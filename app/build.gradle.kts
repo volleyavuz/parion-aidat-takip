@@ -8,7 +8,11 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 2
-        versionName = "2.0-pilot"
+        versionCode = 3
+        versionName = "2.1-pilot"
     }
+}
+
+dependencies {
+    implementation("androidx.appcompat:appcompat:1.7.1")
 }
