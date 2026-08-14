@@ -2,7 +2,6 @@ package com.parion.aidat;
 
 import android.database.Cursor;
 import android.graphics.*;
-import android.graphics.drawable.Drawable;
 import android.view.*;
 import android.widget.*;
 import java.io.InputStream;
@@ -34,17 +33,17 @@ public class MainActivityV31 extends MainActivity {
     }
 
     void loadAthletesAdvanced(LinearLayout b,String q,String status,String category,String birth,String notes){
-        b.removeAllViews(); String stat=(status==null||status.startsWith("TÜM"))?"TÜMÜ":status; Cursor c=db.athletes(q,stat); int shown=0;
+        b.removeAllViews(); String statusFilter=(status==null||status.startsWith("TÜM"))?"TÜMÜ":status; Cursor c=db.athletes(q,statusFilter); int shown=0;
         String noteNeed=fold(notes.trim()); int birthNeed=0; try{birthNeed=Integer.parseInt(birth.trim());}catch(Exception ignored){}
         while(c.moveToNext()){
             String cat=s(c,"category"), nt=s(c,"notes"); int by=c.getInt(c.getColumnIndexOrThrow("birthYear"));
             if(category!=null&&!category.startsWith("TÜM")&&!category.equalsIgnoreCase(cat))continue;
             if(birthNeed>0&&by!=birthNeed)continue;
             if(!noteNeed.isEmpty()&&!fold(nt).contains(noteNeed))continue;
-            long id=c.getLong(c.getColumnIndexOrThrow("id")); String name=s(c,"name"),stat=s(c,"status"),photo=s(c,"photo");
+            long id=c.getLong(c.getColumnIndexOrThrow("id")); String name=s(c,"name"),athleteStatus=s(c,"status"),photo=s(c,"photo");
             LinearLayout row=new LinearLayout(this); row.setGravity(Gravity.CENTER_VERTICAL); row.setPadding(dp(8),dp(7),dp(8),dp(7)); row.setBackground(round(Color.WHITE,10));
             ImageView av=new ImageView(this); av.setScaleType(ImageView.ScaleType.CENTER_CROP); setAthletePhoto(av,photo); row.addView(av,new LinearLayout.LayoutParams(dp(60),dp(60)));
-            LinearLayout t=new LinearLayout(this); t.setOrientation(LinearLayout.VERTICAL); t.addView(tv((by>0?by+" • ":"")+name,15,BLACK,true)); t.addView(tv(cat+" • "+stat,12,statusColor(stat),false)); if(!nt.isEmpty())t.addView(tv(nt,11,Color.DKGRAY,false)); row.addView(t,new LinearLayout.LayoutParams(0,-2,1));
+            LinearLayout t=new LinearLayout(this); t.setOrientation(LinearLayout.VERTICAL); t.addView(tv((by>0?by+" • ":"")+name,15,BLACK,true)); t.addView(tv(cat+" • "+athleteStatus,12,statusColor(athleteStatus),false)); if(!nt.isEmpty())t.addView(tv(nt,11,Color.DKGRAY,false)); row.addView(t,new LinearLayout.LayoutParams(0,-2,1));
             final long athleteId=id; row.setOnClickListener(v->showProfile(athleteId)); LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2); lp.setMargins(0,0,0,dp(7)); b.addView(row,lp); shown++;
         } c.close();
         if(shown==0){TextView none=tv("FİLTRELERE UYGUN SPORCU BULUNAMADI",14,Color.DKGRAY,true); none.setGravity(Gravity.CENTER); b.addView(none);}
