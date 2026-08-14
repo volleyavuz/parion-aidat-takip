@@ -6,8 +6,8 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 12
-        versionName = "3.4-pilot"
+        versionCode = 13
+        versionName = "3.5-pilot"
     }
     compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
 }
