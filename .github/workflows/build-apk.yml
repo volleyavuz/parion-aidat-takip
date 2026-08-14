@@ -23,12 +23,28 @@ jobs:
         with:
           gradle-version: '8.13'
 
-      - name: Build debug APK
-        run: gradle assembleDebug --stacktrace
+      - name: Restore permanent Parion signing key
+        env:
+          PARION_KEYSTORE_BASE64: ${{ secrets.PARION_KEYSTORE_BASE64 }}
+        run: |
+          test -n "$PARION_KEYSTORE_BASE64"
+          printf '%s' "$PARION_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/parion-release.jks"
+
+      - name: Build signed release APK
+        env:
+          PARION_KEYSTORE_PATH: ${{ runner.temp }}/parion-release.jks
+          PARION_STORE_PASSWORD: ${{ secrets.PARION_STORE_PASSWORD }}
+          PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
+          PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
+        run: gradle assembleRelease --stacktrace
+
+      - name: Verify APK signature
+        run: |
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-Android-v3-Pilot
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: Parion-Android-v3.8.2-Release
+          path: app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
