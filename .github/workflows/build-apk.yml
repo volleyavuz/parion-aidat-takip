@@ -32,16 +32,14 @@ jobs:
 
       - name: Normalize PNG resources
         run: |
+          python3 -m pip install --quiet pillow
           python3 - <<'PY'
           from pathlib import Path
           from PIL import Image
           for p in Path('app/src/main/res').rglob('*.png'):
-              try:
-                  im = Image.open(p).convert('RGBA')
-                  im.save(p, format='PNG')
-                  print('normalized', p)
-              except Exception as e:
-                  print('skip', p, e)
+              im = Image.open(p).convert('RGBA')
+              im.save(p, format='PNG')
+              print('normalized', p)
           PY
 
       - name: Build signed release APK
