@@ -1,11 +1,12 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
     <application
         android:allowBackup="true"
         android:label="Parion Spor Okulu"
         android:theme="@style/AppTheme"
         android:supportsRtl="true">
-        <activity android:name=".MainActivityV37" android:screenOrientation="portrait" android:exported="true">
+        <activity android:name=".MainActivityV38" android:screenOrientation="portrait" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
