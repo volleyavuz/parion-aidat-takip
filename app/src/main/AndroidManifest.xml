@@ -5,7 +5,7 @@
         android:label="Parion Spor Okulu"
         android:theme="@style/AppTheme"
         android:supportsRtl="true">
-        <activity android:name=".MainActivityV33" android:screenOrientation="portrait" android:exported="true">
+        <activity android:name=".MainActivityV34" android:screenOrientation="portrait" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
