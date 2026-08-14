@@ -30,6 +30,20 @@ jobs:
           test -n "$PARION_KEYSTORE_BASE64"
           printf '%s' "$PARION_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/parion-release.jks"
 
+      - name: Normalize PNG resources
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          for p in Path('app/src/main/res').rglob('*.png'):
+              try:
+                  im = Image.open(p).convert('RGBA')
+                  im.save(p, format='PNG')
+                  print('normalized', p)
+              except Exception as e:
+                  print('skip', p, e)
+          PY
+
       - name: Build signed release APK
         env:
           PARION_KEYSTORE_PATH: ${{ runner.temp }}/parion-release.jks
