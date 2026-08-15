@@ -10,6 +10,8 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.*;
+import java.io.File;
+import java.io.InputStream;
 import java.util.*;
 
 public class MainActivityV389 extends MainActivityV386 {
@@ -48,8 +50,17 @@ public class MainActivityV389 extends MainActivityV386 {
     }
 
     private boolean missingPhoto(String p){
-        if(p==null) return true; String x=p.trim().toUpperCase(new Locale("tr","TR"));
-        return x.isEmpty() || "NONE".equals(x) || x.contains("0000 BOS");
+        if(p==null) return true;
+        String raw=p.trim();
+        String x=raw.toUpperCase(new Locale("tr","TR"));
+        if(x.isEmpty() || "NONE".equals(x) || x.contains("0000 BOS")) return true;
+        try{
+            if(raw.startsWith("USER:")){
+                File f=new File(new File(getFilesDir(),"athlete_photos"),raw.substring(5));
+                return !f.isFile();
+            }
+            try(InputStream in=getAssets().open("photos/"+raw)){ return false; }
+        }catch(Exception ignored){ return true; }
     }
 
     private int countMissingActivePhotos(){
@@ -64,7 +75,7 @@ public class MainActivityV389 extends MainActivityV386 {
         Cursor c=db.athletes("","AKTİF");
         while(c.moveToNext()){ A x=a(c); if(!missingPhoto(x.photo)) continue; row(b,x,null,0); n++; }
         c.close();
-        if(n==0) b.addView(tv("Fotoğrafı olmayan aktif sporcu bulunmuyor.",15,Color.DKGRAY,true));
+        if(n==0) b.addView(tv("Varsayılan fotoğrafı kullanan aktif sporcu bulunmuyor.",15,Color.DKGRAY,true));
     }
 
     @Override void form(long id){
