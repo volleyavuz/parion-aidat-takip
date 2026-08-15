@@ -2,7 +2,7 @@ name: Build Parion APK
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, android-v3-pilot ]
   workflow_dispatch:
 
 jobs:
@@ -23,12 +23,77 @@ jobs:
         with:
           gradle-version: '8.13'
 
-      - name: Build debug APK
-        run: gradle assembleDebug --stacktrace
+      - name: Restore permanent Parion signing key
+        env:
+          PARION_KEYSTORE_BASE64: ${{ secrets.PARION_KEYSTORE_BASE64 }}
+        run: |
+          test -n "$PARION_KEYSTORE_BASE64"
+          printf '%s' "$PARION_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/parion-release.jks"
+
+      - name: Validate permanent signing key
+        env:
+          PARION_STORE_PASSWORD: ${{ secrets.PARION_STORE_PASSWORD }}
+          PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
+          PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
+        run: |
+          set -e
+          keytool -list -keystore "$RUNNER_TEMP/parion-release.jks" -storepass "$PARION_STORE_PASSWORD" -alias "$PARION_KEY_ALIAS" >/dev/null
+          keytool -importkeystore \
+            -srckeystore "$RUNNER_TEMP/parion-release.jks" \
+            -srcstorepass "$PARION_STORE_PASSWORD" \
+            -srcalias "$PARION_KEY_ALIAS" \
+            -srckeypass "$PARION_KEY_PASSWORD" \
+            -destkeystore "$RUNNER_TEMP/parion-key-check.p12" \
+            -deststoretype PKCS12 \
+            -deststorepass parion-check-only \
+            -destkeypass parion-check-only \
+            -noprompt >/dev/null
+          echo "Permanent signing key validated successfully."
+
+      - name: Normalize PNG resources
+        run: |
+          python3 -m pip install --quiet pillow
+          python3 - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          for p in Path('app/src/main/res').rglob('*.png'):
+              im = Image.open(p).convert('RGBA')
+              im.save(p, format='PNG')
+              print('normalized', p)
+          PY
+
+      - name: Build signed release APK
+        env:
+          PARION_KEYSTORE_PATH: ${{ runner.temp }}/parion-release.jks
+          PARION_STORE_PASSWORD: ${{ secrets.PARION_STORE_PASSWORD }}
+          PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
+          PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
+        run: gradle assembleRelease --stacktrace
+
+      - name: Verify APK signature
+        run: |
+          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-Aidat-Takip-Pilot-v0.1
-          path: app/build/outputs/apk/debug/app-debug.apk
+          name: Parion-Android-v3.8.3-Release
+          path: app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+
+      - name: Collect Android signing tools
+        run: |
+          mkdir -p "$RUNNER_TEMP/parion-sign-tools/lib" "$RUNNER_TEMP/parion-sign-tools/lib64"
+          cp "$ANDROID_HOME/build-tools/36.0.0/apksigner" "$RUNNER_TEMP/parion-sign-tools/"
+          cp "$ANDROID_HOME/build-tools/36.0.0/zipalign" "$RUNNER_TEMP/parion-sign-tools/"
+          cp "$ANDROID_HOME/build-tools/36.0.0/lib/apksigner.jar" "$RUNNER_TEMP/parion-sign-tools/lib/"
+          LIBCPP=$(find "$ANDROID_HOME/build-tools/36.0.0" -name 'libc++.so' -type f | head -1)
+          test -n "$LIBCPP"
+          cp "$LIBCPP" "$RUNNER_TEMP/parion-sign-tools/lib64/libc++.so"
+
+      - name: Upload Android signing tools
+        uses: actions/upload-artifact@v4
+        with:
+          name: Parion-Android-Signing-Tools
+          path: ${{ runner.temp }}/parion-sign-tools
           if-no-files-found: error
