@@ -30,6 +30,26 @@ jobs:
           test -n "$PARION_KEYSTORE_BASE64"
           printf '%s' "$PARION_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/parion-release.jks"
 
+      - name: Validate permanent signing key
+        env:
+          PARION_STORE_PASSWORD: ${{ secrets.PARION_STORE_PASSWORD }}
+          PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
+          PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
+        run: |
+          set -e
+          keytool -list -keystore "$RUNNER_TEMP/parion-release.jks" -storepass "$PARION_STORE_PASSWORD" -alias "$PARION_KEY_ALIAS" >/dev/null
+          keytool -importkeystore \
+            -srckeystore "$RUNNER_TEMP/parion-release.jks" \
+            -srcstorepass "$PARION_STORE_PASSWORD" \
+            -srcalias "$PARION_KEY_ALIAS" \
+            -srckeypass "$PARION_KEY_PASSWORD" \
+            -destkeystore "$RUNNER_TEMP/parion-key-check.p12" \
+            -deststoretype PKCS12 \
+            -deststorepass parion-check-only \
+            -destkeypass parion-check-only \
+            -noprompt >/dev/null
+          echo "Permanent signing key validated successfully."
+
       - name: Normalize PNG resources
         run: |
           python3 -m pip install --quiet pillow
