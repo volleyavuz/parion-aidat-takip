@@ -8,7 +8,7 @@
         android:roundIcon="@drawable/ic_launcher"
         android:theme="@style/AppTheme"
         android:supportsRtl="true">
-        <activity android:name=".MainActivityV397" android:screenOrientation="portrait" android:exported="true">
+        <activity android:name=".MainActivityV398" android:screenOrientation="portrait" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
