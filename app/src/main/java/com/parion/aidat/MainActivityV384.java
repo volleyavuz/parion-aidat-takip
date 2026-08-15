@@ -11,7 +11,6 @@ import android.graphics.Color;
 import android.graphics.Matrix;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
-import android.os.Bundle;
 import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
@@ -25,7 +24,10 @@ import java.util.*;
 public class MainActivityV384 extends MainActivityV383 {
     private static final int REQ_PICK_PHOTO = 3840;
     private String pendingPhoto = "";
+    private String originalPhoto = "";
     private ImageView pendingPreview;
+    private Button pendingPhotoButton;
+    private Button pendingDeleteButton;
 
     @Override void showProfile(long id) {
         super.showProfile(id);
@@ -45,12 +47,22 @@ public class MainActivityV384 extends MainActivityV383 {
                 if (bm != null) { v.setImageBitmap(bm); return; }
             }
         }
+        if ("NONE".equals(photo)) {
+            if (loadDefaultPhoto(v)) return;
+        }
         super.setAthletePhoto(v, photo);
+    }
+
+    private boolean loadDefaultPhoto(ImageView v){
+        try(InputStream in=getAssets().open("photos/0000 BOS.jpg")){
+            Bitmap bm=BitmapFactory.decodeStream(in);if(bm!=null){v.setImageBitmap(bm);return true;}
+        }catch(Exception ignored){}
+        return false;
     }
 
     @Override int[] applyCloudCache(org.json.JSONArray athletes, org.json.JSONArray payments) throws Exception {
         HashMap<Long,String> local = new HashMap<>();
-        Cursor c = db.getReadableDatabase().rawQuery("SELECT id,photo FROM athletes WHERE photo LIKE 'USER:%'", null);
+        Cursor c = db.getReadableDatabase().rawQuery("SELECT id,photo FROM athletes WHERE photo LIKE 'USER:%' OR photo='NONE'", null);
         while (c.moveToNext()) local.put(c.getLong(0), c.getString(1));
         c.close();
         int[] r = super.applyCloudCache(athletes, payments);
@@ -68,13 +80,18 @@ public class MainActivityV384 extends MainActivityV383 {
         ScrollView sv=scroll(); LinearLayout b=box(sv);
         Cursor c=id<0?null:db.athlete(id); if(c!=null)c.moveToFirst();
 
-        pendingPhoto = c==null ? "" : v(c,"photo");
+        originalPhoto = c==null ? "" : v(c,"photo");
+        pendingPhoto = originalPhoto;
         LinearLayout photoBox = new LinearLayout(this); photoBox.setOrientation(LinearLayout.VERTICAL); photoBox.setGravity(Gravity.CENTER_HORIZONTAL); photoBox.setPadding(0,dp(6),0,dp(12));
         pendingPreview = new ImageView(this); pendingPreview.setScaleType(ImageView.ScaleType.CENTER_CROP); setAthletePhoto(pendingPreview,pendingPhoto);
         photoBox.addView(pendingPreview,new LinearLayout.LayoutParams(dp(150),dp(150)));
-        Button photoBtn=btn(pendingPhoto==null||pendingPhoto.isEmpty()?"FOTOĞRAF EKLE":"FOTOĞRAFI DEĞİŞTİR");
-        LinearLayout.LayoutParams pbp=new LinearLayout.LayoutParams(-1,dp(52)); pbp.setMargins(0,dp(8),0,0); photoBox.addView(photoBtn,pbp); b.addView(photoBox);
-        photoBtn.setOnClickListener(vv->pickPhoto());
+        pendingPhotoButton=btn(hasPhoto(pendingPhoto)?"FOTOĞRAFI DEĞİŞTİR":"FOTOĞRAF EKLE");
+        LinearLayout.LayoutParams pbp=new LinearLayout.LayoutParams(-1,dp(52)); pbp.setMargins(0,dp(8),0,0); photoBox.addView(pendingPhotoButton,pbp);
+        pendingDeleteButton=btn("FOTOĞRAFI SİL"); pendingDeleteButton.setBackground(round(Color.rgb(245,210,210),12));
+        LinearLayout.LayoutParams dbp=new LinearLayout.LayoutParams(-1,dp(52)); dbp.setMargins(0,dp(6),0,0); photoBox.addView(pendingDeleteButton,dbp);
+        updatePhotoButtons(); b.addView(photoBox);
+        pendingPhotoButton.setOnClickListener(vv->pickPhoto());
+        pendingDeleteButton.setOnClickListener(vv->confirmPhotoDelete());
         pendingPreview.setOnClickListener(vv->showZoomPhoto(pendingPreview.getDrawable()));
 
         EditText name=f("AD SOYAD",v(c,"name")),bd=f("DOĞUM TARİHİ (gg.aa.yyyy)",birth(c)),cat=f("GRUP / TAKIM",v(c,"category")),fee=f("AYLIK AİDAT ₺",n(c,"monthlyFee")),phone=f("SPORCU TELEFON",v(c,"phone")),mn=f("ANNE ADI",v(c,"motherName")),mp=f("ANNE TELEFON",v(c,"motherPhone")),fn=f("BABA ADI",v(c,"fatherName")),fp=f("BABA TELEFON",v(c,"fatherPhone")),start=f("BAŞLANGIÇ TARİHİ",dt(c,"startDate")),end=f("BİTİŞ / ARA VERME",dt(c,"endDate")),restart=f("YENİDEN BAŞLAMA",dt(c,"restartDate")),notes=f("ÖZEL NOTLAR",v(c,"notes"));
@@ -92,8 +109,20 @@ public class MainActivityV384 extends MainActivityV383 {
             cv.put("startDate",iso(start.getText().toString())); cv.put("endDate",iso(end.getText().toString())); cv.put("restartDate",iso(restart.getText().toString())); cv.put("notes",notes.getText().toString().trim()); cv.put("photo",pendingPhoto==null?"":pendingPhoto);
             SQLiteDatabase d=db.getWritableDatabase(); long saved=id;
             if(id<0){Cursor m=d.rawQuery("SELECT COALESCE(MAX(seq),0)+1 FROM athletes",null);m.moveToFirst();cv.put("seq",m.getInt(0));m.close();saved=d.insert("athletes",null,cv);} else d.update("athletes",cv,"id=?",new String[]{String.valueOf(id)});
-            if(saved>0){Toast.makeText(this,"Kayıt kaydedildi.",Toast.LENGTH_SHORT).show();showProfile(saved);}
+            if(saved>0){deleteOldUserPhotoIfNeeded();Toast.makeText(this,"Kayıt kaydedildi.",Toast.LENGTH_SHORT).show();showProfile(saved);}
         });
+    }
+
+    private boolean hasPhoto(String p){return p!=null&&!p.trim().isEmpty()&&!"NONE".equals(p);}
+    private void updatePhotoButtons(){if(pendingPhotoButton!=null)pendingPhotoButton.setText(hasPhoto(pendingPhoto)?"FOTOĞRAFI DEĞİŞTİR":"FOTOĞRAF EKLE");if(pendingDeleteButton!=null)pendingDeleteButton.setVisibility(hasPhoto(pendingPhoto)?View.VISIBLE:View.GONE);}
+    private void confirmPhotoDelete(){
+        if(!hasPhoto(pendingPhoto))return;
+        new android.app.AlertDialog.Builder(this).setTitle("FOTOĞRAFI SİL").setMessage("Sporcunun fotoğrafı kaldırılsın mı? Değişiklik, kayıt kaydedildiğinde uygulanır.").setPositiveButton("EVET, SİL",(d,w)->{pendingPhoto="NONE";if(pendingPreview!=null)setAthletePhoto(pendingPreview,pendingPhoto);updatePhotoButtons();toast("Fotoğraf kaldırıldı. Değişikliği kaydetmeyi unutmayın.");}).setNegativeButton("VAZGEÇ",null).show();
+    }
+    private void deleteOldUserPhotoIfNeeded(){
+        if(originalPhoto!=null&&originalPhoto.startsWith("USER:")&&!originalPhoto.equals(pendingPhoto)){
+            File f=new File(new File(getFilesDir(),"athlete_photos"),originalPhoto.substring(5));if(f.isFile())f.delete();
+        }
     }
 
     private void pickPhoto(){
@@ -111,7 +140,7 @@ public class MainActivityV384 extends MainActivityV383 {
                 byte[] buf=new byte[8192]; int n; while(in!=null&&(n=in.read(buf))>0)os.write(buf,0,n);
             }
             Bitmap bm=BitmapFactory.decodeFile(out.getAbsolutePath()); if(bm==null){out.delete();toast("Fotoğraf okunamadı.");return;}
-            pendingPhoto="USER:"+fn; if(pendingPreview!=null)pendingPreview.setImageBitmap(bm); toast("Fotoğraf seçildi. Kaydet düğmesine basın.");
+            pendingPhoto="USER:"+fn; if(pendingPreview!=null)pendingPreview.setImageBitmap(bm); updatePhotoButtons(); toast("Fotoğraf seçildi. Kaydet düğmesine basın.");
         }catch(Exception e){toast("Fotoğraf eklenemedi: "+shortMsg(e));}
     }
 
