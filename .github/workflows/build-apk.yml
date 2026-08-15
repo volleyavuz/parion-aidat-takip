@@ -83,10 +83,13 @@ jobs:
 
       - name: Collect Android signing tools
         run: |
-          mkdir -p "$RUNNER_TEMP/parion-sign-tools/lib"
+          mkdir -p "$RUNNER_TEMP/parion-sign-tools/lib" "$RUNNER_TEMP/parion-sign-tools/lib64"
           cp "$ANDROID_HOME/build-tools/36.0.0/apksigner" "$RUNNER_TEMP/parion-sign-tools/"
           cp "$ANDROID_HOME/build-tools/36.0.0/zipalign" "$RUNNER_TEMP/parion-sign-tools/"
           cp "$ANDROID_HOME/build-tools/36.0.0/lib/apksigner.jar" "$RUNNER_TEMP/parion-sign-tools/lib/"
+          LIBCPP=$(find "$ANDROID_HOME/build-tools/36.0.0" -name 'libc++.so' -type f | head -1)
+          test -n "$LIBCPP"
+          cp "$LIBCPP" "$RUNNER_TEMP/parion-sign-tools/lib64/libc++.so"
 
       - name: Upload Android signing tools
         uses: actions/upload-artifact@v4
