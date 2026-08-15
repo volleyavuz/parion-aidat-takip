@@ -11,16 +11,18 @@ import java.text.Collator;
 import java.util.*;
 
 public class MainActivityV37 extends MainActivityV36 {
-    final String[] SORTS={"AD (A-Z)","AD (Z-A)","SOYAD (A-Z)","SOYAD (Z-A)","DOĞUM TARİHİ/YILI ↑","DOĞUM TARİHİ/YILI ↓","GRUP / TAKIM (A-Z)","GRUP / TAKIM (Z-A)","AİDAT ₺ ↑","AİDAT ₺ ↓"};
-    static class A{long id;String name,cat,status,notes,photo,birthDate;int by,fee;}
+    final String[] SORTS={"AD (A-Z)","AD (Z-A)","SOYAD (A-Z)","SOYAD (Z-A)","DOĞUM TARİHİ/YILI ↑","DOĞUM TARİHİ/YILI ↓","GRUP / TAKIM (A-Z)","GRUP / TAKIM (Z-A)","AİDAT ₺ ↑","AİDAT ₺ ↓","KAYIT TARİHİ • ESKİDEN YENİYE","KAYIT TARİHİ • YENİDEN ESKİYE"};
+    static class A{long id;String name,cat,status,notes,photo,birthDate,startDate;int by,fee;}
 
     @Override public void onCreate(android.os.Bundle b){super.onCreate(b);ensureBirthDate();}
     void ensureBirthDate(){try{Cursor c=db.getReadableDatabase().rawQuery("PRAGMA table_info(athletes)",null);boolean ok=false;while(c.moveToNext())if("birthDate".equals(c.getString(c.getColumnIndexOrThrow("name"))))ok=true;c.close();if(!ok)db.getWritableDatabase().execSQL("ALTER TABLE athletes ADD COLUMN birthDate TEXT");}catch(Exception ignored){}}
 
-    A a(Cursor c){A x=new A();x.id=c.getLong(c.getColumnIndexOrThrow("id"));x.name=s(c,"name");x.cat=s(c,"category");x.status=s(c,"status");x.notes=s(c,"notes");x.photo=s(c,"photo");x.by=c.getInt(c.getColumnIndexOrThrow("birthYear"));x.fee=c.getInt(c.getColumnIndexOrThrow("monthlyFee"));int i=c.getColumnIndex("birthDate");x.birthDate=i>=0&&!c.isNull(i)?c.getString(i):"";return x;}
+    A a(Cursor c){A x=new A();x.id=c.getLong(c.getColumnIndexOrThrow("id"));x.name=s(c,"name");x.cat=s(c,"category");x.status=s(c,"status");x.notes=s(c,"notes");x.photo=s(c,"photo");x.by=c.getInt(c.getColumnIndexOrThrow("birthYear"));x.fee=c.getInt(c.getColumnIndexOrThrow("monthlyFee"));int i=c.getColumnIndex("birthDate");x.birthDate=i>=0&&!c.isNull(i)?c.getString(i):"";int j=c.getColumnIndex("startDate");x.startDate=j>=0&&!c.isNull(j)?c.getString(j):"";return x;}
     String surname(String n){String[] p=(n==null?"":n.trim()).split("\\s+");return p.length==0?"":p[p.length-1];}
     String birthKey(A x){return x.birthDate!=null&&x.birthDate.matches("\\d{4}-\\d{2}-\\d{2}")?x.birthDate:String.format(Locale.US,"%04d-01-01",x.by);}
-    Comparator<A> cmp(int m){Collator tr=Collator.getInstance(new Locale("tr","TR"));tr.setStrength(Collator.PRIMARY);return (x,y)->{int r;switch(m){case 1:return -tr.compare(x.name,y.name);case 2:return tr.compare(surname(x.name),surname(y.name));case 3:return -tr.compare(surname(x.name),surname(y.name));case 4:return birthKey(x).compareTo(birthKey(y));case 5:return birthKey(y).compareTo(birthKey(x));case 6:return tr.compare(x.cat,y.cat);case 7:return -tr.compare(x.cat,y.cat);case 8:return Integer.compare(x.fee,y.fee);case 9:return Integer.compare(y.fee,x.fee);default:return tr.compare(x.name,y.name);}};}
+    String startKey(A x){return x.startDate!=null&&x.startDate.matches("\\d{4}-\\d{2}-\\d{2}")?x.startDate:"";}
+    int compareStart(A x,A y,boolean newestFirst){String a=startKey(x),b=startKey(y);if(a.isEmpty()&&b.isEmpty())return 0;if(a.isEmpty())return 1;if(b.isEmpty())return -1;return newestFirst?b.compareTo(a):a.compareTo(b);}
+    Comparator<A> cmp(int m){Collator tr=Collator.getInstance(new Locale("tr","TR"));tr.setStrength(Collator.PRIMARY);return (x,y)->{switch(m){case 1:return -tr.compare(x.name,y.name);case 2:return tr.compare(surname(x.name),surname(y.name));case 3:return -tr.compare(surname(x.name),surname(y.name));case 4:return birthKey(x).compareTo(birthKey(y));case 5:return birthKey(y).compareTo(birthKey(x));case 6:return tr.compare(x.cat,y.cat);case 7:return -tr.compare(x.cat,y.cat);case 8:return Integer.compare(x.fee,y.fee);case 9:return Integer.compare(y.fee,x.fee);case 10:return compareStart(x,y,false);case 11:return compareStart(x,y,true);default:return tr.compare(x.name,y.name);}};}
 
     @Override void showAthletes(){
         page="LIST";base("SPORCULAR",true);LinearLayout p=new LinearLayout(this);p.setOrientation(LinearLayout.VERTICAL);p.setPadding(dp(8),dp(8),dp(8),dp(6));p.setBackground(round(Color.WHITE,10));
