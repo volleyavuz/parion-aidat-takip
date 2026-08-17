@@ -2,7 +2,7 @@ name: Build Parion APK
 
 on:
   push:
-    branches: [ main, android-v3-pilot ]
+    branches: [ main, android-v3-pilot, v3-8-37-media-fix ]
   workflow_dispatch:
 
 jobs:
@@ -77,7 +77,7 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-Android-v3.8.3-Release
+          name: Parion-Android-v3.8.37-Media-Fix
           path: app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
 
