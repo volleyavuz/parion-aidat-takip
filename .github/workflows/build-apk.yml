@@ -5,8 +5,12 @@ on:
     branches: [ main, android-v3-pilot, v3-8-37-media-fix ]
   workflow_dispatch:
 
+permissions:
+  contents: write
+
 jobs:
   build:
+    if: github.event_name == 'workflow_dispatch' || !contains(github.event.head_commit.message, '[run-meta]')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -97,3 +101,14 @@ jobs:
           name: Parion-Android-Signing-Tools
           path: ${{ runner.temp }}/parion-sign-tools
           if-no-files-found: error
+
+      - name: Record latest successful run id
+        if: success()
+        run: |
+          mkdir -p build-meta
+          printf '%s\n' "$GITHUB_RUN_ID" > build-meta/latest-run-id.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add build-meta/latest-run-id.txt
+          git commit -m "[run-meta] latest APK run $GITHUB_RUN_ID" || exit 0
+          git push
