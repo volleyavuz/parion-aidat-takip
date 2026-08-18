@@ -19,31 +19,32 @@ public class SplashActivity extends Activity {
         box.setBackgroundColor(Color.BLACK);
 
         ImageView logo=new ImageView(this);
-        logo.setImageBitmap(ClubLogoAsset.bitmap());
+        logo.setImageResource(R.drawable.parion_app_icon);
         logo.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        box.addView(logo,new LinearLayout.LayoutParams(180,180));
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(210,210);
+        box.addView(logo,lp);
 
         TextView title=new TextView(this);
         title.setText("PARİON SPOR KULÜBÜ");
         title.setTextColor(Color.rgb(245,197,24));
-        title.setTextSize(22);
+        title.setTextSize(23);
         title.setGravity(Gravity.CENTER);
         title.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);
-        LinearLayout.LayoutParams tp=new LinearLayout.LayoutParams(-1,-2);tp.setMargins(0,18,0,0);box.addView(title,tp);
+        LinearLayout.LayoutParams tp=new LinearLayout.LayoutParams(-1,-2);tp.setMargins(0,22,0,4);box.addView(title,tp);
 
         TextView sub=new TextView(this);
         sub.setText("AİDAT TAKİP SİSTEMİ");
-        sub.setTextColor(Color.LTGRAY);
-        sub.setTextSize(13);
+        sub.setTextColor(Color.WHITE);
+        sub.setTextSize(14);
         sub.setGravity(Gravity.CENTER);
+        sub.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);
         box.addView(sub,new LinearLayout.LayoutParams(-1,-2));
         setContentView(box);
 
         box.postDelayed(()->{
-            Intent i=new Intent(this,MainActivityV434.class);
-            startActivity(i);
+            startActivity(new Intent(this,MainActivityV436.class));
             overridePendingTransition(0,0);
             finish();
-        },120);
+        },280);
     }
 }
