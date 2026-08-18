@@ -16,12 +16,12 @@ public class SplashActivity extends Activity {
         box.setOrientation(LinearLayout.VERTICAL);
         box.setGravity(Gravity.CENTER);
         box.setPadding(36,36,36,36);
-        box.setBackgroundColor(Color.rgb(17,24,39));
+        box.setBackgroundColor(Color.BLACK);
 
         ImageView logo=new ImageView(this);
-        logo.setImageResource(R.drawable.ic_launcher);
-        logo.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
-        box.addView(logo,new LinearLayout.LayoutParams(120,120));
+        logo.setImageBitmap(ClubLogoAsset.bitmap());
+        logo.setScaleType(ImageView.ScaleType.CENTER_CROP);
+        box.addView(logo,new LinearLayout.LayoutParams(180,180));
 
         TextView title=new TextView(this);
         title.setText("PARİON SPOR KULÜBÜ");
@@ -40,7 +40,7 @@ public class SplashActivity extends Activity {
         setContentView(box);
 
         box.postDelayed(()->{
-            Intent i=new Intent(this,MainActivityV432.class);
+            Intent i=new Intent(this,MainActivityV433.class);
             startActivity(i);
             overridePendingTransition(0,0);
             finish();
