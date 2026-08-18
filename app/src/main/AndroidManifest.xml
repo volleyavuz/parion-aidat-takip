@@ -2,8 +2,7 @@
 <uses-permission android:name="android.permission.INTERNET" />
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
 <application android:allowBackup="true" android:label="Parion Spor Okulu" android:icon="@drawable/ic_launcher" android:roundIcon="@drawable/ic_launcher" android:theme="@style/AppTheme" android:supportsRtl="true">
-<activity android:name=".MainActivityV434" android:screenOrientation="portrait" android:exported="false" />
-<activity android:name=".SplashActivity" android:screenOrientation="portrait" android:exported="true">
+<activity android:name=".MainActivityV435" android:screenOrientation="portrait" android:exported="true">
 <intent-filter>
 <action android:name="android.intent.action.MAIN" />
 <category android:name="android.intent.category.LAUNCHER" />
