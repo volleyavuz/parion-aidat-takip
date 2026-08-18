@@ -41,7 +41,7 @@ public class SplashActivity extends Activity {
         setContentView(box);
 
         box.postDelayed(()->{
-            startActivity(new Intent(this,MainActivityV440.class));
+            startActivity(new Intent(this,MainActivityV441.class));
             overridePendingTransition(0,0);
             finish();
         },280);
