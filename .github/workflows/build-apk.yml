@@ -16,6 +16,12 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Materialize selected Parion app icon
+        run: |
+          mkdir -p app/src/main/res/drawable
+          base64 --decode build-assets/parion_option1_icon.b64 > app/src/main/res/drawable/parion_app_icon.jpg
+          test -s app/src/main/res/drawable/parion_app_icon.jpg
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
