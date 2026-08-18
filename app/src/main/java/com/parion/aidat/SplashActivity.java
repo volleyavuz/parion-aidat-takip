@@ -21,8 +21,7 @@ public class SplashActivity extends Activity {
         ImageView logo=new ImageView(this);
         logo.setImageResource(R.drawable.parion_app_icon);
         logo.setScaleType(ImageView.ScaleType.CENTER_CROP);
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(210,210);
-        box.addView(logo,lp);
+        box.addView(logo,new LinearLayout.LayoutParams(210,210));
 
         TextView title=new TextView(this);
         title.setText("PARİON SPOR KULÜBÜ");
@@ -42,7 +41,7 @@ public class SplashActivity extends Activity {
         setContentView(box);
 
         box.postDelayed(()->{
-            startActivity(new Intent(this,MainActivityV436.class));
+            startActivity(new Intent(this,MainActivityV438.class));
             overridePendingTransition(0,0);
             finish();
         },280);
