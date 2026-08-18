@@ -28,12 +28,16 @@ jobs:
           jar cf ../patch.jar com
           cd ../..
           "$BT/d8" --min-api 23 --output patch-build/dex patch-build/patch.jar
-      - name: Commit dex output to patch branch
+      - name: Commit dex and text chunks to patch branch
         run: |
-          mkdir -p patch-output
+          rm -rf patch-output
+          mkdir -p patch-output/chunks
           cp patch-build/dex/classes.dex patch-output/classes.dex
+          base64 -w0 patch-build/dex/classes.dex | split -b 6000 - patch-output/chunks/part-
+          wc -c patch-build/dex/classes.dex > patch-output/size.txt
+          sha256sum patch-build/dex/classes.dex > patch-output/sha256.txt
           git config user.name github-actions
           git config user.email github-actions@github.com
-          git add patch-output/classes.dex
-          git commit -m "Build v3.8.64 patch dex" || exit 0
+          git add -f patch-output
+          git commit -m "Export v3.8.64 patch dex chunks" || exit 0
           git push origin HEAD:chatgpt/v3.8.64-sync-patch
