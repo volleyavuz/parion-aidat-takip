@@ -3,6 +3,8 @@ name: Build Parion v3.9.0 Recovery APK
 on:
   push:
     branches: [ chatgpt/v3.9.0-readonly-restore ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
