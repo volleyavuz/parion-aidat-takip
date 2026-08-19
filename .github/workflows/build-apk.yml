@@ -3,6 +3,8 @@ name: Build Parion APK
 on:
   push:
     branches: [ main, android-v3-pilot ]
+  pull_request:
+    branches: [ android-v3-pilot ]
   workflow_dispatch:
 
 jobs:
@@ -48,7 +50,6 @@ jobs:
             -deststorepass parion-check-only \
             -destkeypass parion-check-only \
             -noprompt >/dev/null
-          echo "Permanent signing key validated successfully."
 
       - name: Normalize PNG resources
         run: |
@@ -57,9 +58,7 @@ jobs:
           from pathlib import Path
           from PIL import Image
           for p in Path('app/src/main/res').rglob('*.png'):
-              im = Image.open(p).convert('RGBA')
-              im.save(p, format='PNG')
-              print('normalized', p)
+              Image.open(p).convert('RGBA').save(p, format='PNG')
           PY
 
       - name: Build signed release APK
@@ -71,29 +70,11 @@ jobs:
         run: gradle assembleRelease --stacktrace
 
       - name: Verify APK signature
-        run: |
-          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
+        run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-Android-v3.8.3-Release
+          name: Parion-Android-Release
           path: app/build/outputs/apk/release/app-release.apk
-          if-no-files-found: error
-
-      - name: Collect Android signing tools
-        run: |
-          mkdir -p "$RUNNER_TEMP/parion-sign-tools/lib" "$RUNNER_TEMP/parion-sign-tools/lib64"
-          cp "$ANDROID_HOME/build-tools/36.0.0/apksigner" "$RUNNER_TEMP/parion-sign-tools/"
-          cp "$ANDROID_HOME/build-tools/36.0.0/zipalign" "$RUNNER_TEMP/parion-sign-tools/"
-          cp "$ANDROID_HOME/build-tools/36.0.0/lib/apksigner.jar" "$RUNNER_TEMP/parion-sign-tools/lib/"
-          LIBCPP=$(find "$ANDROID_HOME/build-tools/36.0.0" -name 'libc++.so' -type f | head -1)
-          test -n "$LIBCPP"
-          cp "$LIBCPP" "$RUNNER_TEMP/parion-sign-tools/lib64/libc++.so"
-
-      - name: Upload Android signing tools
-        uses: actions/upload-artifact@v4
-        with:
-          name: Parion-Android-Signing-Tools
-          path: ${{ runner.temp }}/parion-sign-tools
           if-no-files-found: error
