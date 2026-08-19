@@ -38,7 +38,6 @@ jobs:
           printf '%s' "$PARION_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/parion-release.jks"
 
       - name: Build signed release APK and capture log
-        id: buildstep
         env:
           PARION_KEYSTORE_PATH: ${{ runner.temp }}/parion-release.jks
           PARION_STORE_PASSWORD: ${{ secrets.PARION_STORE_PASSWORD }}
@@ -54,7 +53,7 @@ jobs:
           fi
           exit 0
 
-      - name: Publish build log and APK to output branch
+      - name: Publish build result to output branch
         env:
           GH_TOKEN: ${{ github.token }}
           GH_REPOSITORY: ${{ github.repository }}
@@ -79,7 +78,14 @@ jobs:
           put('builds/v390-status.txt',open(os.path.join(tmp,'v390-status.txt'),'rb').read(),'Publish v3.9.0 build status')
           apk='app/build/outputs/apk/release/app-release.apk'
           if os.path.isfile(apk):
-              put('builds/Parion_V3_9_0_Buluttan_Yerele_Kurtarma.apk',open(apk,'rb').read(),'Publish signed Parion v3.9.0 recovery APK')
+              raw=open(apk,'rb').read()
+              put('builds/Parion_V3_9_0_Buluttan_Yerele_Kurtarma.apk',raw,'Publish signed Parion v3.9.0 recovery APK')
+              b64=base64.b64encode(raw).decode('ascii')
+              size=40000
+              parts=[b64[i:i+size] for i in range(0,len(b64),size)]
+              put('builds/v390-apk-parts.txt',str(len(parts)).encode(),'Publish APK chunk count')
+              for i,p in enumerate(parts):
+                  put(f'builds/v390-apk-{i:02d}.b64',p.encode(),'Publish APK base64 chunk')
           PY
 
       - name: Fail workflow if build failed
