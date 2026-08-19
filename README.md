@@ -5,4 +5,4 @@ Android için yerel, tek kullanıcılı sporcu takip uygulaması.
 Sürüm: 1.0.0
 APK derleme hattı: GitHub Actions. Android Studio gerektirmez.
 
-Build: full-apk-v1.0.0
+Build: final-signing-tool
