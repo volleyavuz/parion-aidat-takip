@@ -1,5 +1,6 @@
-# Parion Aidat Takip
+# Parion Sporcu Takip Sistemi
 
-Android için yerel, tek kullanıcılı spor okulu aidat takip pilot uygulaması.
+Android için yerel, tek kullanıcılı sporcu takip uygulaması.
 
+Sürüm: 1.0.0
 APK derleme hattı: GitHub Actions. Android Studio gerektirmez.
