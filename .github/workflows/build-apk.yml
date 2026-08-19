@@ -1,10 +1,10 @@
-name: Build Parion v3.9.0 Recovery APK
+name: Build Parion APK
 
 on:
   push:
-    branches: [ chatgpt/v3.9.0-readonly-restore ]
+    branches: [ main, android-v3-pilot ]
   pull_request:
-    branches: [ main ]
+    branches: [ android-v3-pilot ]
   workflow_dispatch:
 
 jobs:
@@ -40,6 +40,16 @@ jobs:
         run: |
           set -e
           keytool -list -keystore "$RUNNER_TEMP/parion-release.jks" -storepass "$PARION_STORE_PASSWORD" -alias "$PARION_KEY_ALIAS" >/dev/null
+          keytool -importkeystore \
+            -srckeystore "$RUNNER_TEMP/parion-release.jks" \
+            -srcstorepass "$PARION_STORE_PASSWORD" \
+            -srcalias "$PARION_KEY_ALIAS" \
+            -srckeypass "$PARION_KEY_PASSWORD" \
+            -destkeystore "$RUNNER_TEMP/parion-key-check.p12" \
+            -deststoretype PKCS12 \
+            -deststorepass parion-check-only \
+            -destkeypass parion-check-only \
+            -noprompt >/dev/null
 
       - name: Normalize PNG resources
         run: |
@@ -48,8 +58,7 @@ jobs:
           from pathlib import Path
           from PIL import Image
           for p in Path('app/src/main/res').rglob('*.png'):
-              im = Image.open(p).convert('RGBA')
-              im.save(p, format='PNG')
+              Image.open(p).convert('RGBA').save(p, format='PNG')
           PY
 
       - name: Build signed release APK
@@ -61,12 +70,11 @@ jobs:
         run: gradle assembleRelease --stacktrace
 
       - name: Verify APK signature
-        run: |
-          "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
+        run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v3.9.0-Cloud-To-Local-Recovery
+          name: Parion-Android-Release
           path: app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
