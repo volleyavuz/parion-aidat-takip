@@ -138,7 +138,13 @@ public class MainActivityV600 extends MainActivityV505 {
 
     private void queueDelta600(long id){
         if(id<=0||delta600||restore600||cloudPrefs==null||cloudPrefs.getString("access_token","").isEmpty())return;String now=athleteHash600(id);if(now.equals(savedHash600(id)))return;
-        delta600=true;sync600.execute(()->{try{JSONObject body=oneAthleteBody600(id);String token=cloudPrefs.getString("access_token","");HttpResult r=request("POST",SUPABASE_URL+"/rest/v1/rpc/parion_sync_one_athlete_delta_v4",body.toString(),token);if(r.code==401&&refreshSession()){token=cloudPrefs.getString("access_token","");r=request("POST",SUPABASE_URL+"/rest/v1/rpc/parion_sync_one_athlete_delta_v4",body.toString(),token);}if(r.code>=200&&r.code<300)saveHash600(id,athleteHash600(id));else runOnUiThread(()->toast("DEĞİŞİKLİK BULUTA GÖNDERİLEMEDİ • HTTP "+r.code));}catch(Exception e){runOnUiThread(()->toast("DEĞİŞİKLİK BULUTTA BEKLİYOR."));}finally{delta600=false;}});
+        delta600=true;sync600.execute(()->{try{
+            JSONObject body=oneAthleteBody600(id);String token=cloudPrefs.getString("access_token","");
+            HttpResult r=request("POST",SUPABASE_URL+"/rest/v1/rpc/parion_sync_one_athlete_delta_v4",body.toString(),token);
+            if(r.code==401&&refreshSession()){token=cloudPrefs.getString("access_token","");r=request("POST",SUPABASE_URL+"/rest/v1/rpc/parion_sync_one_athlete_delta_v4",body.toString(),token);}
+            final int responseCode=r.code;
+            if(responseCode>=200&&responseCode<300)saveHash600(id,athleteHash600(id));else runOnUiThread(()->toast("DEĞİŞİKLİK BULUTA GÖNDERİLEMEDİ • HTTP "+responseCode));
+        }catch(Exception e){runOnUiThread(()->toast("DEĞİŞİKLİK BULUTTA BEKLİYOR."));}finally{delta600=false;}});
     }
 
     private JSONObject oneAthleteBody600(long id)throws Exception{
