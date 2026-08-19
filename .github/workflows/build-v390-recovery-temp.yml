@@ -8,7 +8,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout v3.9.0 source
+        uses: actions/checkout@v4
+        with:
+          ref: android-v3-pilot
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
