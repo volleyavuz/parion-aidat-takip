@@ -10,6 +10,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -40,16 +42,6 @@ jobs:
         run: |
           set -e
           keytool -list -keystore "$RUNNER_TEMP/parion-release.jks" -storepass "$PARION_STORE_PASSWORD" -alias "$PARION_KEY_ALIAS" >/dev/null
-          keytool -importkeystore \
-            -srckeystore "$RUNNER_TEMP/parion-release.jks" \
-            -srcstorepass "$PARION_STORE_PASSWORD" \
-            -srcalias "$PARION_KEY_ALIAS" \
-            -srckeypass "$PARION_KEY_PASSWORD" \
-            -destkeystore "$RUNNER_TEMP/parion-key-check.p12" \
-            -deststoretype PKCS12 \
-            -deststorepass parion-check-only \
-            -destkeypass parion-check-only \
-            -noprompt >/dev/null
 
       - name: Normalize PNG resources
         run: |
@@ -62,19 +54,51 @@ jobs:
           PY
 
       - name: Build signed release APK
+        id: build
         env:
           PARION_KEYSTORE_PATH: ${{ runner.temp }}/parion-release.jks
           PARION_STORE_PASSWORD: ${{ secrets.PARION_STORE_PASSWORD }}
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
-        run: gradle assembleRelease --stacktrace
+        run: |
+          set +e
+          gradle assembleRelease --stacktrace 2>&1 | tee /tmp/parion-v4-build.log
+          rc=${PIPESTATUS[0]}
+          echo "exit_code=$rc" >> "$GITHUB_OUTPUT"
+          exit 0
 
       - name: Verify APK signature
-        run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
+        if: steps.build.outputs.exit_code == '0'
+        run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk | tee /tmp/parion-v4-signature.log
 
       - name: Upload APK
+        if: steps.build.outputs.exit_code == '0'
         uses: actions/upload-artifact@v4
         with:
           name: Parion-v4.0.0-Light-Delta
           path: app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
+
+      - name: Publish build status
+        if: always()
+        env:
+          BUILD_EXIT: ${{ steps.build.outputs.exit_code }}
+        run: |
+          cp /tmp/parion-v4-build.log /tmp/build.log 2>/dev/null || echo 'build did not start' > /tmp/build.log
+          cp /tmp/parion-v4-signature.log /tmp/signature.log 2>/dev/null || true
+          git config user.name github-actions
+          git config user.email github-actions@github.com
+          git reset --hard
+          git clean -fdx
+          git checkout --orphan build-output-v400
+          git rm -rf . >/dev/null 2>&1 || true
+          printf 'run_id=%s\nsource_sha=%s\nbuild_exit=%s\n' "$GITHUB_RUN_ID" "$GITHUB_SHA" "${BUILD_EXIT:-unknown}" > status.txt
+          cp /tmp/build.log build.log
+          [ -f /tmp/signature.log ] && cp /tmp/signature.log signature.log || true
+          git add status.txt build.log signature.log 2>/dev/null || git add status.txt build.log
+          git commit -m "v4 build $GITHUB_RUN_ID"
+          git push origin HEAD:build-output-v400 --force
+
+      - name: Fail if build failed
+        if: steps.build.outputs.exit_code != '0'
+        run: exit 1
