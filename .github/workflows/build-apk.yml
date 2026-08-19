@@ -2,7 +2,7 @@ name: Build Parion APK
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, chatgpt/parion-sporcu-takip-v1.0.0 ]
   workflow_dispatch:
 
 jobs:
@@ -29,6 +29,6 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-Aidat-Takip-Pilot-v0.1
+          name: Parion-Sporcu-Takip-Sistemi-v1.0.0
           path: app/build/outputs/apk/debug/app-debug.apk
           if-no-files-found: error
