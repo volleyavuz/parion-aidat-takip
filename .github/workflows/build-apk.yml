@@ -3,6 +3,8 @@ name: Build Parion APK
 on:
   push:
     branches: [ main, chatgpt/parion-sporcu-takip-v1.0.0 ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 jobs:
