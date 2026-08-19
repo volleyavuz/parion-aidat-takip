@@ -3,6 +3,8 @@ name: Build Parion APK
 on:
   push:
     branches: [ main ]
+  pull_request:
+    branches: [ main ]
   workflow_dispatch:
 
 permissions:
@@ -58,7 +60,7 @@ jobs:
           GH_REPOSITORY: ${{ github.repository }}
         run: |
           python3 - <<'PY'
-          import os, json, base64, urllib.request, urllib.error
+          import os, json, base64, urllib.request
           repo=os.environ['GH_REPOSITORY']; token=os.environ['GH_TOKEN']; branch='build-output-v390'
           def put(path, data, message):
               api=f'https://api.github.com/repos/{repo}/contents/{path}'
@@ -73,10 +75,8 @@ jobs:
               req=urllib.request.Request(api,data=json.dumps(body).encode(),headers={**headers,'Content-Type':'application/json'},method='PUT')
               with urllib.request.urlopen(req) as r: print(path, r.status)
           tmp=os.environ['RUNNER_TEMP']
-          log=open(os.path.join(tmp,'v390-build.log'),'rb').read()
-          put('builds/v390-build.log',log,'Publish v3.9.0 build log')
-          status=open(os.path.join(tmp,'v390-status.txt'),'rb').read()
-          put('builds/v390-status.txt',status,'Publish v3.9.0 build status')
+          put('builds/v390-build.log',open(os.path.join(tmp,'v390-build.log'),'rb').read(),'Publish v3.9.0 build log')
+          put('builds/v390-status.txt',open(os.path.join(tmp,'v390-status.txt'),'rb').read(),'Publish v3.9.0 build status')
           apk='app/build/outputs/apk/release/app-release.apk'
           if os.path.isfile(apk):
               put('builds/Parion_V3_9_0_Buluttan_Yerele_Kurtarma.apk',open(apk,'rb').read(),'Publish signed Parion v3.9.0 recovery APK')
