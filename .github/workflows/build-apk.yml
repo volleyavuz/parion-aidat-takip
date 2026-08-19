@@ -2,7 +2,7 @@ name: Build Parion APK
 
 on:
   push:
-    branches: [ main, android-v3-pilot ]
+    branches: [ main, android-v3-pilot, parion-v4-light-delta-sync ]
   pull_request:
     branches: [ android-v3-pilot ]
   workflow_dispatch:
@@ -75,6 +75,6 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-Android-Release
+          name: Parion-v4.0.0-Light-Delta
           path: app/build/outputs/apk/release/app-release.apk
           if-no-files-found: error
