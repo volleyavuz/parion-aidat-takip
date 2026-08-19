@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.1 source
+      - name: Checkout v4.0.2 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -49,20 +49,20 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
-      - name: Verify v4.0.1 package
+      - name: Verify v4.0.2 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
           ! grep -R "SeedData1\|SeedData2\|SeedData3\|SeedData4" app/src/main/java || exit 1
-          grep -q 'MainActivityV601' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV602' app/src/main/AndroidManifest.xml
           grep -q 'V4_BULK_SNAPSHOT_DISABLED' app/src/main/java/com/parion/aidat/MainActivityV600.java
-          grep -q 'versionName = "4.0.1"' app/build.gradle.kts
+          grep -q 'versionName = "4.0.2"' app/build.gradle.kts
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_1_V62_Kart_Navigasyon.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_2_V62_Duzeltmeler.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.1-V62-Kart-Navigasyon
-          path: Parion_V4_0_1_V62_Kart_Navigasyon.apk
+          name: Parion-v4.0.2-V62-Duzeltmeler
+          path: Parion_V4_0_2_V62_Duzeltmeler.apk
           if-no-files-found: error
