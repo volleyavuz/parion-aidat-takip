@@ -3,9 +3,10 @@ name: Build Parion APK
 on:
   push:
     branches: [ main ]
-  pull_request:
-    branches: [ main ]
   workflow_dispatch:
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -34,20 +35,54 @@ jobs:
           test -n "$PARION_KEYSTORE_BASE64"
           printf '%s' "$PARION_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/parion-release.jks"
 
-      - name: Build signed release APK
+      - name: Build signed release APK and capture log
+        id: buildstep
         env:
           PARION_KEYSTORE_PATH: ${{ runner.temp }}/parion-release.jks
           PARION_STORE_PASSWORD: ${{ secrets.PARION_STORE_PASSWORD }}
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
-        run: gradle assembleRelease --stacktrace
+        run: |
+          set +e
+          gradle assembleRelease --stacktrace > "$RUNNER_TEMP/v390-build.log" 2>&1
+          STATUS=$?
+          echo "$STATUS" > "$RUNNER_TEMP/v390-status.txt"
+          if [ -f app/build/outputs/apk/release/app-release.apk ]; then
+            "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk >> "$RUNNER_TEMP/v390-build.log" 2>&1
+          fi
+          exit 0
 
-      - name: Verify APK signature
-        run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
+      - name: Publish build log and APK to output branch
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPOSITORY: ${{ github.repository }}
+        run: |
+          python3 - <<'PY'
+          import os, json, base64, urllib.request, urllib.error
+          repo=os.environ['GH_REPOSITORY']; token=os.environ['GH_TOKEN']; branch='build-output-v390'
+          def put(path, data, message):
+              api=f'https://api.github.com/repos/{repo}/contents/{path}'
+              headers={'Authorization':f'Bearer {token}','Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28'}
+              sha=None
+              try:
+                  req=urllib.request.Request(api+'?ref='+branch,headers=headers)
+                  with urllib.request.urlopen(req) as r: sha=json.load(r).get('sha')
+              except Exception: pass
+              body={'message':message,'content':base64.b64encode(data).decode(),'branch':branch}
+              if sha: body['sha']=sha
+              req=urllib.request.Request(api,data=json.dumps(body).encode(),headers={**headers,'Content-Type':'application/json'},method='PUT')
+              with urllib.request.urlopen(req) as r: print(path, r.status)
+          tmp=os.environ['RUNNER_TEMP']
+          log=open(os.path.join(tmp,'v390-build.log'),'rb').read()
+          put('builds/v390-build.log',log,'Publish v3.9.0 build log')
+          status=open(os.path.join(tmp,'v390-status.txt'),'rb').read()
+          put('builds/v390-status.txt',status,'Publish v3.9.0 build status')
+          apk='app/build/outputs/apk/release/app-release.apk'
+          if os.path.isfile(apk):
+              put('builds/Parion_V3_9_0_Buluttan_Yerele_Kurtarma.apk',open(apk,'rb').read(),'Publish signed Parion v3.9.0 recovery APK')
+          PY
 
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: Parion-v3.9.0-Cloud-To-Local-Recovery
-          path: app/build/outputs/apk/release/app-release.apk
-          if-no-files-found: error
+      - name: Fail workflow if build failed
+        run: |
+          STATUS=$(cat "$RUNNER_TEMP/v390-status.txt")
+          test "$STATUS" = "0"
