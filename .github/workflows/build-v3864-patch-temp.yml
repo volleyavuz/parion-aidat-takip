@@ -1,17 +1,14 @@
 name: Temporary v3.8.64 Patch Build
 on:
-  push:
+  pull_request:
     branches: ["main"]
 permissions:
-  contents: write
+  contents: read
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          ref: chatgpt/v3.8.64-sync-patch
-          persist-credentials: true
       - uses: actions/setup-java@v4
         with:
           distribution: temurin
@@ -28,16 +25,7 @@ jobs:
           jar cf ../patch.jar com
           cd ../..
           "$BT/d8" --min-api 23 --output patch-build/dex patch-build/patch.jar
-      - name: Commit dex and text chunks to patch branch
-        run: |
-          rm -rf patch-output
-          mkdir -p patch-output/chunks
-          cp patch-build/dex/classes.dex patch-output/classes.dex
-          base64 -w0 patch-build/dex/classes.dex | split -b 6000 - patch-output/chunks/part-
-          wc -c patch-build/dex/classes.dex > patch-output/size.txt
-          sha256sum patch-build/dex/classes.dex > patch-output/sha256.txt
-          git config user.name github-actions
-          git config user.email github-actions@github.com
-          git add -f patch-output
-          git commit -m "Export v3.8.64 patch dex chunks" || exit 0
-          git push origin HEAD:chatgpt/v3.8.64-sync-patch
+      - uses: actions/upload-artifact@v4
+        with:
+          name: parion-v3864-patch-dex
+          path: patch-build/dex/classes.dex
