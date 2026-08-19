@@ -18,8 +18,8 @@ Starting a Gradle Daemon (subsequent builds will be faster)
 > Task :app:mergeReleaseResources
 > Task :app:createReleaseCompatibleScreenManifests
 > Task :app:extractDeepLinksRelease
-> Task :app:parseReleaseLocalResources
 > Task :app:processReleaseMainManifest
+> Task :app:parseReleaseLocalResources
 > Task :app:processReleaseManifest
 > Task :app:desugarReleaseFileDependencies
 > Task :app:mergeReleaseStartupProfile
@@ -58,7 +58,7 @@ Note: Recompile with -Xlint:deprecation for details.
 > Task :app:packageRelease
 > Task :app:createReleaseApkListingFileRedirect
 > Task :app:assembleRelease
-gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/buildstep-1787117329861.json
+gradle/actions: Writing build results to /home/runner/work/_temp/.gradle-actions/build-results/buildstep-1787117338248.json
 
 [Incubating] Problems report is available at: file:///home/runner/work/parion-aidat-takip/parion-aidat-takip/build/reports/problems/problems-report.html
 
