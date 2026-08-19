@@ -14,10 +14,10 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v3.9.0 source
+      - name: Checkout v4 source
         uses: actions/checkout@v4
         with:
-          ref: android-v3-pilot
+          ref: v4-cloud-first
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -49,12 +49,19 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
+      - name: Verify v4 cloud-first package
+        run: |
+          unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
+          ! grep -R "SeedData1\|SeedData2\|SeedData3\|SeedData4" app/src/main/java || exit 1
+          grep -q 'MainActivityV600' app/src/main/AndroidManifest.xml
+          grep -q 'PARION_V4_FULL_SNAPSHOT_DISABLED' app/src/main/java/com/parion/aidat/MainActivityV600.java
+
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V3_9_0_Buluttan_Yerele_Kurtarma.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_0_Cloud_First.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v3.9.0-Cloud-To-Local-Recovery
-          path: Parion_V3_9_0_Buluttan_Yerele_Kurtarma.apk
+          name: Parion-v4.0.0-Cloud-First
+          path: Parion_V4_0_0_Cloud_First.apk
           if-no-files-found: error
