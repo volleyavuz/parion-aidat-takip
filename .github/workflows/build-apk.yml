@@ -2,9 +2,9 @@ name: Build Parion APK
 
 on:
   push:
-    branches: [ main, android-v3-pilot, parion-v4-light-delta-sync, parion-v4-v62-overlay ]
+    branches: [ main, android-v3-pilot, parion-v4-light-delta-sync, parion-v4-v62-overlay, parion-v4-0-9-profile-home-startup ]
   pull_request:
-    branches: [ android-v3-pilot ]
+    branches: [ android-v3-pilot, parion-v4-v62-overlay ]
   workflow_dispatch:
 
 jobs:
@@ -37,16 +37,17 @@ jobs:
         run: gradle assembleRelease --stacktrace
       - name: Verify APK signature
         run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-      - name: Verify v4.0.3
+      - name: Verify v4.0.9
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV603' app/src/main/AndroidManifest.xml
-          grep -q 'versionName = "4.0.3"' app/build.gradle.kts
+          grep -q 'MainActivityV609' app/src/main/AndroidManifest.xml
+          grep -q 'SplashActivity' app/src/main/AndroidManifest.xml
+          grep -q 'versionName = "4.0.9"' app/build.gradle.kts
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_3_Donem_Gecikme_Arama_Hatirlatma.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_9_Profil_Anasayfa_Acilis.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.3-Donem-Gecikme-Arama-Hatirlatma
-          path: Parion_V4_0_3_Donem_Gecikme_Arama_Hatirlatma.apk
+          name: Parion-v4.0.9-Profil-Anasayfa-Acilis
+          path: Parion_V4_0_9_Profil_Anasayfa_Acilis.apk
           if-no-files-found: error
