@@ -37,17 +37,17 @@ jobs:
         run: gradle assembleRelease --stacktrace
       - name: Verify APK signature
         run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-      - name: Verify v4.0.10
+      - name: Verify v4.0.11
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
           grep -q 'MainActivityV610' app/src/main/AndroidManifest.xml
           grep -q 'SplashActivity' app/src/main/AndroidManifest.xml
-          grep -q 'versionName = "4.0.10"' app/build.gradle.kts
+          grep -q 'versionName = "4.0.11"' app/build.gradle.kts
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_10_ANR_Hotfix.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_11_Home_Speed.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.10-ANR-Hotfix
-          path: Parion_V4_0_10_ANR_Hotfix.apk
+          name: Parion-v4.0.11-Home-Speed
+          path: Parion_V4_0_11_Home_Speed.apk
           if-no-files-found: error
