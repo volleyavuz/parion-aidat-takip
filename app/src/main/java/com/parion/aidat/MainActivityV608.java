@@ -2,12 +2,16 @@ package com.parion.aidat;
 
 import android.database.Cursor;
 import android.graphics.Color;
+import android.os.SystemClock;
 import android.view.*;
 import android.widget.*;
 import java.util.*;
 
 /** v4.0.8 - bind the REAL V62 overdue card and calculate only completed personal cycles before today. */
 public class MainActivityV608 extends MainActivityV607 {
+    private long overdueCacheAt608=0L;
+    private int overdueCacheCount608=0;
+    private int overdueCacheDebt608=0;
 
     @Override void showHome(){
         super.showHome();
@@ -19,12 +23,32 @@ public class MainActivityV608 extends MainActivityV607 {
         if(label==null)return;
         View card=(label.getParent() instanceof View)?(View)label.getParent():null;
         if(card==null)return;
-        int count=countOverdueAthletes608();
-        int debt=totalOverdue608();
-        label.setText("GECİKMİŞ\n"+count+" SPORCU");
-        setCardAmount608(card,money(debt),label);
+        ensureOverdueCache608();
+        label.setText("GECİKMİŞ\n"+overdueCacheCount608+" SPORCU");
+        setCardAmount608(card,money(overdueCacheDebt608),label);
         card.setOnClickListener(v->showOverdue608());
         card.setClickable(true);
+    }
+
+    /**
+     * Home used to scan every athlete twice: once for count and once for debt.
+     * Keep one short-lived result so a single home render performs only one scan.
+     * The cache is intentionally only 2 seconds: it collapses duplicate work during
+     * one render without hiding newly entered payment data on a later navigation.
+     */
+    private void ensureOverdueCache608(){
+        long now=SystemClock.uptimeMillis();
+        if(overdueCacheAt608>0L && now-overdueCacheAt608<2000L)return;
+        int n=0,total=0;
+        Cursor c=db.getReadableDatabase().rawQuery("SELECT id FROM athletes WHERE TRIM(COALESCE(deletedAt,''))=''",null);
+        while(c.moveToNext()){
+            int debt=overdueAmount608(c.getLong(0));
+            if(debt>0){n++;total+=debt;}
+        }
+        c.close();
+        overdueCacheCount608=n;
+        overdueCacheDebt608=total;
+        overdueCacheAt608=now;
     }
 
     private TextView findOverdueLabel608(View v){
@@ -48,18 +72,6 @@ public class MainActivityV608 extends MainActivityV607 {
             View x=g.getChildAt(i);
             if(x instanceof TextView && x!=label){((TextView)x).setText(value);return;}
         }
-    }
-
-    private int countOverdueAthletes608(){
-        int n=0;Cursor c=db.getReadableDatabase().rawQuery("SELECT id FROM athletes WHERE TRIM(COALESCE(deletedAt,''))=''",null);
-        while(c.moveToNext())if(overdueAmount608(c.getLong(0))>0)n++;
-        c.close();return n;
-    }
-
-    private int totalOverdue608(){
-        int total=0;Cursor c=db.getReadableDatabase().rawQuery("SELECT id FROM athletes WHERE TRIM(COALESCE(deletedAt,''))=''",null);
-        while(c.moveToNext())total+=overdueAmount608(c.getLong(0));
-        c.close();return total;
     }
 
     /**
@@ -88,7 +100,7 @@ public class MainActivityV608 extends MainActivityV607 {
         int debt=0,guard=0;
         for(int key=first;guard++<240;key=shiftMonth(key,1)){
             Calendar cycleStart=cycleDate(key,anchor);
-            if(!cycleStart.before(todayCycleStart))break; // current and future never overdue
+            if(!cycleStart.before(todayCycleStart))break;
             int y=key/100,m=key%100;
             if(!activeAt(y,m,start,end,restart))continue;
             PayRec r=pays.get(key);if(r==null)r=new PayRec("",0);
