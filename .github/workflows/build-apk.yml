@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.12 source
+      - name: Checkout v4.0.13 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -49,20 +49,20 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
-      - name: Verify v4.0.12 package
+      - name: Verify v4.0.13 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV612' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV612.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.12"' app/build.gradle.kts
-          grep -q 'db.count(null)>0' app/src/main/java/com/parion/aidat/MainActivityV612.java
+          grep -q 'MainActivityV613' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV613.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.13"' app/build.gradle.kts
+          grep -q 'if(!announce) return' app/src/main/java/com/parion/aidat/MainActivityV613.java
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_12_ANR_Home_Hotfix.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_13_ANR_Manual_Sync_Only.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.12-ANR-Home-Hotfix
-          path: Parion_V4_0_12_ANR_Home_Hotfix.apk
+          name: Parion-v4.0.13-ANR-Manual-Sync-Only
+          path: Parion_V4_0_13_ANR_Manual_Sync_Only.apk
           if-no-files-found: error
