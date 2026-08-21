@@ -8,8 +8,8 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 113
-        versionName = "4.0.13"
+        versionCode = 114
+        versionName = "4.0.14"
     }
 
     signingConfigs {
