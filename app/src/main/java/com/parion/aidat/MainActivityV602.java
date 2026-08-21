@@ -17,7 +17,7 @@ public class MainActivityV602 extends MainActivityV601 {
     @Override void showHome() {
         super.showHome();
         removeLegacyYellowBanner602();
-        patchOverdueCard602();
+        // v4.0.15: overdue is computed once in V608, asynchronously.
     }
 
     private void patchHeaderLogo602() {
