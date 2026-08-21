@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.13 source
+      - name: Checkout v4.0.15 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -49,20 +49,21 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
-      - name: Verify v4.0.13 package
+      - name: Verify v4.0.15 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV613' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV613.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.13"' app/build.gradle.kts
+          grep -q 'MainActivityV615' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV615.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.15"' app/build.gradle.kts
           grep -q 'if(!announce) return' app/src/main/java/com/parion/aidat/MainActivityV613.java
+          grep -q 'overdueExec608' app/src/main/java/com/parion/aidat/MainActivityV608.java
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_13_ANR_Manual_Sync_Only.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_15_ANR_UI_Thread_Hotfix.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.13-ANR-Manual-Sync-Only
-          path: Parion_V4_0_13_ANR_Manual_Sync_Only.apk
+          name: Parion-v4.0.15-ANR-UI-Thread-Hotfix
+          path: Parion_V4_0_15_ANR_UI_Thread_Hotfix.apk
           if-no-files-found: error
