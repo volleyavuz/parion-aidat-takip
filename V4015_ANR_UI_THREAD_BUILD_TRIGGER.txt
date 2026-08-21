@@ -1,1 +1,2 @@
 Parion v4.0.15 UI-thread ANR hotfix build trigger
+synchronize 2
