@@ -6,37 +6,51 @@ import android.os.SystemClock;
 import android.view.*;
 import android.widget.*;
 import java.util.*;
+import java.util.concurrent.*;
 
 /** v4.0.8 - bind the REAL V62 overdue card and calculate only completed personal cycles before today. */
 public class MainActivityV608 extends MainActivityV607 {
     private long overdueCacheAt608=0L;
     private int overdueCacheCount608=0;
     private int overdueCacheDebt608=0;
+    private final ExecutorService overdueExec608=Executors.newSingleThreadExecutor();
+    private volatile int overdueGeneration608=0;
 
     @Override void showHome(){
         super.showHome();
-        patchRealOverdue608();
+        patchRealOverdueAsync608();
     }
 
-    private void patchRealOverdue608(){
-        TextView label=findOverdueLabel608(root);
+    private void patchRealOverdueAsync608(){
+        final TextView label=findOverdueLabel608(root);
         if(label==null)return;
-        View card=(label.getParent() instanceof View)?(View)label.getParent():null;
+        final View card=(label.getParent() instanceof View)?(View)label.getParent():null;
         if(card==null)return;
-        ensureOverdueCache608();
-        label.setText("GECİKMİŞ\n"+overdueCacheCount608+" SPORCU");
-        setCardAmount608(card,money(overdueCacheDebt608),label);
+        final int generation=++overdueGeneration608;
+        label.setText("GECİKMİŞ\nHESAPLANIYOR");
+        setCardAmount608(card,"…",label);
         card.setOnClickListener(v->showOverdue608());
         card.setClickable(true);
+        overdueExec608.execute(()->{
+            ensureOverdueCache608();
+            final int count=overdueCacheCount608;
+            final int debt=overdueCacheDebt608;
+            runOnUiThread(()->{
+                if(generation!=overdueGeneration608)return;
+                if(!"HOME".equals(page) || root==null)return;
+                TextView current=findOverdueLabel608(root);
+                if(current==null)return;
+                View currentCard=(current.getParent() instanceof View)?(View)current.getParent():null;
+                if(currentCard==null)return;
+                current.setText("GECİKMİŞ\n"+count+" SPORCU");
+                setCardAmount608(currentCard,money(debt),current);
+                currentCard.setOnClickListener(v->showOverdue608());
+                currentCard.setClickable(true);
+            });
+        });
     }
 
-    /**
-     * Home used to scan every athlete twice: once for count and once for debt.
-     * Keep one short-lived result so a single home render performs only one scan.
-     * The cache is intentionally only 2 seconds: it collapses duplicate work during
-     * one render without hiding newly entered payment data on a later navigation.
-     */
-    private void ensureOverdueCache608(){
+    private synchronized void ensureOverdueCache608(){
         long now=SystemClock.uptimeMillis();
         if(overdueCacheAt608>0L && now-overdueCacheAt608<2000L)return;
         int n=0,total=0;
@@ -74,12 +88,6 @@ public class MainActivityV608 extends MainActivityV607 {
         }
     }
 
-    /**
-     * No status filter. Every non-deleted athlete is evaluated.
-     * The card containing TODAY is excluded. Future cards are excluded even if
-     * they exist for early payment. Only completed personal cycles before the
-     * start of today's cycle may create overdue debt.
-     */
     private int overdueAmount608(long id){
         Cursor a=db.athlete(id);if(!a.moveToFirst()){a.close();return 0;}
         String start=s608(a,"startDate"),end=s608(a,"endDate"),restart=s608(a,"restartDate"),sib=s608(a,"sibling");
@@ -124,6 +132,12 @@ public class MainActivityV608 extends MainActivityV607 {
     }
 
     @Override void goBack(){if("OVERDUE_608".equals(page)){showHome();return;}super.goBack();}
+
+    @Override protected void onDestroy(){
+        overdueGeneration608++;
+        overdueExec608.shutdownNow();
+        super.onDestroy();
+    }
 
     private String s608(Cursor c,String col){int i=c.getColumnIndex(col);return i<0||c.isNull(i)?"":c.getString(i);}
 }
