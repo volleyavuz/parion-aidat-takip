@@ -1,3 +1,1 @@
-Parion v4.0.15 PR build trigger 4
-synchronize after workflow v4.0.15 update
-ready synchronize
+Parion v4.0.16 navigation/readability build trigger
