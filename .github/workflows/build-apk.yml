@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.33 source
+      - name: Checkout v4.0.34 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -49,25 +49,25 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
-      - name: Verify v4.0.33 package
+      - name: Verify v4.0.34 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV633' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV633.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.33"' app/build.gradle.kts
-          grep -q 'chooseMonth633' app/src/main/java/com/parion/aidat/MainActivityV633.java
-          grep -q 'jul_aug_2026' app/src/main/java/com/parion/aidat/MainActivityV633.java
+          grep -q 'MainActivityV634' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV634.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.34"' app/build.gradle.kts
+          grep -q 'activeOn634' app/src/main/java/com/parion/aidat/MainActivityV634.java
+          grep -q 'attColor634' app/src/main/java/com/parion/aidat/MainActivityV634.java
+          grep -q 'loadPhoto634' app/src/main/java/com/parion/aidat/MainActivityV634.java
           grep -q 'BU YOKLAMA GÜNÜNÜ SİL' app/src/main/java/com/parion/aidat/MainActivityV633.java
-          grep -q 'attendance_records' app/src/main/java/com/parion/aidat/MainActivityV633.java
           grep -q 'attendance_dashboard_groups' app/src/main/java/com/parion/aidat/MainActivityV631.java
           grep -q 'PAID_GREEN_625=Color.rgb(9,242,153)' app/src/main/java/com/parion/aidat/MainActivityV625.java
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_33_Attendance_Months_Backfill_Delete.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_34_Attendance_Period_Continuity_Photos.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.33-Attendance-Months-Backfill-Delete
-          path: Parion_V4_0_33_Attendance_Months_Backfill_Delete.apk
+          name: Parion-v4.0.34-Attendance-Period-Continuity-Photos
+          path: Parion_V4_0_34_Attendance_Period_Continuity_Photos.apk
           if-no-files-found: error
