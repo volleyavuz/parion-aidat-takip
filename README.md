@@ -3,3 +3,5 @@
 Android için yerel, tek kullanıcılı spor okulu aidat takip pilot uygulaması.
 
 APK derleme hattı: GitHub Actions. Android Studio gerektirmez.
+
+Build trigger: v4.0.44 dashboard categories.
