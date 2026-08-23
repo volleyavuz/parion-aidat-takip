@@ -1,1 +1,1 @@
-Parion v4.0.31 group dashboard inclusion and frozen attendance matrix build trigger
+Parion v4.0.32 attendance profile photos and past history build trigger
