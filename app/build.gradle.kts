@@ -8,8 +8,8 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 137
-        versionName = "4.0.37"
+        versionCode = 138
+        versionName = "4.0.38"
     }
 
     signingConfigs {
@@ -32,4 +32,8 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
+}
+
+dependencies {
+    implementation("androidx.work:work-runtime:2.10.1")
 }
