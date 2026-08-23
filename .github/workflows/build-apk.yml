@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.28 source
+      - name: Checkout v4.0.29 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -49,29 +49,27 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
-      - name: Verify v4.0.28 package
+      - name: Verify v4.0.29 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV628' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV628.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.28"' app/build.gradle.kts
+          grep -q 'MainActivityV629' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV629.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.29"' app/build.gradle.kts
+          grep -q 'setMultiChoiceItems' app/src/main/java/com/parion/aidat/MainActivityV629.java
+          grep -q 'showWeekdayDialog629' app/src/main/java/com/parion/aidat/MainActivityV629.java
           grep -q 'attendance_sessions' app/src/main/java/com/parion/aidat/MainActivityV628.java
-          grep -q 'attendance_records' app/src/main/java/com/parion/aidat/MainActivityV628.java
-          grep -q 'attendance_schedule' app/src/main/java/com/parion/aidat/MainActivityV628.java
           grep -q 'DEVAMSIZLAR' app/src/main/java/com/parion/aidat/MainActivityV628.java
           grep -q 'YOKLAMALARI DIŞA AKTAR' app/src/main/java/com/parion/aidat/MainActivityV628.java
-          grep -q 'Calendar.MONTH,-10' app/src/main/java/com/parion/aidat/MainActivityV628.java
-          grep -q 'v626-bottom-nav' app/src/main/java/com/parion/aidat/MainActivityV626.java
           grep -q 'PAID_GREEN_625=Color.rgb(9,242,153)' app/src/main/java/com/parion/aidat/MainActivityV625.java
           grep -q 'profileSourceRoot616' app/src/main/java/com/parion/aidat/MainActivityV616.java
           grep -q 'overdueExec608' app/src/main/java/com/parion/aidat/MainActivityV608.java
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_28_Attendance_Absentee_System.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_29_Attendance_Weekday_Fix.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.28-Attendance-Absentee-System
-          path: Parion_V4_0_28_Attendance_Absentee_System.apk
+          name: Parion-v4.0.29-Attendance-Weekday-Fix
+          path: Parion_V4_0_29_Attendance_Weekday_Fix.apk
           if-no-files-found: error
