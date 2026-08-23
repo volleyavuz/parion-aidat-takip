@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.35 source
+      - name: Checkout v4.0.36 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -49,25 +49,26 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
-      - name: Verify v4.0.35 package
+      - name: Verify v4.0.36 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV635' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV635.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.35"' app/build.gradle.kts
+          grep -q 'MainActivityV636' app/src/main/AndroidManifest.xml
+          grep -q 'AttendanceShareProvider' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV636.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.36"' app/build.gradle.kts
+          grep -q 'PDF • A4 YOKLAMA LİSTESİ' app/src/main/java/com/parion/aidat/MainActivityV636.java
+          grep -q 'Intent.ACTION_SEND' app/src/main/java/com/parion/aidat/MainActivityV636.java
+          grep -q 'YOKLAMA DIŞA AKTAR • GRUP SEÇ' app/src/main/java/com/parion/aidat/MainActivityV636.java
+          grep -q 'PdfDocument' app/src/main/java/com/parion/aidat/MainActivityV636.java
+          grep -q 'attendance_exports' app/src/main/java/com/parion/aidat/AttendanceShareProvider.java
           grep -q 'ORDER BY sessionDate DESC' app/src/main/java/com/parion/aidat/MainActivityV635.java
-          grep -q 'updateMeter635' app/src/main/java/com/parion/aidat/MainActivityV635.java
-          grep -q 'loadPhoto635' app/src/main/java/com/parion/aidat/MainActivityV635.java
-          grep -q 'showAttendanceGroups635' app/src/main/java/com/parion/aidat/MainActivityV635.java
-          grep -q 'BU YOKLAMA GÜNÜNÜ SİL' app/src/main/java/com/parion/aidat/MainActivityV633.java
-          grep -q 'attendance_dashboard_groups' app/src/main/java/com/parion/aidat/MainActivityV631.java
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_35_Attendance_Scroll_Photo_Back_Fix.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_36_Attendance_Share_A4_List.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.35-Attendance-Scroll-Photo-Back-Fix
-          path: Parion_V4_0_35_Attendance_Scroll_Photo_Back_Fix.apk
+          name: Parion-v4.0.36-Attendance-Share-A4-List
+          path: Parion_V4_0_36_Attendance_Share_A4_List.apk
           if-no-files-found: error
