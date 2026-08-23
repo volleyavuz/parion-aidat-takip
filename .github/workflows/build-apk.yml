@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.20 source
+      - name: Checkout v4.0.21 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -49,24 +49,24 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
-      - name: Verify v4.0.20 package
+      - name: Verify v4.0.21 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV620' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV620.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.20"' app/build.gradle.kts
-          grep -q 'v620-active-count' app/src/main/java/com/parion/aidat/MainActivityV620.java
-          grep -q 'rotateRequestedCards620' app/src/main/java/com/parion/aidat/MainActivityV620.java
-          grep -q 'moveDeletedBottom620' app/src/main/java/com/parion/aidat/MainActivityV620.java
+          grep -q 'MainActivityV621' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV621.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.21"' app/build.gradle.kts
+          grep -q 'Tişört Almayan Sporcular' app/src/main/java/com/parion/aidat/MainActivityV621.java
+          grep -q 'KIŞIN ARANACAKLAR' app/src/main/java/com/parion/aidat/MainActivityV621.java
+          grep -q 'showNoTshirt621' app/src/main/java/com/parion/aidat/MainActivityV621.java
           grep -q 'profileSourceRoot616' app/src/main/java/com/parion/aidat/MainActivityV616.java
           grep -q 'overdueExec608' app/src/main/java/com/parion/aidat/MainActivityV608.java
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_20_Dashboard_Placement_Fix.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_21_Tshirt_Followup_Header.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.20-Dashboard-Placement-Fix
-          path: Parion_V4_0_20_Dashboard_Placement_Fix.apk
+          name: Parion-v4.0.21-Tshirt-Followup-Header
+          path: Parion_V4_0_21_Tshirt_Followup_Header.apk
           if-no-files-found: error
