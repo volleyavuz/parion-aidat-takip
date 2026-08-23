@@ -25,7 +25,6 @@ public class ParionSyncWorker extends Worker {
         SharedPreferences prefs=ctx.getSharedPreferences(PREF,Context.MODE_PRIVATE);
         String token=prefs.getString("access_token","");
         if(token.isEmpty())return Result.success();
-        if(pendingCount()==0)return Result.success();
         try{
             if(!pushCore(token,prefs))return Result.retry();
             if(!pushAttendance(token,prefs))return Result.retry();
@@ -37,7 +36,6 @@ public class ParionSyncWorker extends Worker {
     }
 
     private void ensureQueue(){db.getWritableDatabase().execSQL("CREATE TABLE IF NOT EXISTS pending_sync(id INTEGER PRIMARY KEY AUTOINCREMENT,kind TEXT NOT NULL,entity_key TEXT NOT NULL DEFAULT '',created_at INTEGER NOT NULL,UNIQUE(kind,entity_key))");}
-    private int pendingCount(){Cursor c=db.getReadableDatabase().rawQuery("SELECT COUNT(*) FROM pending_sync",null);c.moveToFirst();int n=c.getInt(0);c.close();return n;}
 
     private boolean pushCore(String token,SharedPreferences prefs)throws Exception{
         JSONArray athletes=new JSONArray(),payments=new JSONArray(),fees=new JSONArray();SQLiteDatabase d=db.getReadableDatabase();
