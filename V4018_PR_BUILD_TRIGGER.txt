@@ -1,1 +1,1 @@
-Parion v4.0.34 attendance active-period continuity and photo build trigger
+Parion v4.0.35 attendance newest-first scroll retention photo and back navigation build trigger
