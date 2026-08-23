@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.36 source
+      - name: Checkout v4.0.37 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -49,26 +49,23 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
-      - name: Verify v4.0.36 package
+      - name: Verify v4.0.37 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV636' app/src/main/AndroidManifest.xml
-          grep -q 'AttendanceShareProvider' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV636.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.36"' app/build.gradle.kts
+          grep -q 'MainActivityV637' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV637.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.37"' app/build.gradle.kts
+          grep -q 'setAthletePhoto' app/src/main/java/com/parion/aidat/MainActivityV637.java
+          grep -q 'CLOUD:' app/src/main/java/com/parion/aidat/MainActivityV637.java
           grep -q 'PDF • A4 YOKLAMA LİSTESİ' app/src/main/java/com/parion/aidat/MainActivityV636.java
           grep -q 'Intent.ACTION_SEND' app/src/main/java/com/parion/aidat/MainActivityV636.java
-          grep -q 'YOKLAMA DIŞA AKTAR • GRUP SEÇ' app/src/main/java/com/parion/aidat/MainActivityV636.java
-          grep -q 'PdfDocument' app/src/main/java/com/parion/aidat/MainActivityV636.java
-          grep -q 'attendance_exports' app/src/main/java/com/parion/aidat/AttendanceShareProvider.java
-          grep -q 'ORDER BY sessionDate DESC' app/src/main/java/com/parion/aidat/MainActivityV635.java
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_36_Attendance_Share_A4_List.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_37_Attendance_Cloud_Photos.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.36-Attendance-Share-A4-List
-          path: Parion_V4_0_36_Attendance_Share_A4_List.apk
+          name: Parion-v4.0.37-Attendance-Cloud-Photos
+          path: Parion_V4_0_37_Attendance_Cloud_Photos.apk
           if-no-files-found: error
