@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.23 source
+      - name: Checkout v4.0.24 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -49,23 +49,23 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
-      - name: Verify v4.0.23 package
+      - name: Verify v4.0.24 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV623' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV623.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.23"' app/build.gradle.kts
-          grep -q 'calmer, denser professional dashboard hierarchy' app/src/main/java/com/parion/aidat/MainActivityV623.java
-          grep -q "status='AKTİF' AND COALESCE(tshirtQty,0)=0" app/src/main/java/com/parion/aidat/MainActivityV622.java
+          grep -q 'MainActivityV624' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV624.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.24"' app/build.gradle.kts
+          grep -q 'LIGHT_PAID_GREEN_624' app/src/main/java/com/parion/aidat/MainActivityV624.java
+          grep -q 'reorderProfileActions624' app/src/main/java/com/parion/aidat/MainActivityV624.java
           grep -q 'profileSourceRoot616' app/src/main/java/com/parion/aidat/MainActivityV616.java
           grep -q 'overdueExec608' app/src/main/java/com/parion/aidat/MainActivityV608.java
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_23_Professional_Dashboard_Polish.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_24_Profile_Actions_Light_Green.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.23-Professional-Dashboard-Polish
-          path: Parion_V4_0_23_Professional_Dashboard_Polish.apk
+          name: Parion-v4.0.24-Profile-Actions-Light-Green
+          path: Parion_V4_0_24_Profile_Actions_Light_Green.apk
           if-no-files-found: error
