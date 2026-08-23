@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.17 source
+      - name: Checkout v4.0.18 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -49,23 +49,25 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
-      - name: Verify v4.0.17 package
+      - name: Verify v4.0.18 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV617' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV617.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.17"' app/build.gradle.kts
-          grep -q 'redesign617' app/src/main/java/com/parion/aidat/MainActivityV617.java
+          grep -q 'MainActivityV618' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV618.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.18"' app/build.gradle.kts
+          grep -q 'Bu ay başlayan sporcular' app/src/main/java/com/parion/aidat/MainActivityV618.java
+          grep -q 'Geçen ay başlayan sporcular' app/src/main/java/com/parion/aidat/MainActivityV618.java
+          grep -q 'Son 3 ay içinde bırakanlar' app/src/main/java/com/parion/aidat/MainActivityV618.java
           grep -q 'profileSourceRoot616' app/src/main/java/com/parion/aidat/MainActivityV616.java
           grep -q 'if(!announce) return' app/src/main/java/com/parion/aidat/MainActivityV613.java
           grep -q 'overdueExec608' app/src/main/java/com/parion/aidat/MainActivityV608.java
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_17_Designer_Dashboard.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_18_Dashboard_Cohorts.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.17-Designer-Dashboard
-          path: Parion_V4_0_17_Designer_Dashboard.apk
+          name: Parion-v4.0.18-Dashboard-Cohorts
+          path: Parion_V4_0_18_Dashboard_Cohorts.apk
           if-no-files-found: error
