@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.44 source
+      - name: Checkout v4.0.45 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -49,22 +49,22 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
-      - name: Verify v4.0.44 package
+      - name: Verify v4.0.45 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV644' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV644.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.44"' app/build.gradle.kts
-          grep -q 'SPORCU HAREKETLERİ' app/src/main/java/com/parion/aidat/MainActivityV644.java
-          grep -q 'SİLİNEN SPORCULAR' app/src/main/java/com/parion/aidat/MainActivityV644.java
-          grep -q 'injectDeletedSettings644' app/src/main/java/com/parion/aidat/MainActivityV644.java
+          grep -q 'MainActivityV645' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV645.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.45"' app/build.gradle.kts
+          grep -q 'styleSection645(box,"GENEL DURUM")' app/src/main/java/com/parion/aidat/MainActivityV645.java
+          grep -q 'styleSection645(box,"FİNANS")' app/src/main/java/com/parion/aidat/MainActivityV645.java
+          grep -q 'setCornerRadius' app/src/main/java/com/parion/aidat/MainActivityV645.java
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_44_Dashboard_Categories.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_45_Card_Visual_Pass.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.44-Dashboard-Categories
-          path: Parion_V4_0_44_Dashboard_Categories.apk
+          name: Parion-v4.0.45-Card-Visual-Pass
+          path: Parion_V4_0_45_Card_Visual_Pass.apk
           if-no-files-found: error
