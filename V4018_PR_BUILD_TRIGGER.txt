@@ -1,1 +1,1 @@
-Parion v4.0.28 attendance and absentee system build trigger - retry 3
+Parion v4.0.29 attendance weekday selection fix build trigger
