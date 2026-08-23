@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.24 source
+      - name: Checkout v4.0.25 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -49,23 +49,25 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
-      - name: Verify v4.0.24 package
+      - name: Verify v4.0.25 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV624' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV624.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.24"' app/build.gradle.kts
-          grep -q 'LIGHT_PAID_GREEN_624' app/src/main/java/com/parion/aidat/MainActivityV624.java
-          grep -q 'reorderProfileActions624' app/src/main/java/com/parion/aidat/MainActivityV624.java
+          grep -q 'MainActivityV625' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV625.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.25"' app/build.gradle.kts
+          grep -q 'PAID_GREEN_625=Color.rgb(9,242,153)' app/src/main/java/com/parion/aidat/MainActivityV625.java
+          grep -q 'v625-bottom-nav' app/src/main/java/com/parion/aidat/MainActivityV625.java
+          grep -q 'GRUPLARI DÜZENLE' app/src/main/java/com/parion/aidat/MainActivityV625.java
+          grep -q 'CREATE TABLE IF NOT EXISTS app_groups' app/src/main/java/com/parion/aidat/MainActivityV625.java
           grep -q 'profileSourceRoot616' app/src/main/java/com/parion/aidat/MainActivityV616.java
           grep -q 'overdueExec608' app/src/main/java/com/parion/aidat/MainActivityV608.java
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_24_Profile_Actions_Light_Green.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_25_Bottom_Nav_Group_Manager.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.24-Profile-Actions-Light-Green
-          path: Parion_V4_0_24_Profile_Actions_Light_Green.apk
+          name: Parion-v4.0.25-Bottom-Nav-Group-Manager
+          path: Parion_V4_0_25_Bottom_Nav_Group_Manager.apk
           if-no-files-found: error
