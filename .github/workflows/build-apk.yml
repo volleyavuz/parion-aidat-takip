@@ -56,11 +56,11 @@ jobs:
           grep -q 'MainActivityV628.class' app/src/main/java/com/parion/aidat/SplashActivity.java
           grep -q 'versionName = "4.0.28"' app/build.gradle.kts
           grep -q 'attendance_sessions' app/src/main/java/com/parion/aidat/MainActivityV628.java
-          grep -q 'attendance_entries' app/src/main/java/com/parion/aidat/MainActivityV628.java
-          grep -q 'attendance_schedules' app/src/main/java/com/parion/aidat/MainActivityV628.java
+          grep -q 'attendance_records' app/src/main/java/com/parion/aidat/MainActivityV628.java
+          grep -q 'attendance_schedule' app/src/main/java/com/parion/aidat/MainActivityV628.java
           grep -q 'DEVAMSIZLAR' app/src/main/java/com/parion/aidat/MainActivityV628.java
           grep -q 'YOKLAMALARI DIŞA AKTAR' app/src/main/java/com/parion/aidat/MainActivityV628.java
-          grep -q 'date('"'"'now'"'"','"'"'-10 months'"'"')' app/src/main/java/com/parion/aidat/MainActivityV628.java
+          grep -q 'Calendar.MONTH,-10' app/src/main/java/com/parion/aidat/MainActivityV628.java
           grep -q 'v626-bottom-nav' app/src/main/java/com/parion/aidat/MainActivityV626.java
           grep -q 'PAID_GREEN_625=Color.rgb(9,242,153)' app/src/main/java/com/parion/aidat/MainActivityV625.java
           grep -q 'profileSourceRoot616' app/src/main/java/com/parion/aidat/MainActivityV616.java
