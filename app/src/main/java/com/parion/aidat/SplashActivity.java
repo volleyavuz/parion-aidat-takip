@@ -15,7 +15,7 @@ public class SplashActivity extends Activity {
         TextView title=new TextView(this);title.setText("PARİON SPOR KULÜBÜ");title.setTextColor(Color.BLACK);title.setTextSize(24);title.setGravity(Gravity.CENTER);title.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);LinearLayout.LayoutParams tp=new LinearLayout.LayoutParams(-1,-2);tp.setMargins(0,dp(16),0,0);root.addView(title,tp);
         TextView sub=new TextView(this);sub.setText("SPORCU TAKİP SİSTEMİ");sub.setTextColor(Color.DKGRAY);sub.setTextSize(14);sub.setGravity(Gravity.CENTER);sub.setTypeface(android.graphics.Typeface.DEFAULT,android.graphics.Typeface.BOLD);root.addView(sub,new LinearLayout.LayoutParams(-1,-2));
         setContentView(root);
-        root.postDelayed(()->{startActivity(new Intent(this,MainActivityV635.class));finish();},320);
+        root.postDelayed(()->{startActivity(new Intent(this,MainActivityV636.class));finish();},320);
     }
     private int dp(int x){return (int)(x*getResources().getDisplayMetrics().density+.5f);}
 }
