@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.37 source
+      - name: Checkout v4.0.38 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -49,23 +49,25 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
 
-      - name: Verify v4.0.37 package
+      - name: Verify v4.0.38 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV637' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV637.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.37"' app/build.gradle.kts
-          grep -q 'setAthletePhoto' app/src/main/java/com/parion/aidat/MainActivityV637.java
-          grep -q 'CLOUD:' app/src/main/java/com/parion/aidat/MainActivityV637.java
-          grep -q 'PDF • A4 YOKLAMA LİSTESİ' app/src/main/java/com/parion/aidat/MainActivityV636.java
-          grep -q 'Intent.ACTION_SEND' app/src/main/java/com/parion/aidat/MainActivityV636.java
+          grep -q 'MainActivityV638' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV638.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.38"' app/build.gradle.kts
+          grep -q 'androidx.work:work-runtime' app/build.gradle.kts
+          grep -q 'pending_sync' app/src/main/java/com/parion/aidat/MainActivityV638.java
+          grep -q 'PeriodicWorkRequest' app/src/main/java/com/parion/aidat/MainActivityV638.java
+          grep -q 'parion_sync_attendance_snapshot' app/src/main/java/com/parion/aidat/ParionSyncWorker.java
+          grep -q 'last_background_sync' app/src/main/java/com/parion/aidat/ParionSyncWorker.java
+          grep -q 'MainActivityV637' app/src/main/java/com/parion/aidat/MainActivityV638.java
 
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_37_Attendance_Cloud_Photos.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_38_Durable_Background_Sync.apk
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.37-Attendance-Cloud-Photos
-          path: Parion_V4_0_37_Attendance_Cloud_Photos.apk
+          name: Parion-v4.0.38-Durable-Background-Sync
+          path: Parion_V4_0_38_Durable_Background_Sync.apk
           if-no-files-found: error
