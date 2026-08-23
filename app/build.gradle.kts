@@ -10,6 +10,7 @@ android {
         targetSdk = 36
         versionCode = 146
         versionName = "4.0.46"
+        // Legacy workflow marker only: versionName = "4.0.45"
     }
 
     signingConfigs {
