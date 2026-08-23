@@ -1,1 +1,1 @@
-Parion v4.0.39 settings sync menu logout and exit build trigger
+Parion v4.0.40 clean home dashboard cards build trigger
