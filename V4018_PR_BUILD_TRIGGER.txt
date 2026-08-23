@@ -1,1 +1,1 @@
-Parion v4.0.36 attendance group-selectable shareable A4 PDF and CSV build trigger
+Parion v4.0.37 attendance cloud photo loader fix build trigger
