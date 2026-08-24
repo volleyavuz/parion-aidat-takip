@@ -35,19 +35,19 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.0.71 package and signature
+      - name: Verify v4.0.72 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV671' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV671.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.71"' app/build.gradle.kts
-          grep -q 'extends MainActivityV670' app/src/main/java/com/parion/aidat/MainActivityV671.java
+          grep -q 'MainActivityV672' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV672.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.72"' app/build.gradle.kts
+          grep -q 'extends MainActivityV671' app/src/main/java/com/parion/aidat/MainActivityV672.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_71_Stabilization_1.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_72_Dashboard_Account_Row_Fix.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.71-Stabilization-1
-          path: Parion_V4_0_71_Stabilization_1.apk
+          name: Parion-v4.0.72-Dashboard-Account-Row-Fix
+          path: Parion_V4_0_72_Dashboard_Account_Row_Fix.apk
           if-no-files-found: error
