@@ -18,10 +18,7 @@ public class MainActivityV650 extends MainActivityV649 {
     @Override void showHome(){
         super.showHome();
         int gen=++dashGeneration650;
-        if(root!=null){
-            root.postDelayed(()->rebuildUpper650(gen),950);
-            root.postDelayed(()->rebuildUpper650(gen),1220);
-        }
+        rebuildUpper650(gen);
     }
 
     private void rebuildUpper650(int gen){
