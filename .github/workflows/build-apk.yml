@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.62 source
+      - name: Checkout v4.0.63 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -42,19 +42,19 @@ jobs:
         run: gradle assembleRelease --stacktrace
       - name: Verify APK signature
         run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-      - name: Verify v4.0.62 package
+      - name: Verify v4.0.63 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV662' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV662.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.62"' app/build.gradle.kts
-          grep -q 'extends MainActivityV661' app/src/main/java/com/parion/aidat/MainActivityV662.java
-          grep -q 'AY SONUNA KADAR GELECEK' app/src/main/java/com/parion/aidat/MainActivityV662.java
+          grep -q 'MainActivityV663' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV663.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.63"' app/build.gradle.kts
+          grep -q 'extends MainActivityV662' app/src/main/java/com/parion/aidat/MainActivityV663.java
+          grep -q 'TAKİP GEREKTİRENLER' app/src/main/java/com/parion/aidat/MainActivityV663.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_62_Sport_Movements_Cleanup.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_63_Followup_Section_Cleanup.apk
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.62-Sport-Movements-Cleanup
-          path: Parion_V4_0_62_Sport_Movements_Cleanup.apk
+          name: Parion-v4.0.63-Followup-Section-Cleanup
+          path: Parion_V4_0_63_Followup_Section_Cleanup.apk
           if-no-files-found: error
