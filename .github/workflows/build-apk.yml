@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.59 source
+      - name: Checkout v4.0.60 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -42,19 +42,19 @@ jobs:
         run: gradle assembleRelease --stacktrace
       - name: Verify APK signature
         run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-      - name: Verify v4.0.59 package
+      - name: Verify v4.0.60 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV659' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV659.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.59"' app/build.gradle.kts
-          grep -q 'extends MainActivityV657' app/src/main/java/com/parion/aidat/MainActivityV659.java
-          ! grep -q 'HOME_FINAL_658' app/src/main/java/com/parion/aidat/MainActivityV659.java
+          grep -q 'MainActivityV660' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV660.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.60"' app/build.gradle.kts
+          grep -q 'extends MainActivityV659' app/src/main/java/com/parion/aidat/MainActivityV660.java
+          grep -q 'showDashboardCover660' app/src/main/java/com/parion/aidat/MainActivityV660.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_59_ANR_Recovery.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_60_ANR_Safe_Visual_Cover.apk
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.59-ANR-Recovery
-          path: Parion_V4_0_59_ANR_Recovery.apk
+          name: Parion-v4.0.60-ANR-Safe-Visual-Cover
+          path: Parion_V4_0_60_ANR_Safe_Visual_Cover.apk
           if-no-files-found: error
