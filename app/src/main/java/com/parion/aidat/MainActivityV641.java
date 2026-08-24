@@ -14,10 +14,7 @@ import java.util.Locale;
 public class MainActivityV641 extends MainActivityV640 {
     @Override void showHome(){
         super.showHome();
-        if(root!=null){
-            root.post(this::cleanHome641);
-            root.postDelayed(this::cleanHome641,180);
-        }
+        if(root!=null) cleanHome641();
     }
 
     private void cleanHome641(){
@@ -42,35 +39,20 @@ public class MainActivityV641 extends MainActivityV640 {
                 return;
             }
         }
-        if(v instanceof ViewGroup){
-            ViewGroup g=(ViewGroup)v;
-            for(int i=0;i<g.getChildCount();i++) hideTargetTexts641(g.getChildAt(i));
-        }
+        if(v instanceof ViewGroup){ViewGroup g=(ViewGroup)v;for(int i=0;i<g.getChildCount();i++) hideTargetTexts641(g.getChildAt(i));}
     }
 
     private void removeCardStrokes641(View v){
         if(v instanceof ViewGroup && !(v instanceof ScrollView)){
             Drawable bg=v.getBackground();
-            if(bg instanceof GradientDrawable){
-                ((GradientDrawable)bg).setStroke(0,Color.TRANSPARENT);
-                v.invalidate();
-            }
+            if(bg instanceof GradientDrawable){((GradientDrawable)bg).setStroke(0,Color.TRANSPARENT);v.invalidate();}
         }
-        if(v instanceof ViewGroup){
-            ViewGroup g=(ViewGroup)v;
-            for(int i=0;i<g.getChildCount();i++) removeCardStrokes641(g.getChildAt(i));
-        }
+        if(v instanceof ViewGroup){ViewGroup g=(ViewGroup)v;for(int i=0;i<g.getChildCount();i++) removeCardStrokes641(g.getChildAt(i));}
     }
 
     private ScrollView findHomeScroll641(View v){
         if(v instanceof ScrollView) return (ScrollView)v;
-        if(v instanceof ViewGroup){
-            ViewGroup g=(ViewGroup)v;
-            for(int i=0;i<g.getChildCount();i++){
-                ScrollView s=findHomeScroll641(g.getChildAt(i));
-                if(s!=null) return s;
-            }
-        }
+        if(v instanceof ViewGroup){ViewGroup g=(ViewGroup)v;for(int i=0;i<g.getChildCount();i++){ScrollView s=findHomeScroll641(g.getChildAt(i));if(s!=null) return s;}}
         return null;
     }
 }
