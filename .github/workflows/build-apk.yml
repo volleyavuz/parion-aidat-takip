@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.57 source
+      - name: Checkout v4.0.58 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -42,19 +42,19 @@ jobs:
         run: gradle assembleRelease --stacktrace
       - name: Verify APK signature
         run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-      - name: Verify v4.0.57 package
+      - name: Verify v4.0.58 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV657' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV657.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.57"' app/build.gradle.kts
-          grep -q 'extends MainActivityV639' app/src/main/java/com/parion/aidat/MainActivityV657.java
-          grep -q 'buildFinalDashboard657' app/src/main/java/com/parion/aidat/MainActivityV657.java
+          grep -q 'MainActivityV658' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV658.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.58"' app/build.gradle.kts
+          grep -q 'HOME_FINAL_658' app/src/main/java/com/parion/aidat/MainActivityV658.java
+          grep -q 'calculateOverdue658' app/src/main/java/com/parion/aidat/MainActivityV658.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_57_Single_Pass_Dashboard.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_58_Final_Home_Guard.apk
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.57-Single-Pass-Dashboard
-          path: Parion_V4_0_57_Single_Pass_Dashboard.apk
+          name: Parion-v4.0.58-Final-Home-Guard
+          path: Parion_V4_0_58_Final_Home_Guard.apk
           if-no-files-found: error
