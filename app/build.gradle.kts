@@ -8,8 +8,8 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 157
-        versionName = "4.0.57"
+        versionCode = 158
+        versionName = "4.0.58"
         // Legacy workflow marker only: versionName = "4.0.45"
     }
 
