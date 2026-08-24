@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.67 source
+      - name: Checkout v4.0.68 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -42,18 +42,18 @@ jobs:
         run: gradle assembleRelease --stacktrace
       - name: Verify APK signature
         run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-      - name: Verify v4.0.67 package
+      - name: Verify v4.0.68 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV667' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV667.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.67"' app/build.gradle.kts
-          grep -q 'extends MainActivityV666' app/src/main/java/com/parion/aidat/MainActivityV667.java
+          grep -q 'MainActivityV668' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV668.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.68"' app/build.gradle.kts
+          grep -q 'extends MainActivityV667' app/src/main/java/com/parion/aidat/MainActivityV668.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_67_Targeted_Dashboard_Fixes.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_68_Dashboard_Due_Now.apk
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.67-Targeted-Dashboard-Fixes
-          path: Parion_V4_0_67_Targeted_Dashboard_Fixes.apk
+          name: Parion-v4.0.68-Dashboard-Due-Now
+          path: Parion_V4_0_68_Dashboard_Due_Now.apk
           if-no-files-found: error
