@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.51 source
+      - name: Checkout v4.0.52 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -42,20 +42,19 @@ jobs:
         run: gradle assembleRelease --stacktrace
       - name: Verify APK signature
         run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-      - name: Verify v4.0.51 package
+      - name: Verify v4.0.52 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV651' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV651.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.51"' app/build.gradle.kts
-          grep -q 'polish651' app/src/main/java/com/parion/aidat/MainActivityV651.java
-          grep -q 'FOTOĞRAF EKSİK' app/src/main/java/com/parion/aidat/MainActivityV651.java
-          grep -q 'KAYIT FORMU EKSİK' app/src/main/java/com/parion/aidat/MainActivityV651.java
+          grep -q 'MainActivityV652' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV652.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.52"' app/build.gradle.kts
+          grep -q 'SPORCU HAREKETLERİ' app/src/main/java/com/parion/aidat/MainActivityV652.java
+          grep -q 'TAKİP GEREKTİRENLER' app/src/main/java/com/parion/aidat/MainActivityV652.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_51_Dashboard_Visual_Polish.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_52_Lower_Dashboard_Categories.apk
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.51-Dashboard-Visual-Polish
-          path: Parion_V4_0_51_Dashboard_Visual_Polish.apk
+          name: Parion-v4.0.52-Lower-Dashboard-Categories
+          path: Parion_V4_0_52_Lower_Dashboard_Categories.apk
           if-no-files-found: error
