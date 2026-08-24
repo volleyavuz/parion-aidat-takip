@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.52 source
+      - name: Checkout v4.0.53 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -42,19 +42,19 @@ jobs:
         run: gradle assembleRelease --stacktrace
       - name: Verify APK signature
         run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-      - name: Verify v4.0.52 package
+      - name: Verify v4.0.53 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV652' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV652.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.52"' app/build.gradle.kts
-          grep -q 'SPORCU HAREKETLERİ' app/src/main/java/com/parion/aidat/MainActivityV652.java
-          grep -q 'TAKİP GEREKTİRENLER' app/src/main/java/com/parion/aidat/MainActivityV652.java
+          grep -q 'MainActivityV653' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV653.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.53"' app/build.gradle.kts
+          grep -q 'reveal653' app/src/main/java/com/parion/aidat/MainActivityV653.java
+          grep -q 'setVisibility(View.INVISIBLE)' app/src/main/java/com/parion/aidat/MainActivityV653.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_52_Lower_Dashboard_Categories.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_53_Dashboard_Reveal_Gate.apk
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.52-Lower-Dashboard-Categories
-          path: Parion_V4_0_52_Lower_Dashboard_Categories.apk
+          name: Parion-v4.0.53-Dashboard-Reveal-Gate
+          path: Parion_V4_0_53_Dashboard_Reveal_Gate.apk
           if-no-files-found: error
