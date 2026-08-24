@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.65 source
+      - name: Checkout v4.0.66 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -42,18 +42,18 @@ jobs:
         run: gradle assembleRelease --stacktrace
       - name: Verify APK signature
         run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-      - name: Verify v4.0.65 package
+      - name: Verify v4.0.66 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV665' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV665.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.65"' app/build.gradle.kts
-          grep -q 'extends MainActivityV663' app/src/main/java/com/parion/aidat/MainActivityV665.java
+          grep -q 'MainActivityV666' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV666.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.66"' app/build.gradle.kts
+          grep -q 'extends MainActivityV665' app/src/main/java/com/parion/aidat/MainActivityV666.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_65_ANR_Recovery.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_66_Duplicate_Text_Cleanup.apk
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.65-ANR-Recovery
-          path: Parion_V4_0_65_ANR_Recovery.apk
+          name: Parion-v4.0.66-Duplicate-Text-Cleanup
+          path: Parion_V4_0_66_Duplicate_Text_Cleanup.apk
           if-no-files-found: error
