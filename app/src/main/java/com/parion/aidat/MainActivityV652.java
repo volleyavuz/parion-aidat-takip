@@ -10,10 +10,7 @@ import java.util.*;
 public class MainActivityV652 extends MainActivityV651 {
     @Override void showHome(){
         super.showHome();
-        if(root!=null){
-            root.postDelayed(this::layout652,1900);
-            root.postDelayed(this::layout652,2400);
-        }
+        layout652();
     }
 
     private void layout652(){
