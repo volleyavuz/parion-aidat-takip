@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.64 source
+      - name: Checkout v4.0.65 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -42,19 +42,18 @@ jobs:
         run: gradle assembleRelease --stacktrace
       - name: Verify APK signature
         run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-      - name: Verify v4.0.64 package
+      - name: Verify v4.0.65 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV664' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV664.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.64"' app/build.gradle.kts
-          grep -q 'extends MainActivityV663' app/src/main/java/com/parion/aidat/MainActivityV664.java
-          grep -q 'removeActiveDuplicate664' app/src/main/java/com/parion/aidat/MainActivityV664.java
+          grep -q 'MainActivityV665' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV665.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.65"' app/build.gradle.kts
+          grep -q 'extends MainActivityV663' app/src/main/java/com/parion/aidat/MainActivityV665.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_64_Dashboard_Visual_Tightening.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_65_ANR_Recovery.apk
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.64-Dashboard-Visual-Tightening
-          path: Parion_V4_0_64_Dashboard_Visual_Tightening.apk
+          name: Parion-v4.0.65-ANR-Recovery
+          path: Parion_V4_0_65_ANR_Recovery.apk
           if-no-files-found: error
