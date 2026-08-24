@@ -14,7 +14,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout v4.0.54 source
+      - name: Checkout v4.0.55 source
         uses: actions/checkout@v4
         with:
           ref: parion-v4-v62-overlay
@@ -42,19 +42,21 @@ jobs:
         run: gradle assembleRelease --stacktrace
       - name: Verify APK signature
         run: "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-      - name: Verify v4.0.54 package
+      - name: Verify v4.0.55 package
         run: |
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV654' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV654.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.54"' app/build.gradle.kts
-          grep -q 'BU AY BAŞLAYANLAR' app/src/main/java/com/parion/aidat/MainActivityV654.java
-          grep -q 'GEÇEN AY BAŞLAYANLAR' app/src/main/java/com/parion/aidat/MainActivityV654.java
+          grep -q 'MainActivityV655' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV655.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.55"' app/build.gradle.kts
+          ! grep -q 'postDelayed(()->rebuildUpper650' app/src/main/java/com/parion/aidat/MainActivityV650.java
+          ! grep -q 'postDelayed(this::polish651' app/src/main/java/com/parion/aidat/MainActivityV651.java
+          ! grep -q 'postDelayed(this::layout652' app/src/main/java/com/parion/aidat/MainActivityV652.java
+          ! grep -q '2550' app/src/main/java/com/parion/aidat/MainActivityV653.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_54_Cohort_Headers.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_55_Immediate_Dashboard_Render.apk
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.54-Cohort-Headers
-          path: Parion_V4_0_54_Cohort_Headers.apk
+          name: Parion-v4.0.55-Immediate-Dashboard-Render
+          path: Parion_V4_0_55_Immediate_Dashboard_Render.apk
           if-no-files-found: error
