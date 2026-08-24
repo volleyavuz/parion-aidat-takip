@@ -10,10 +10,7 @@ import java.util.*;
 public class MainActivityV654 extends MainActivityV653 {
     @Override void showHome(){
         super.showHome();
-        if(root!=null){
-            root.postDelayed(this::labelCohorts654,2350);
-            root.postDelayed(this::labelCohorts654,2480);
-        }
+        if(root!=null)root.post(this::labelCohorts654);
     }
 
     private void labelCohorts654(){
@@ -21,9 +18,6 @@ public class MainActivityV654 extends MainActivityV653 {
         ArrayList<TextView> mores=new ArrayList<>();
         collectMore654(root,mores);
         if(mores.size()<2)return;
-
-        // V620 keeps current-month starts on the left and previous-month starts on the right.
-        Collections.sort(mores,(a,b)->Integer.compare(screenX654(a),screenX654(b)));
         styleCohortCard654(mores.get(0),"BU AY BAŞLAYANLAR");
         styleCohortCard654(mores.get(1),"GEÇEN AY BAŞLAYANLAR");
     }
@@ -47,7 +41,6 @@ public class MainActivityV654 extends MainActivityV653 {
         existing.setGravity(Gravity.CENTER);
         existing.setMaxLines(2);
         existing.setPadding(dp(3),dp(4),dp(3),dp(7));
-
         card.setPadding(dp(10),dp(8),dp(10),dp(10));
         ViewGroup.LayoutParams lp=card.getLayoutParams();
         if(lp!=null&&lp.height>0&&lp.height<dp(150)){lp.height=dp(150);card.setLayoutParams(lp);}
@@ -70,6 +63,5 @@ public class MainActivityV654 extends MainActivityV653 {
         if(v instanceof TextView&&"v619-more".equals(v.getTag()))out.add((TextView)v);
         if(v instanceof ViewGroup){ViewGroup g=(ViewGroup)v;for(int i=0;i<g.getChildCount();i++)collectMore654(g.getChildAt(i),out);}
     }
-    private int screenX654(View v){int[] p=new int[2];v.getLocationOnScreen(p);return p[0];}
     private String norm654(String s){return s==null?"":s.replace('\n',' ').replaceAll("\\s+"," ").trim().toUpperCase(new Locale("tr","TR"));}
 }
