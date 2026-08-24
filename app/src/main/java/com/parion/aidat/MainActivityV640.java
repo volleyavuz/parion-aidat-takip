@@ -9,10 +9,7 @@ import java.util.Locale;
 public class MainActivityV640 extends MainActivityV639 {
     @Override void showHome(){
         super.showHome();
-        if(root!=null){
-            root.post(()->cleanHome640(root));
-            root.postDelayed(()->cleanHome640(root),120);
-        }
+        if(root!=null) cleanHome640(root);
     }
 
     private void cleanHome640(View v){
