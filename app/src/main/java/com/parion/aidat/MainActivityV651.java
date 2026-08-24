@@ -11,10 +11,7 @@ import java.util.*;
 public class MainActivityV651 extends MainActivityV650 {
     @Override void showHome(){
         super.showHome();
-        if(root!=null){
-            root.postDelayed(this::polish651,1350);
-            root.postDelayed(this::polish651,1800);
-        }
+        polish651();
     }
 
     private void polish651(){
