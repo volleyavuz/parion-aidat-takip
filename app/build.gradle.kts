@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 188
-        versionName = "4.0.88"
-        // Stable baseline: versionName = "4.0.87"
+        versionCode = 189
+        versionName = "4.0.89"
+        // Stable baseline: versionName = "4.0.88"
         // Recovery baseline: versionName = "4.0.70"
     }
 
