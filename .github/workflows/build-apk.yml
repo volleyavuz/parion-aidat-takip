@@ -39,20 +39,20 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.0.77 package and signature
+      - name: Verify v4.0.78 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV677' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV677.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.77"' app/build.gradle.kts
-          grep -q 'extends MainActivityV676' app/src/main/java/com/parion/aidat/MainActivityV677.java
+          grep -q 'MainActivityV678' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV678.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.78"' app/build.gradle.kts
+          grep -q 'extends MainActivityV677' app/src/main/java/com/parion/aidat/MainActivityV678.java
           test -s app/src/main/res/drawable/parion_official_logo.png
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_77_Official_Logo.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_78_Official_Logo_Home_Icon_Fix.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.77-Official-Logo
-          path: Parion_V4_0_77_Official_Logo.apk
+          name: Parion-v4.0.78-Official-Logo-Home-Icon-Fix
+          path: Parion_V4_0_78_Official_Logo_Home_Icon_Fix.apk
           if-no-files-found: error
