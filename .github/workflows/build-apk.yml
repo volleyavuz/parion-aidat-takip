@@ -2,7 +2,7 @@ name: Build Parion APK
 
 on:
   push:
-    branches: [ parion-v4-0-86-remove-v617-legacy-winter ]
+    branches: [ parion-v4-0-88-winter-label-summer-order ]
   workflow_dispatch:
 
 jobs:
@@ -48,18 +48,18 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.0.87 package and signature
+      - name: Verify v4.0.88 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV687' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV687.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.87"' app/build.gradle.kts
-          grep -q 'extends MainActivityV686' app/src/main/java/com/parion/aidat/MainActivityV687.java
+          grep -q 'MainActivityV688' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV688.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.88"' app/build.gradle.kts
+          grep -q 'extends MainActivityV687' app/src/main/java/com/parion/aidat/MainActivityV688.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_87_Remove_All_Winter_Cards.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_88_Winter_Label_Summer_Order.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.87-Remove-All-Winter-Cards
-          path: Parion_V4_0_87_Remove_All_Winter_Cards.apk
+          name: Parion-v4.0.88-Winter-Label-Summer-Order
+          path: Parion_V4_0_88_Winter_Label_Summer_Order.apk
           if-no-files-found: error
