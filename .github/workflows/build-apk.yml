@@ -2,7 +2,7 @@ name: Build Parion APK
 
 on:
   push:
-    branches: [ parion-v4-0-84-dashboard-starters-winter-fix ]
+    branches: [ parion-v4-0-86-remove-v617-legacy-winter ]
   workflow_dispatch:
 
 jobs:
@@ -48,18 +48,18 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.0.85 package and signature
+      - name: Verify v4.0.86 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV685' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV685.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.85"' app/build.gradle.kts
-          grep -q 'extends MainActivityV684' app/src/main/java/com/parion/aidat/MainActivityV685.java
+          grep -q 'MainActivityV686' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV686.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.86"' app/build.gradle.kts
+          grep -q 'extends MainActivityV685' app/src/main/java/com/parion/aidat/MainActivityV686.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_85_Starter_Crash_Winter_Duplicate_Fix.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_86_Remove_V617_Legacy_Winter.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.85-Starter-Crash-Winter-Duplicate-Fix
-          path: Parion_V4_0_85_Starter_Crash_Winter_Duplicate_Fix.apk
+          name: Parion-v4.0.86-Remove-V617-Legacy-Winter
+          path: Parion_V4_0_86_Remove_V617_Legacy_Winter.apk
           if-no-files-found: error
