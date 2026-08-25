@@ -2,7 +2,7 @@ name: Build Parion APK
 
 on:
   push:
-    branches: [ parion-v4-0-96-dashboard-tshirt-absence-fix ]
+    branches: [ parion-v4-0-97-absentee-preview-fix ]
   workflow_dispatch:
 
 jobs:
@@ -48,19 +48,19 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.0.96 package and signature
+      - name: Verify v4.0.97 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV696' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV696.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 198' app/build.gradle.kts
-          grep -q 'versionName = "4.0.96"' app/build.gradle.kts
-          grep -q 'extends MainActivityV694' app/src/main/java/com/parion/aidat/MainActivityV696.java
+          grep -q 'MainActivityV697' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV697.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 199' app/build.gradle.kts
+          grep -q 'versionName = "4.0.97"' app/build.gradle.kts
+          grep -q 'extends MainActivityV694' app/src/main/java/com/parion/aidat/MainActivityV697.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_96_Dashboard_Data_Fix.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_97_Absentee_Preview_Fix.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.96-Dashboard-Data-Fix
-          path: Parion_V4_0_96_Dashboard_Data_Fix.apk
+          name: Parion-v4.0.97-Absentee-Preview-Fix
+          path: Parion_V4_0_97_Absentee_Preview_Fix.apk
           if-no-files-found: error
