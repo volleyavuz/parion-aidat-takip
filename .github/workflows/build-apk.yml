@@ -2,7 +2,7 @@ name: Build Parion APK
 
 on:
   push:
-    branches: [ parion-v4-0-92-seasonal-height-match ]
+    branches: [ parion-v4-0-93-dashboard-visual-cleanup ]
   workflow_dispatch:
 
 jobs:
@@ -48,18 +48,18 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.0.92 package and signature
+      - name: Verify v4.0.93 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV692' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV692.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.92"' app/build.gradle.kts
-          grep -q 'extends MainActivityV691' app/src/main/java/com/parion/aidat/MainActivityV692.java
+          grep -q 'MainActivityV693' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV693.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.93"' app/build.gradle.kts
+          grep -q 'extends MainActivityV692' app/src/main/java/com/parion/aidat/MainActivityV693.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_92_Seasonal_Height_Match.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_93_Dashboard_Visual_Cleanup.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.92-Seasonal-Height-Match
-          path: Parion_V4_0_92_Seasonal_Height_Match.apk
+          name: Parion-v4.0.93-Dashboard-Visual-Cleanup
+          path: Parion_V4_0_93_Dashboard_Visual_Cleanup.apk
           if-no-files-found: error
