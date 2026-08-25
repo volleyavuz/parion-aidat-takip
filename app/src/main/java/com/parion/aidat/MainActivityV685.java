@@ -16,13 +16,19 @@ public class MainActivityV685 extends MainActivityV684 {
     @Override void showHome(){
         super.showHome();
         if(root!=null){
-            root.post(this::cleanupDuplicateWinter685);
-            root.postDelayed(this::cleanupDuplicateWinter685,320);
+            root.post(this::patch685);
+            root.postDelayed(this::patch685,180);
+            root.postDelayed(this::patch685,420);
         }
     }
 
-    private void cleanupDuplicateWinter685(){
+    private void patch685(){
         if(root==null||page==null||!"HOME".equalsIgnoreCase(page))return;
+        cleanupDuplicateWinter685();
+        rewireStarter685();
+    }
+
+    private void cleanupDuplicateWinter685(){
         ScrollView sv=findScroll685(root);
         if(sv==null||sv.getChildCount()==0||!(sv.getChildAt(0) instanceof LinearLayout))return;
         LinearLayout box=(LinearLayout)sv.getChildAt(0);
@@ -35,16 +41,9 @@ public class MainActivityV685 extends MainActivityV684 {
             View card=nearestVerticalCard685(t,box);
             if(card!=null&&card!=canonical)remove.add(card);
         }
-        for(View v:remove){
-            ViewParent p=v.getParent();
-            if(p instanceof ViewGroup)((ViewGroup)p).removeView(v);
-        }
+        for(View v:remove){ViewParent p=v.getParent();if(p instanceof ViewGroup)((ViewGroup)p).removeView(v);}
         pruneEmpty685(box);
     }
-
-    // Correct implementation: scroll() already owns one LinearLayout child; use its tag via box(sv).
-    @Override
-    protected void finalize() throws Throwable { super.finalize(); }
 
     private void showNewStartersFixed685(){
         page="LIST";
@@ -52,36 +51,22 @@ public class MainActivityV685 extends MainActivityV684 {
         ScrollView sv=scroll();
         LinearLayout list=box(sv);
         String from=firstDay685(0),to=firstDay685(1);
-        Cursor c=db.getReadableDatabase().rawQuery(
-            "SELECT id,name,startDate FROM athletes WHERE TRIM(COALESCE(deletedAt,''))='' AND startDate>=? AND startDate<? ORDER BY startDate DESC,name COLLATE NOCASE",
-            new String[]{from,to});
+        Cursor c=db.getReadableDatabase().rawQuery("SELECT id,name,startDate FROM athletes WHERE TRIM(COALESCE(deletedAt,''))='' AND startDate>=? AND startDate<? ORDER BY startDate DESC,name COLLATE NOCASE",new String[]{from,to});
         if(!c.moveToFirst()){
-            TextView empty=text685("Bu ay yeni başlayan sporcu yok.",14f,MUTED685,false);
-            list.addView(empty,new LinearLayout.LayoutParams(-1,-2));
+            list.addView(text685("Bu ay yeni başlayan sporcu yok.",14f,MUTED685,false),new LinearLayout.LayoutParams(-1,-2));
             c.close();return;
         }
         do{
             long id=c.getLong(0);String name=c.getString(1);String date=c.getString(2);
             TextView row=text685(name+(date==null||date.trim().isEmpty()?"":"\nBaşlangıç: "+date),14f,TEXT685,true);
-            row.setPadding(dp(14),dp(12),dp(14),dp(12));
-            row.setClickable(true);row.setOnClickListener(v->showProfile(id));
+            row.setPadding(dp(14),dp(12),dp(14),dp(12));row.setClickable(true);row.setOnClickListener(v->showProfile(id));
             GradientDrawable bg=new GradientDrawable();bg.setColor(Color.WHITE);bg.setCornerRadius(dp(12));row.setBackground(bg);
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.setMargins(0,0,0,dp(8));list.addView(row,lp);
         }while(c.moveToNext());
         c.close();
     }
 
-    // Rewire the v4.0.84 generated card after super.showHome() has created it.
-    private void rewireStarter685(){
-        View card=findTag685(root,"v684-new-starters");
-        if(card!=null)card.setOnClickListener(v->showNewStartersFixed685());
-    }
-
-    @Override public void onWindowFocusChanged(boolean hasFocus){
-        super.onWindowFocusChanged(hasFocus);
-        if(hasFocus&&root!=null&&"HOME".equalsIgnoreCase(page))root.post(this::rewireStarter685);
-    }
-
+    private void rewireStarter685(){View card=findTag685(root,"v684-new-starters");if(card!=null)card.setOnClickListener(v->showNewStartersFixed685());}
     private String firstDay685(int addMonths){Calendar c=Calendar.getInstance();c.set(Calendar.DAY_OF_MONTH,1);c.add(Calendar.MONTH,addMonths);return String.format(Locale.US,"%04d-%02d-01",c.get(Calendar.YEAR),c.get(Calendar.MONTH)+1);}
     private TextView text685(String s,float sp,int color,boolean bold){TextView t=new TextView(this);t.setText(s);t.setTextSize(sp);t.setTextColor(color);if(bold)t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);return t;}
     private void collectWinter685(View v,List<TextView> out){if(v instanceof TextView){String n=norm685(String.valueOf(((TextView)v).getText()));if(n.contains("KIŞIN ARANACAK")||n.contains("KISIN ARANACAK"))out.add((TextView)v);}if(v instanceof ViewGroup){ViewGroup g=(ViewGroup)v;for(int i=0;i<g.getChildCount();i++)collectWinter685(g.getChildAt(i),out);}}
