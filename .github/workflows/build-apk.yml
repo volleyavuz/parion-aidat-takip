@@ -35,19 +35,19 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.0.74 package and signature
+      - name: Verify v4.0.75 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV674' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV674.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.74"' app/build.gradle.kts
-          grep -q 'extends MainActivityV673' app/src/main/java/com/parion/aidat/MainActivityV674.java
+          grep -q 'MainActivityV675' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV675.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.75"' app/build.gradle.kts
+          grep -q 'extends MainActivityV674' app/src/main/java/com/parion/aidat/MainActivityV675.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_74_Detail_Header_Cleanup.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_75_Attendance_Chrome_Cleanup.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.74-Detail-Header-Cleanup
-          path: Parion_V4_0_74_Detail_Header_Cleanup.apk
+          name: Parion-v4.0.75-Attendance-Chrome-Cleanup
+          path: Parion_V4_0_75_Attendance_Chrome_Cleanup.apk
           if-no-files-found: error
