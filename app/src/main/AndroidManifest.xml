@@ -6,7 +6,7 @@
 <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
 <application android:allowBackup="true" android:label="Parion Spor Kulübü" android:icon="@drawable/parion_launcher_official" android:roundIcon="@drawable/parion_launcher_official" android:theme="@style/AppTheme" android:supportsRtl="true">
 <provider android:name=".AttendanceShareProvider" android:authorities="com.parion.aidat.share" android:exported="false" android:grantUriPermissions="true" />
-<activity android:name=".MainActivityV687" android:screenOrientation="portrait" android:exported="false" />
+<activity android:name=".MainActivityV688" android:screenOrientation="portrait" android:exported="false" />
 <activity android:name=".SplashActivity" android:screenOrientation="portrait" android:exported="true">
 <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
 </activity>
