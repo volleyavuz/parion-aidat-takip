@@ -34,7 +34,15 @@ jobs:
           test -s app/src/main/res/drawable/parion_official_logo.png
       - name: Build dedicated launcher bitmap
         run: |
-          convert -size 512x512 xc:'#F7B234' \( app/src/main/res/drawable/parion_official_logo.png -resize 348x348 \) -gravity center -composite app/src/main/res/drawable/parion_launcher_official.png
+          python -m pip install --quiet pillow
+          python - <<'PY'
+          from PIL import Image
+          src=Image.open('app/src/main/res/drawable/parion_official_logo.png').convert('RGBA')
+          canvas=Image.new('RGBA',(512,512),(247,178,52,255))
+          logo=src.resize((348,348),Image.Resampling.LANCZOS)
+          canvas.alpha_composite(logo,((512-348)//2,(512-348)//2))
+          canvas.save('app/src/main/res/drawable/parion_launcher_official.png')
+          PY
           test -s app/src/main/res/drawable/parion_launcher_official.png
       - name: Build signed release APK
         env:
