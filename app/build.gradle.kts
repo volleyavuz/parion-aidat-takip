@@ -8,10 +8,10 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 192
-        versionName = "4.0.92"
-        // Stable baseline: versionName = "4.0.91"
-        // Recovery baseline: versionName = "4.0.70"
+        versionCode = 194
+        versionName = "4.0.92-R1"
+        // Functional baseline: v4.0.92
+        // Recovery baseline: v4.0.70
     }
 
     signingConfigs {
