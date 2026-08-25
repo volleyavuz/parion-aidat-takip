@@ -2,7 +2,7 @@ name: Build Parion APK
 
 on:
   push:
-    branches: [ main, android-v3-pilot, parion-v4-light-delta-sync, parion-v4-v62-overlay, parion-v4-0-71-stabilization, parion-v4-0-9-profile-home-startup, parion-v4-0-10-anr-hotfix, parion-v4-0-12-anr-home-hotfix, parion-v4-0-14-material-anr ]
+    branches: [ main, android-v3-pilot, parion-v4-light-delta-sync, parion-v4-v62-overlay, parion-v4-0-71-stabilization, parion-v4-0-82-dashboard-cleanup, parion-v4-0-9-profile-home-startup, parion-v4-0-10-anr-hotfix, parion-v4-0-12-anr-home-hotfix, parion-v4-0-14-material-anr ]
   pull_request:
     branches: [ android-v3-pilot, parion-v4-v62-overlay ]
   workflow_dispatch:
@@ -51,20 +51,20 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.0.81 package and signature
+      - name: Verify v4.0.82 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV681' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV681.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.81"' app/build.gradle.kts
-          grep -q 'extends MainActivityV680' app/src/main/java/com/parion/aidat/MainActivityV681.java
+          grep -q 'MainActivityV682' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV682.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.82"' app/build.gradle.kts
+          grep -q 'extends MainActivityV681' app/src/main/java/com/parion/aidat/MainActivityV682.java
           test -s app/src/main/res/drawable/parion_launcher_official.png
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_81_Dashboard_Consolidation_1.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_82_Dashboard_Cleanup.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.81-Dashboard-Consolidation-1
-          path: Parion_V4_0_81_Dashboard_Consolidation_1.apk
+          name: Parion-v4.0.82-Dashboard-Cleanup
+          path: Parion_V4_0_82_Dashboard_Cleanup.apk
           if-no-files-found: error
