@@ -28,6 +28,10 @@ jobs:
         run: |
           test -n "$PARION_KEYSTORE_BASE64"
           printf '%s' "$PARION_KEYSTORE_BASE64" | base64 --decode > "$RUNNER_TEMP/parion-release.jks"
+      - name: Restore official Parion logo asset
+        run: |
+          base64 --decode app/src/main/logo_official.b64 > app/src/main/res/drawable/parion_official_logo.png
+          test -s app/src/main/res/drawable/parion_official_logo.png
       - name: Build signed release APK
         env:
           PARION_KEYSTORE_PATH: ${{ runner.temp }}/parion-release.jks
@@ -35,19 +39,20 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.0.76 package and signature
+      - name: Verify v4.0.77 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV676' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV676.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.76"' app/build.gradle.kts
-          grep -q 'extends MainActivityV675' app/src/main/java/com/parion/aidat/MainActivityV676.java
+          grep -q 'MainActivityV677' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV677.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.77"' app/build.gradle.kts
+          grep -q 'extends MainActivityV676' app/src/main/java/com/parion/aidat/MainActivityV677.java
+          test -s app/src/main/res/drawable/parion_official_logo.png
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_76_Attendance_Header_Top_Fix.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_77_Official_Logo.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.76-Attendance-Header-Top-Fix
-          path: Parion_V4_0_76_Attendance_Header_Top_Fix.apk
+          name: Parion-v4.0.77-Official-Logo
+          path: Parion_V4_0_77_Official_Logo.apk
           if-no-files-found: error
