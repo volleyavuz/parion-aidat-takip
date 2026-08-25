@@ -32,6 +32,10 @@ jobs:
         run: |
           base64 --decode app/src/main/logo_official.b64 > app/src/main/res/drawable/parion_official_logo.png
           test -s app/src/main/res/drawable/parion_official_logo.png
+      - name: Build dedicated launcher bitmap
+        run: |
+          convert -size 512x512 xc:'#F7B234' \( app/src/main/res/drawable/parion_official_logo.png -resize 348x348 \) -gravity center -composite app/src/main/res/drawable/parion_launcher_official.png
+          test -s app/src/main/res/drawable/parion_launcher_official.png
       - name: Build signed release APK
         env:
           PARION_KEYSTORE_PATH: ${{ runner.temp }}/parion-release.jks
@@ -39,20 +43,20 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.0.79 package and signature
+      - name: Verify v4.0.80 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
           unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV679' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV679.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.79"' app/build.gradle.kts
-          grep -q 'extends MainActivityV678' app/src/main/java/com/parion/aidat/MainActivityV679.java
-          test -s app/src/main/res/drawable/parion_official_logo.png
+          grep -q 'MainActivityV680' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV680.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.80"' app/build.gradle.kts
+          grep -q 'extends MainActivityV679' app/src/main/java/com/parion/aidat/MainActivityV680.java
+          test -s app/src/main/res/drawable/parion_launcher_official.png
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_79_Logo_Safe_Area_Fix.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_80_Logo_Deterministic_Fix.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.79-Logo-Safe-Area-Fix
-          path: Parion_V4_0_79_Logo_Safe_Area_Fix.apk
+          name: Parion-v4.0.80-Logo-Deterministic-Fix
+          path: Parion_V4_0_80_Logo_Deterministic_Fix.apk
           if-no-files-found: error
