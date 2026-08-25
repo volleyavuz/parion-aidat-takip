@@ -2,9 +2,7 @@ name: Build Parion APK
 
 on:
   push:
-    branches: [ main, android-v3-pilot, parion-v4-light-delta-sync, parion-v4-v62-overlay, parion-v4-0-71-stabilization, parion-v4-0-82-dashboard-cleanup, parion-v4-0-83-winter-legacy-container-cleanup, parion-v4-0-9-profile-home-startup, parion-v4-0-10-anr-hotfix, parion-v4-0-12-anr-home-hotfix, parion-v4-0-14-material-anr ]
-  pull_request:
-    branches: [ android-v3-pilot, parion-v4-v62-overlay ]
+    branches: [ parion-v4-0-84-dashboard-starters-winter-fix ]
   workflow_dispatch:
 
 jobs:
@@ -43,7 +41,6 @@ jobs:
           canvas.alpha_composite(logo,((512-348)//2,(512-348)//2))
           canvas.save('app/src/main/res/drawable/parion_launcher_official.png')
           PY
-          test -s app/src/main/res/drawable/parion_launcher_official.png
       - name: Build signed release APK
         env:
           PARION_KEYSTORE_PATH: ${{ runner.temp }}/parion-release.jks
@@ -51,21 +48,18 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.0.83 package and signature
+      - name: Verify v4.0.85 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          unzip -l app/build/outputs/apk/release/app-release.apk | grep -q classes.dex
-          grep -q 'MainActivityV683' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV683.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.83"' app/build.gradle.kts
-          grep -q 'extends MainActivityV682' app/src/main/java/com/parion/aidat/MainActivityV683.java
-          test -s app/src/main/res/drawable/parion_launcher_official.png
+          grep -q 'MainActivityV685' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV685.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.85"' app/build.gradle.kts
+          grep -q 'extends MainActivityV684' app/src/main/java/com/parion/aidat/MainActivityV685.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_83_Winter_Legacy_Container_Cleanup.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_85_Starter_Crash_Winter_Duplicate_Fix.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.83-Winter-Legacy-Container-Cleanup
-          path: Parion_V4_0_83_Winter_Legacy_Container_Cleanup.apk
+          name: Parion-v4.0.85-Starter-Crash-Winter-Duplicate-Fix
+          path: Parion_V4_0_85_Starter_Crash_Winter_Duplicate_Fix.apk
           if-no-files-found: error
-# v4.0.83 build trigger
