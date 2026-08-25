@@ -2,7 +2,7 @@ name: Build Parion APK
 
 on:
   push:
-    branches: [ parion-v4-0-92-rollback-installable ]
+    branches: [ parion-v4-0-94-seasonal-layout-stable ]
   workflow_dispatch:
 
 jobs:
@@ -48,19 +48,19 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify rollback package and signature
+      - name: Verify v4.0.94 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV692' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV692.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 194' app/build.gradle.kts
-          grep -q 'versionName = "4.0.92-R1"' app/build.gradle.kts
-          grep -q 'extends MainActivityV691' app/src/main/java/com/parion/aidat/MainActivityV692.java
+          grep -q 'MainActivityV694' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV694.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 195' app/build.gradle.kts
+          grep -q 'versionName = "4.0.94"' app/build.gradle.kts
+          grep -q 'extends MainActivityV692' app/src/main/java/com/parion/aidat/MainActivityV694.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_92_R1_Rollback_Installable.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_94_Seasonal_Layout_Stable.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.92-R1-Rollback-Installable
-          path: Parion_V4_0_92_R1_Rollback_Installable.apk
+          name: Parion-v4.0.94-Seasonal-Layout-Stable
+          path: Parion_V4_0_94_Seasonal_Layout_Stable.apk
           if-no-files-found: error
