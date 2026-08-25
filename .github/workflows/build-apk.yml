@@ -2,7 +2,7 @@ name: Build Parion APK
 
 on:
   push:
-    branches: [ parion-v4-0-94-seasonal-layout-stable ]
+    branches: [ parion-v4-0-95-attendance-final ]
   workflow_dispatch:
 
 jobs:
@@ -48,19 +48,22 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.0.94 package and signature
+      - name: Verify v4.0.95 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV694' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV694.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 195' app/build.gradle.kts
-          grep -q 'versionName = "4.0.94"' app/build.gradle.kts
-          grep -q 'extends MainActivityV692' app/src/main/java/com/parion/aidat/MainActivityV694.java
+          grep -q 'MainActivityV695' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV695.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 196' app/build.gradle.kts
+          grep -q 'versionName = "4.0.95"' app/build.gradle.kts
+          grep -q 'extends MainActivityV694' app/src/main/java/com/parion/aidat/MainActivityV695.java
+          grep -q 'unchecked_default_v695' app/src/main/java/com/parion/aidat/MainActivityV695.java
+          grep -q 'athlete_group_history' app/src/main/java/com/parion/aidat/MainActivityV695.java
+          grep -q 'PdfDocument.PageInfo.Builder(PW,PH' app/src/main/java/com/parion/aidat/MainActivityV695.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_94_Seasonal_Layout_Stable.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_95_Attendance_Final.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.94-Seasonal-Layout-Stable
-          path: Parion_V4_0_94_Seasonal_Layout_Stable.apk
+          name: Parion-v4.0.95-Attendance-Final
+          path: Parion_V4_0_95_Attendance_Final.apk
           if-no-files-found: error
