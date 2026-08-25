@@ -2,7 +2,7 @@ name: Build Parion APK
 
 on:
   push:
-    branches: [ parion-v4-0-89-seasonal-card-visual-sync ]
+    branches: [ parion-v4-0-91-winter-single-layer ]
   workflow_dispatch:
 
 jobs:
@@ -48,18 +48,18 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.0.90 package and signature
+      - name: Verify v4.0.91 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV690' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV690.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionName = "4.0.90"' app/build.gradle.kts
-          grep -q 'extends MainActivityV689' app/src/main/java/com/parion/aidat/MainActivityV690.java
+          grep -q 'MainActivityV691' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV691.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionName = "4.0.91"' app/build.gradle.kts
+          grep -q 'extends MainActivityV690' app/src/main/java/com/parion/aidat/MainActivityV691.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_90_Winter_Card_Flattened.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_91_Winter_Single_Layer.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.90-Winter-Card-Flattened
-          path: Parion_V4_0_90_Winter_Card_Flattened.apk
+          name: Parion-v4.0.91-Winter-Single-Layer
+          path: Parion_V4_0_91_Winter_Single_Layer.apk
           if-no-files-found: error
