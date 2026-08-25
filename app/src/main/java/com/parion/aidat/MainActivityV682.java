@@ -4,7 +4,7 @@ import android.view.*;
 import android.widget.*;
 import java.util.*;
 
-/** v4.0.82 - narrow dashboard cleanup: remove stray half text under Monthly Target and duplicate legacy Winter card. */
+/** v4.0.82 - narrow dashboard cleanup: hide clipped Monthly Target subtitle and remove duplicate legacy Winter card. */
 public class MainActivityV682 extends MainActivityV681 {
     @Override void showHome(){
         super.showHome();
@@ -19,27 +19,23 @@ public class MainActivityV682 extends MainActivityV681 {
         ScrollView sv=findScroll682(root);
         if(sv==null||sv.getChildCount()==0||!(sv.getChildAt(0) instanceof LinearLayout))return;
         LinearLayout box=(LinearLayout)sv.getChildAt(0);
-        removeStrayHalfUnderMonthlyTarget682(box);
+        cleanMonthlyTarget682(box);
         removeDuplicateWinter682(box);
     }
 
-    private void removeStrayHalfUnderMonthlyTarget682(LinearLayout box){
+    private void cleanMonthlyTarget682(LinearLayout box){
         TextView monthly=findExact682(box,"AYLIK HEDEF");
         if(monthly==null)return;
-        View monthlyTop=topChild682(box,monthly);
-        if(monthlyTop==null)return;
-        int idx=box.indexOfChild(monthlyTop);
-        // The reported artifact is a standalone/legacy partial label immediately after the monthly target area.
-        for(int i=Math.min(box.getChildCount()-1,idx+2);i>idx;i--){
-            View candidate=box.getChildAt(i);
-            if(candidate==null)continue;
-            if(containsCoreCardTitle682(candidate))continue;
-            String txt=allText682(candidate);
-            String n=norm682(txt);
-            if(n.equals("YARIM")||n.startsWith("YARIM ")||n.endsWith(" YARIM")||
-               (candidate instanceof TextView && n.length()>0 && n.length()<=12)){
-                box.removeViewAt(i);
-            }
+        View card=nearestCard682(monthly);
+        if(!(card instanceof ViewGroup))return;
+        ViewGroup g=(ViewGroup)card;
+        // V657 metric cards tag their bottom explanatory line as "sub". On the full-width
+        // Monthly Target card that line can be clipped by the fixed card height, so remove only it.
+        View sub=findTag682(g,"sub");
+        if(sub!=null){
+            sub.setVisibility(View.GONE);
+            ViewGroup.LayoutParams lp=sub.getLayoutParams();
+            if(lp!=null){lp.height=0;sub.setLayoutParams(lp);}
         }
     }
 
@@ -50,18 +46,27 @@ public class MainActivityV682 extends MainActivityV681 {
         for(int i=winters.size()-1;i>=0;i--){
             View v=winters.get(i);
             if(v==null||v==keep||isDescendant682(v,keep))continue;
-            // Preserve the current tagged call row; remove every remaining direct legacy winter card.
             if(v.getParent()==box)box.removeView(v);
         }
     }
 
-    private boolean containsCoreCardTitle682(View v){
-        String n=norm682(allText682(v));
-        return n.contains("AYLIK HEDEF")||n.contains("AKTİF SPORCU")||n.contains("ARA VEREN")||
-               n.contains("GECİKMİŞ")||n.contains("ÖDEME VADESİ")||n.contains("TİŞÖRT ALMAYAN")||
-               n.contains("TISORT ALMAYAN")||n.contains("BU AY BAŞLAYAN")||n.contains("GEÇEN AY BAŞLAYAN")||
-               n.contains("FOTOĞRAF EKSİK")||n.contains("KAYIT FORMU EKSİK")||n.contains("DEVAMSIZLAR")||
-               n.contains("YAZIN ARANACAK")||n.contains("KIŞIN ARANACAK")||n.contains("KISIN ARANACAK");
+    private View nearestCard682(View v){
+        View cur=v,best=null;
+        while(cur!=null&&cur!=root){
+            if(cur.hasOnClickListeners()||cur.isClickable())best=cur;
+            ViewParent p=cur.getParent();
+            if(!(p instanceof View))break;
+            cur=(View)p;
+        }
+        if(best!=null)return best;
+        cur=v;
+        while(cur!=null&&cur!=root){
+            ViewParent p=cur.getParent();
+            if(!(p instanceof View))break;
+            cur=(View)p;
+            if(cur instanceof LinearLayout)return cur;
+        }
+        return null;
     }
 
     private void collectWinterTop682(LinearLayout box,View v,ArrayList<View> out){
@@ -78,13 +83,6 @@ public class MainActivityV682 extends MainActivityV681 {
         if(v instanceof TextView&&norm682(String.valueOf(((TextView)v).getText())).equals(norm682(wanted)))return(TextView)v;
         if(v instanceof ViewGroup){ViewGroup g=(ViewGroup)v;for(int i=0;i<g.getChildCount();i++){TextView r=findExact682(g.getChildAt(i),wanted);if(r!=null)return r;}}
         return null;
-    }
-    private String allText682(View v){
-        StringBuilder b=new StringBuilder();collectText682(v,b);return b.toString();
-    }
-    private void collectText682(View v,StringBuilder b){
-        if(v instanceof TextView)b.append(' ').append(((TextView)v).getText());
-        if(v instanceof ViewGroup){ViewGroup g=(ViewGroup)v;for(int i=0;i<g.getChildCount();i++)collectText682(g.getChildAt(i),b);}
     }
     private View topChild682(LinearLayout box,View v){View cur=v;while(cur!=null&&cur.getParent() instanceof View&&cur.getParent()!=box)cur=(View)cur.getParent();return cur!=null&&cur.getParent()==box?cur:null;}
     private boolean isDescendant682(View child,View ancestor){if(child==null||ancestor==null)return false;View cur=child;while(cur!=null){if(cur==ancestor)return true;ViewParent p=cur.getParent();cur=p instanceof View?(View)p:null;}return false;}
