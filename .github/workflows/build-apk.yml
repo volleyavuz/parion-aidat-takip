@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-1-12-looper-profiler ]
+    branches: [ parion-v4-1-13-remove-dashboard-cover ]
   workflow_dispatch:
 jobs:
   build:
@@ -47,17 +47,17 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.1.12 package and signature
+      - name: Verify v4.1.13 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
           grep -q 'MainActivityV702' app/src/main/AndroidManifest.xml
-          grep -q 'versionCode = 214' app/build.gradle.kts
-          grep -q 'versionName = "4.1.12"' app/build.gradle.kts
+          grep -q 'versionCode = 215' app/build.gradle.kts
+          grep -q 'versionName = "4.1.13"' app/build.gradle.kts
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_12_Looper_Profiler.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_13_Remove_Dashboard_Cover.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.1.12-Looper-Profiler
-          path: Parion_V4_1_12_Looper_Profiler.apk
+          name: Parion-v4.1.13-Remove-Dashboard-Cover
+          path: Parion_V4_1_13_Remove_Dashboard_Cover.apk
           if-no-files-found: error
