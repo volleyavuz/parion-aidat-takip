@@ -8,13 +8,13 @@ import android.view.*;
 import android.widget.*;
 import java.util.*;
 
-/** v4.0.98 - dashboard fixes aligned with actual profile/material and attendance UI semantics. */
+/** v4.1.15 - dashboard repair once per HOME build; removes redundant 500 ms full rebuild. */
 public class MainActivityV698 extends MainActivityV694 {
     private static final int TEXT=Color.rgb(28,28,28), MUTED=Color.rgb(92,92,92), RED=Color.rgb(185,55,55), GOLD=Color.rgb(205,156,34);
 
     @Override void showHome(){
         super.showHome();
-        if(root!=null){root.post(this::patch698);root.postDelayed(this::patch698,500);}
+        if(root!=null) root.post(this::patch698);
     }
 
     private void patch698(){
@@ -56,53 +56,13 @@ public class MainActivityV698 extends MainActivityV694 {
     }
 
     private static class Ab698{long id;String name,group;int days;Ab698(long i,String n,String g,int d){id=i;name=n;group=g;days=d;}}
-
-    private ArrayList<Ab698> absentees698(){
-        ArrayList<Ab698> out=new ArrayList<>();Cursor a=db.getReadableDatabase().rawQuery("SELECT id,name,category,startDate,restartDate FROM athletes WHERE status='AKTİF' AND TRIM(COALESCE(deletedAt,''))='' ORDER BY name COLLATE NOCASE",null);
-        while(a.moveToNext()){
-            long id=a.getLong(0);String name=safe698(a.getString(1)),group=safe698(a.getString(2)),start=safe698(a.getString(3)),restart=safe698(a.getString(4));
-            if(group.isEmpty()||!groupEnabled698(group))continue;int days=absenceDays698(id,group,start,restart);if(days>=10)out.add(new Ab698(id,name,group,days));
-        }
-        a.close();Collections.sort(out,(x,y)->x.days!=y.days?Integer.compare(y.days,x.days):x.name.compareToIgnoreCase(y.name));return out;
-    }
-
-    /** Attendance UI treats a missing record as present. Dashboard must use the same rule. */
-    private int absenceDays698(long athlete,String group,String start,String restart){
-        String spell=currentSpellStart698(start,restart);if(spell.isEmpty())spell="1900-01-01";
-        String lastPresent=null;
-        Cursor p=db.getReadableDatabase().rawQuery(
-            "SELECT MAX(s.sessionDate) FROM attendance_sessions s LEFT JOIN attendance_records r ON r.sessionId=s.id AND r.athleteId=? WHERE s.groupName=? COLLATE NOCASE AND s.confirmed=1 AND s.cancelled=0 AND s.sessionDate>=? AND s.sessionDate<=date('now') AND COALESCE(r.present,1)=1",
-            new String[]{String.valueOf(athlete),group,spell});if(p.moveToFirst()&&!p.isNull(0))lastPresent=p.getString(0);p.close();
-
-        if(lastPresent!=null&&!lastPresent.isEmpty()){
-            Cursor m=db.getReadableDatabase().rawQuery(
-                "SELECT MIN(s.sessionDate) FROM attendance_sessions s JOIN attendance_records r ON r.sessionId=s.id AND r.athleteId=? WHERE s.groupName=? COLLATE NOCASE AND s.confirmed=1 AND s.cancelled=0 AND s.sessionDate>? AND s.sessionDate<=date('now') AND r.present=0",
-                new String[]{String.valueOf(athlete),group,lastPresent});String firstMiss=null;if(m.moveToFirst()&&!m.isNull(0))firstMiss=m.getString(0);m.close();if(firstMiss==null)return 0;return daysSince698(lastPresent);
-        }
-
-        // No visible-present session: count only from an explicit confirmed absence, never from a generated session alone.
-        Cursor m=db.getReadableDatabase().rawQuery(
-            "SELECT MIN(s.sessionDate) FROM attendance_sessions s JOIN attendance_records r ON r.sessionId=s.id AND r.athleteId=? WHERE s.groupName=? COLLATE NOCASE AND s.confirmed=1 AND s.cancelled=0 AND s.sessionDate>=? AND s.sessionDate<=date('now') AND r.present=0",
-            new String[]{String.valueOf(athlete),group,spell});String firstMiss=null;if(m.moveToFirst()&&!m.isNull(0))firstMiss=m.getString(0);m.close();return firstMiss==null?0:daysSince698(firstMiss);
-    }
-
+    private ArrayList<Ab698> absentees698(){ArrayList<Ab698> out=new ArrayList<>();Cursor a=db.getReadableDatabase().rawQuery("SELECT id,name,category,startDate,restartDate FROM athletes WHERE status='AKTİF' AND TRIM(COALESCE(deletedAt,''))='' ORDER BY name COLLATE NOCASE",null);while(a.moveToNext()){long id=a.getLong(0);String name=safe698(a.getString(1)),group=safe698(a.getString(2)),start=safe698(a.getString(3)),restart=safe698(a.getString(4));if(group.isEmpty()||!groupEnabled698(group))continue;int days=absenceDays698(id,group,start,restart);if(days>=10)out.add(new Ab698(id,name,group,days));}a.close();Collections.sort(out,(x,y)->x.days!=y.days?Integer.compare(y.days,x.days):x.name.compareToIgnoreCase(y.name));return out;}
+    private int absenceDays698(long athlete,String group,String start,String restart){String spell=currentSpellStart698(start,restart);if(spell.isEmpty())spell="1900-01-01";String lastPresent=null;Cursor p=db.getReadableDatabase().rawQuery("SELECT MAX(s.sessionDate) FROM attendance_sessions s LEFT JOIN attendance_records r ON r.sessionId=s.id AND r.athleteId=? WHERE s.groupName=? COLLATE NOCASE AND s.confirmed=1 AND s.cancelled=0 AND s.sessionDate>=? AND s.sessionDate<=date('now') AND COALESCE(r.present,1)=1",new String[]{String.valueOf(athlete),group,spell});if(p.moveToFirst()&&!p.isNull(0))lastPresent=p.getString(0);p.close();if(lastPresent!=null&&!lastPresent.isEmpty()){Cursor m=db.getReadableDatabase().rawQuery("SELECT MIN(s.sessionDate) FROM attendance_sessions s JOIN attendance_records r ON r.sessionId=s.id AND r.athleteId=? WHERE s.groupName=? COLLATE NOCASE AND s.confirmed=1 AND s.cancelled=0 AND s.sessionDate>? AND s.sessionDate<=date('now') AND r.present=0",new String[]{String.valueOf(athlete),group,lastPresent});String firstMiss=null;if(m.moveToFirst()&&!m.isNull(0))firstMiss=m.getString(0);m.close();if(firstMiss==null)return 0;return daysSince698(lastPresent);}Cursor m=db.getReadableDatabase().rawQuery("SELECT MIN(s.sessionDate) FROM attendance_sessions s JOIN attendance_records r ON r.sessionId=s.id AND r.athleteId=? WHERE s.groupName=? COLLATE NOCASE AND s.confirmed=1 AND s.cancelled=0 AND s.sessionDate>=? AND s.sessionDate<=date('now') AND r.present=0",new String[]{String.valueOf(athlete),group,spell});String firstMiss=null;if(m.moveToFirst()&&!m.isNull(0))firstMiss=m.getString(0);m.close();return firstMiss==null?0:daysSince698(firstMiss);}
     private int daysSince698(String date){Cursor d=db.getReadableDatabase().rawQuery("SELECT CAST(julianday(date('now'))-julianday(?) AS INTEGER)",new String[]{date});int days=0;if(d.moveToFirst())days=Math.max(0,d.getInt(0));d.close();return days;}
     private String currentSpellStart698(String start,String restart){String today=new java.text.SimpleDateFormat("yyyy-MM-dd",Locale.US).format(new Date());if(isIso698(restart)&&restart.compareTo(today)<=0)return restart;return isIso698(start)?start:"";}
-
-    private void addAbsentees698(LinearLayout box){
-        ArrayList<Ab698> list=absentees698();LinearLayout card=new LinearLayout(this);card.setTag("v698-absentees");card.setOrientation(LinearLayout.VERTICAL);card.setPadding(dp(12),dp(12),dp(12),dp(12));card.setBackground(round698(Color.WHITE,RED,14,1));
-        TextView head=txt698("DEVAMSIZLAR  •  "+list.size(),12,TEXT,true);card.addView(head);
-        if(list.isEmpty())card.addView(txt698("Seçili gruplarda 10 gün ve üzeri devamsız aktif sporcu yok.",11,MUTED,false));
-        else{
-            ArrayList<View> extra=new ArrayList<>();for(int i=0;i<list.size();i++){Ab698 x=list.get(i);TextView r=txt698(x.name+" • "+x.days+" gündür gelmiyor • "+x.group,12,x.days>=30?Color.rgb(170,30,30):TEXT,true);r.setPadding(dp(4),dp(7),dp(4),dp(7));r.setOnClickListener(v->showProfile(x.id));card.addView(r);if(i>=3){r.setVisibility(View.GONE);extra.add(r);}}
-            if(list.size()>3){TextView more=txt698("TÜMÜNÜ GÖSTER ("+list.size()+")  ▼",10.5f,RED,true);more.setGravity(Gravity.CENTER);more.setPadding(dp(4),dp(9),dp(4),dp(4));final boolean[] open={false};more.setOnClickListener(v->{open[0]=!open[0];for(View e:extra)e.setVisibility(open[0]?View.VISIBLE:View.GONE);more.setText(open[0]?"DARALT  ▲":"TÜMÜNÜ GÖSTER ("+list.size()+")  ▼");});card.addView(more);}
-        }
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.setMargins(0,dp(12),0,dp(8));box.addView(card,lp);
-    }
-
+    private void addAbsentees698(LinearLayout box){ArrayList<Ab698> list=absentees698();LinearLayout card=new LinearLayout(this);card.setTag("v698-absentees");card.setOrientation(LinearLayout.VERTICAL);card.setPadding(dp(12),dp(12),dp(12),dp(12));card.setBackground(round698(Color.WHITE,RED,14,1));TextView head=txt698("DEVAMSIZLAR  •  "+list.size(),12,TEXT,true);card.addView(head);if(list.isEmpty())card.addView(txt698("Seçili gruplarda 10 gün ve üzeri devamsız aktif sporcu yok.",11,MUTED,false));else{ArrayList<View> extra=new ArrayList<>();for(int i=0;i<list.size();i++){Ab698 x=list.get(i);TextView r=txt698(x.name+" • "+x.days+" gündür gelmiyor • "+x.group,12,x.days>=30?Color.rgb(170,30,30):TEXT,true);r.setPadding(dp(4),dp(7),dp(4),dp(7));r.setOnClickListener(v->showProfile(x.id));card.addView(r);if(i>=3){r.setVisibility(View.GONE);extra.add(r);}}if(list.size()>3){TextView more=txt698("TÜMÜNÜ GÖSTER ("+list.size()+")  ▼",10.5f,RED,true);more.setGravity(Gravity.CENTER);more.setPadding(dp(4),dp(9),dp(4),dp(4));final boolean[] open={false};more.setOnClickListener(v->{open[0]=!open[0];for(View e:extra)e.setVisibility(open[0]?View.VISIBLE:View.GONE);more.setText(open[0]?"DARALT  ▲":"TÜMÜNÜ GÖSTER ("+list.size()+")  ▼");});card.addView(more);}}LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.setMargins(0,dp(12),0,dp(8));box.addView(card,lp);}
     private boolean groupEnabled698(String group){try{Cursor c=db.getReadableDatabase().rawQuery("SELECT enabled FROM attendance_dashboard_groups WHERE groupName=?",new String[]{group});boolean on=!c.moveToFirst()||c.getInt(0)==1;c.close();return on;}catch(Exception e){return true;}}
     @Override void goBack(){if("NO_TSHIRT_698".equals(page)){showHome();return;}super.goBack();}
-
     private void removeCards698(LinearLayout box,String needle){for(int i=box.getChildCount()-1;i>=0;i--){View v=box.getChildAt(i);if(containsText698(v,needle))box.removeViewAt(i);}}
     private TextView txt698(String s,float sp,int color,boolean bold){TextView t=new TextView(this);t.setText(s);t.setTextSize(sp);t.setTextColor(color);if(bold)t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);return t;}
     private GradientDrawable round698(int fill,int stroke,int radius,int width){GradientDrawable d=new GradientDrawable();d.setColor(fill);d.setCornerRadius(dp(radius));if(width>0)d.setStroke(dp(width),stroke);return d;}
