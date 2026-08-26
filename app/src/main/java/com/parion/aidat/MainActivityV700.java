@@ -9,6 +9,11 @@ import android.widget.LinearLayout;
 
 /** v4.1.06 HOME performance/callback diagnostic layer. */
 public class MainActivityV700 extends MainActivityV699 {
+    static volatile long maxCallbackCost700=0L;
+    static volatile long maxCallbackRequested700=0L;
+    static volatile int maxCallbackSeq700=0;
+    static void resetCallbackStats700(){maxCallbackCost700=0L;maxCallbackRequested700=0L;maxCallbackSeq700=0;}
+
     @Override void base(String title, boolean back) {
         super.base(title, back);
         if (root == null || page == null || !"HOME".equalsIgnoreCase(page) || root instanceof FastHomeRoot700) return;
@@ -35,7 +40,7 @@ public class MainActivityV700 extends MainActivityV699 {
                 return true;
             }
             final long requested=delayMillis;
-            long actual;
+            final long actual;
             if(delayMillis<=120L) actual=delayMillis;
             else { actual=72L+Math.min(220L,slot700*8L); slot700++; }
             final long scheduled=SystemClock.elapsedRealtime();
@@ -45,6 +50,7 @@ public class MainActivityV700 extends MainActivityV699 {
                 finally {
                     long cost=SystemClock.elapsedRealtime()-started;
                     long queue=started-scheduled;
+                    if(cost>maxCallbackCost700){maxCallbackCost700=cost;maxCallbackRequested700=requested;maxCallbackSeq700=seq;}
                     Log.i(TAG,"RUN #"+seq+" req="+requested+"ms actual="+actual+"ms queue="+queue+"ms cost="+cost+"ms class="+action.getClass().getName());
                 }
             };
