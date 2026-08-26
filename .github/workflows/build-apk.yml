@@ -61,3 +61,4 @@ jobs:
           name: Parion-v4.1.13-Remove-Dashboard-Cover
           path: Parion_V4_1_13_Remove_Dashboard_Cover.apk
           if-no-files-found: error
+# trigger: 4.1.13
