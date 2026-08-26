@@ -2,10 +2,12 @@ package com.parion.aidat;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.os.SystemClock;
+import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
-/** v4.1.05 HOME performance layer. */
+/** v4.1.06 HOME performance/callback diagnostic layer. */
 public class MainActivityV700 extends MainActivityV699 {
     @Override void base(String title, boolean back) {
         super.base(title, back);
@@ -20,22 +22,33 @@ public class MainActivityV700 extends MainActivityV699 {
         root=fast; setContentView(fast);
     }
 
-    /**
-     * HOME-only scheduler. V691 and V692 are superseded by V694 but historically leave four
-     * delayed full-tree rebuilds behind. Drop only those exact obsolete waits. V694's final
-     * deterministic season-card pass is kept once; its duplicate retry is dropped.
-     */
     static final class FastHomeRoot700 extends LinearLayout {
+        private static final String TAG="ParionHomeCallback";
         private long slot700=0L;
+        private int seq700=0;
         FastHomeRoot700(Context c){super(c);}
         @Override public boolean postDelayed(Runnable action,long delayMillis){
             if(action==null)return false;
+            final int seq=++seq700;
             if(delayMillis==4550L||delayMillis==5200L||delayMillis==5700L||delayMillis==6400L||delayMillis==7700L){
+                Log.i(TAG,"DROP #"+seq+" requested="+delayMillis+"ms class="+action.getClass().getName());
                 return true;
             }
-            if(delayMillis<=120L)return super.postDelayed(action,delayMillis);
-            long compact=72L+Math.min(220L,slot700*8L); slot700++;
-            return super.postDelayed(action,compact);
+            final long requested=delayMillis;
+            long actual;
+            if(delayMillis<=120L) actual=delayMillis;
+            else { actual=72L+Math.min(220L,slot700*8L); slot700++; }
+            final long scheduled=SystemClock.elapsedRealtime();
+            Runnable measured=()->{
+                long started=SystemClock.elapsedRealtime();
+                try { action.run(); }
+                finally {
+                    long cost=SystemClock.elapsedRealtime()-started;
+                    long queue=started-scheduled;
+                    Log.i(TAG,"RUN #"+seq+" req="+requested+"ms actual="+actual+"ms queue="+queue+"ms cost="+cost+"ms class="+action.getClass().getName());
+                }
+            };
+            return super.postDelayed(measured,actual);
         }
     }
 }
