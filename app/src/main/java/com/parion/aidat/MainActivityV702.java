@@ -5,9 +5,10 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.Choreographer;
 import android.widget.Toast;
 
-/** v4.1.07 HOME timing + aggregate callback profiler. No data mutation. */
+/** v4.1.11 HOME timing + callback + frame profiler. No data mutation. */
 public class MainActivityV702 extends MainActivityV701 {
     private static final String TAG702 = "ParionHomePerf";
     private final Handler perfHandler702 = new Handler(Looper.getMainLooper());
@@ -36,6 +37,18 @@ public class MainActivityV702 extends MainActivityV701 {
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         });
 
+        final long frameProbeStart = SystemClock.elapsedRealtime();
+        Choreographer.getInstance().postFrameCallback(frameTimeNanos -> {
+            long firstFrameMs = SystemClock.elapsedRealtime() - frameProbeStart;
+            final long secondStart = SystemClock.elapsedRealtime();
+            Choreographer.getInstance().postFrameCallback(frame2 -> {
+                long nextFrameMs = SystemClock.elapsedRealtime() - secondStart;
+                String fm = "FRAME ilk " + firstFrameMs + " ms • sonraki " + nextFrameMs + " ms";
+                Log.i(TAG702, "call=" + call + " firstFrame=" + firstFrameMs + "ms nextFrame=" + nextFrameMs + "ms");
+                Toast.makeText(this, fm, Toast.LENGTH_LONG).show();
+            });
+        });
+
         perfHandler702.postDelayed(() -> {
             int count=callbackRunCount700;
             long total=totalCallbackCost700;
@@ -45,6 +58,6 @@ public class MainActivityV702 extends MainActivityV701 {
             String cb = "CB " + count + " adet • toplam " + total + " ms • max " + max + " ms";
             Log.i(TAG702, cb + " • maxReq=" + req + "ms • #" + seq + " • queueToplam=" + totalCallbackQueue700 + "ms");
             Toast.makeText(this, cb, Toast.LENGTH_LONG).show();
-        }, 2200L);
+        }, 2600L);
     }
 }
