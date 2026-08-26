@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 209
-        versionName = "4.1.07"
-        // Diagnostic: v4.1.06 behaviour + aggregate HOME callback profiler
+        versionCode = 210
+        versionName = "4.1.08"
+        // HOME transition fix; no dashboard root caching/reparenting.
         // Recovery baseline: v4.0.99
     }
 
