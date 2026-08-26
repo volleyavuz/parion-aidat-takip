@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 214
-        versionName = "4.1.12"
-        // Main-looper dispatch diagnostic; no data mutation.
+        versionCode = 215
+        versionName = "4.1.13"
+        // Remove obsolete 1500 ms dashboard visual gate; keep diagnostics for verification.
         // Recovery baseline: v4.0.99
     }
 
