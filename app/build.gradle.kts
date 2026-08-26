@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 213
-        versionName = "4.1.11"
-        // HOME frame traversal diagnostic; no data mutation.
+        versionCode = 214
+        versionName = "4.1.12"
+        // Main-looper dispatch diagnostic; no data mutation.
         // Recovery baseline: v4.0.99
     }
 
