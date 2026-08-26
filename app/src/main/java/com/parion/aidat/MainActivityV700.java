@@ -7,12 +7,34 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 
-/** v4.1.06 HOME performance/callback diagnostic layer. */
+/** v4.1.07 HOME callback aggregate diagnostic layer. */
 public class MainActivityV700 extends MainActivityV699 {
     static volatile long maxCallbackCost700=0L;
     static volatile long maxCallbackRequested700=0L;
     static volatile int maxCallbackSeq700=0;
-    static void resetCallbackStats700(){maxCallbackCost700=0L;maxCallbackRequested700=0L;maxCallbackSeq700=0;}
+    static volatile long totalCallbackCost700=0L;
+    static volatile long totalCallbackQueue700=0L;
+    static volatile int callbackRunCount700=0;
+
+    static synchronized void resetCallbackStats700(){
+        maxCallbackCost700=0L;
+        maxCallbackRequested700=0L;
+        maxCallbackSeq700=0;
+        totalCallbackCost700=0L;
+        totalCallbackQueue700=0L;
+        callbackRunCount700=0;
+    }
+
+    static synchronized void recordCallback700(long cost,long queue,long requested,int seq){
+        callbackRunCount700++;
+        totalCallbackCost700+=cost;
+        totalCallbackQueue700+=Math.max(0L,queue);
+        if(cost>maxCallbackCost700){
+            maxCallbackCost700=cost;
+            maxCallbackRequested700=requested;
+            maxCallbackSeq700=seq;
+        }
+    }
 
     @Override void base(String title, boolean back) {
         super.base(title, back);
@@ -32,6 +54,7 @@ public class MainActivityV700 extends MainActivityV699 {
         private long slot700=0L;
         private int seq700=0;
         FastHomeRoot700(Context c){super(c);}
+
         @Override public boolean postDelayed(Runnable action,long delayMillis){
             if(action==null)return false;
             final int seq=++seq700;
@@ -50,7 +73,7 @@ public class MainActivityV700 extends MainActivityV699 {
                 finally {
                     long cost=SystemClock.elapsedRealtime()-started;
                     long queue=started-scheduled;
-                    if(cost>maxCallbackCost700){maxCallbackCost700=cost;maxCallbackRequested700=requested;maxCallbackSeq700=seq;}
+                    recordCallback700(cost,queue,requested,seq);
                     Log.i(TAG,"RUN #"+seq+" req="+requested+"ms actual="+actual+"ms queue="+queue+"ms cost="+cost+"ms class="+action.getClass().getName());
                 }
             };
