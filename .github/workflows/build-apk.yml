@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-1-13-remove-dashboard-cover ]
+    branches: [ parion-v4-1-15-viewroot-isolation ]
   workflow_dispatch:
 jobs:
   build:
@@ -47,18 +47,17 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.1.13 package and signature
+      - name: Verify v4.1.15 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
           grep -q 'MainActivityV702' app/src/main/AndroidManifest.xml
-          grep -q 'versionCode = 215' app/build.gradle.kts
-          grep -q 'versionName = "4.1.13"' app/build.gradle.kts
+          grep -q 'versionCode = 217' app/build.gradle.kts
+          grep -q 'versionName = "4.1.15"' app/build.gradle.kts
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_13_Remove_Dashboard_Cover.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_15_ViewRoot_Isolation.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.1.13-Remove-Dashboard-Cover
-          path: Parion_V4_1_13_Remove_Dashboard_Cover.apk
+          name: Parion-v4.1.15-ViewRoot-Isolation
+          path: Parion_V4_1_15_ViewRoot_Isolation.apk
           if-no-files-found: error
-# trigger: 4.1.13
