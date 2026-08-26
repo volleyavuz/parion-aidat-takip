@@ -2,7 +2,7 @@ name: Build Parion APK
 
 on:
   push:
-    branches: [ parion-v4-1-00-home-performance ]
+    branches: [ parion-v4-1-01-single-home-render ]
   workflow_dispatch:
 
 jobs:
@@ -48,20 +48,21 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.1.00 package and signature
+      - name: Verify v4.1.01 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV700' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV700.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 202' app/build.gradle.kts
-          grep -q 'versionName = "4.1.00"' app/build.gradle.kts
-          grep -q 'extends MainActivityV699' app/src/main/java/com/parion/aidat/MainActivityV700.java
-          grep -q 'FastHomeRoot700' app/src/main/java/com/parion/aidat/MainActivityV700.java
+          grep -q 'MainActivityV701' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV701.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 203' app/build.gradle.kts
+          grep -q 'versionName = "4.1.01"' app/build.gradle.kts
+          grep -q 'extends MainActivityV700' app/src/main/java/com/parion/aidat/MainActivityV701.java
+          grep -q 'creating701' app/src/main/java/com/parion/aidat/MainActivityV701.java
+          grep -q 'dashboardData' app/src/main/java/com/parion/aidat/MainActivityV701.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_00_Home_Performance.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_01_Single_Home_Render.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.1.00-Home-Performance
-          path: Parion_V4_1_00_Home_Performance.apk
+          name: Parion-v4.1.01-Single-Home-Render
+          path: Parion_V4_1_01_Single_Home_Render.apk
           if-no-files-found: error
