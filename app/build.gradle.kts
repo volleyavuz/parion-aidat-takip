@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 208
-        versionName = "4.1.06"
-        // Diagnostic: v4.1.05 behaviour + per-callback HOME profiler
+        versionCode = 209
+        versionName = "4.1.07"
+        // Diagnostic: v4.1.06 behaviour + aggregate HOME callback profiler
         // Recovery baseline: v4.0.99
     }
 
