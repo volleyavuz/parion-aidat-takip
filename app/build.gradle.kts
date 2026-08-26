@@ -3,17 +3,14 @@ plugins { id("com.android.application") }
 android {
     namespace = "com.parion.aidat"
     compileSdk = 36
-
     defaultConfig {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 215
-        versionName = "4.1.13"
-        // Remove obsolete 1500 ms dashboard visual gate; keep diagnostics for verification.
-        // Recovery baseline: v4.0.99
+        versionCode = 217
+        versionName = "4.1.15"
+        // Remove redundant second dashboard repair pass; recovery baseline v4.0.99.
     }
-
     signingConfigs {
         create("release") {
             storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks")
@@ -22,18 +19,8 @@ android {
             keyPassword = System.getenv("PARION_KEY_PASSWORD")
         }
     }
-
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("release")
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
+    buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
+    compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
 }
 
 dependencies { implementation("androidx.work:work-runtime:2.10.1") }
