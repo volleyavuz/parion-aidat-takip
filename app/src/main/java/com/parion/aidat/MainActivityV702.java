@@ -7,7 +7,7 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 
-/** v4.1.06 HOME timing + callback profiler. No data mutation. */
+/** v4.1.07 HOME timing + aggregate callback profiler. No data mutation. */
 public class MainActivityV702 extends MainActivityV701 {
     private static final String TAG702 = "ParionHomePerf";
     private final Handler perfHandler702 = new Handler(Looper.getMainLooper());
@@ -27,6 +27,7 @@ public class MainActivityV702 extends MainActivityV701 {
         super.showHome();
         final long syncMs = SystemClock.elapsedRealtime() - t0;
         if (syncMs < 80L) return;
+
         final long queuedAt = SystemClock.elapsedRealtime();
         perfHandler702.post(() -> {
             long uiLagMs = SystemClock.elapsedRealtime() - queuedAt;
@@ -34,10 +35,16 @@ public class MainActivityV702 extends MainActivityV701 {
             Log.i(TAG702, "call=" + call + " sync=" + syncMs + "ms uiLag=" + uiLagMs + "ms");
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         });
+
         perfHandler702.postDelayed(() -> {
-            String cb = "CB max " + maxCallbackCost700 + " ms • istek " + maxCallbackRequested700 + " ms • #" + maxCallbackSeq700;
-            Log.i(TAG702, cb);
+            int count=callbackRunCount700;
+            long total=totalCallbackCost700;
+            long max=maxCallbackCost700;
+            long req=maxCallbackRequested700;
+            int seq=maxCallbackSeq700;
+            String cb = "CB " + count + " adet • toplam " + total + " ms • max " + max + " ms";
+            Log.i(TAG702, cb + " • maxReq=" + req + "ms • #" + seq + " • queueToplam=" + totalCallbackQueue700 + "ms");
             Toast.makeText(this, cb, Toast.LENGTH_LONG).show();
-        }, 1800L);
+        }, 2200L);
     }
 }
