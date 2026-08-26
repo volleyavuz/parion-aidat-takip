@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 203
-        versionName = "4.1.01"
-        // Functional code baseline: v4.0.99 + HOME performance scheduler + single startup HOME render
+        versionCode = 205
+        versionName = "4.1.03"
+        // Functional code baseline: exact v4.1.01 safe restore after failed HOME cache experiment
         // Recovery baseline: v4.0.99
     }
 
