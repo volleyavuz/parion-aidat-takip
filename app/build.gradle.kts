@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 215
-        versionName = "4.1.13"
-        // Remove obsolete 1500 ms dashboard visual gate; keep diagnostics for verification.
+        versionCode = 217
+        versionName = "4.1.15"
+        // Dashboard direct-build experiment from stable v4.1.13; no callback batching.
         // Recovery baseline: v4.0.99
     }
 
