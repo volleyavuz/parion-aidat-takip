@@ -17,12 +17,12 @@ public class MainActivityV702 extends MainActivityV701 {
     @Override public void onCreate(Bundle b) {
         activityStart702 = SystemClock.elapsedRealtime();
         super.onCreate(b);
-        long createMs = SystemClock.elapsedRealtime() - activityStart702;
-        Log.i(TAG702, "onCreate total=" + createMs + "ms");
+        Log.i(TAG702, "onCreate total=" + (SystemClock.elapsedRealtime()-activityStart702) + "ms");
     }
 
     @Override void showHome() {
         final int call = ++homeCall702;
+        resetCallbackStats700();
         final long t0 = SystemClock.elapsedRealtime();
         super.showHome();
         final long syncMs = SystemClock.elapsedRealtime() - t0;
@@ -34,5 +34,10 @@ public class MainActivityV702 extends MainActivityV701 {
             Log.i(TAG702, "call=" + call + " sync=" + syncMs + "ms uiLag=" + uiLagMs + "ms");
             Toast.makeText(this, msg, Toast.LENGTH_LONG).show();
         });
+        perfHandler702.postDelayed(() -> {
+            String cb = "CB max " + maxCallbackCost700 + " ms • istek " + maxCallbackRequested700 + " ms • #" + maxCallbackSeq700;
+            Log.i(TAG702, cb);
+            Toast.makeText(this, cb, Toast.LENGTH_LONG).show();
+        }, 1800L);
     }
 }
