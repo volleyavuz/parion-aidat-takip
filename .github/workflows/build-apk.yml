@@ -2,7 +2,7 @@ name: Build Parion APK
 
 on:
   push:
-    branches: [ parion-v4-0-99-profile-improvements ]
+    branches: [ parion-v4-1-00-home-performance ]
   workflow_dispatch:
 
 jobs:
@@ -48,22 +48,20 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.0.99 package and signature
+      - name: Verify v4.1.00 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV699' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV699.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 201' app/build.gradle.kts
-          grep -q 'versionName = "4.0.99"' app/build.gradle.kts
-          grep -q 'extends MainActivityV698' app/src/main/java/com/parion/aidat/MainActivityV699.java
-          grep -q 'ZoomImage403' app/src/main/java/com/parion/aidat/MainActivityV699.java
-          grep -q 'GRUBU TEMİZLE' app/src/main/java/com/parion/aidat/MainActivityV699.java
-          grep -q '232,247,236' app/src/main/java/com/parion/aidat/MainActivityV699.java
+          grep -q 'MainActivityV700' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV700.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 202' app/build.gradle.kts
+          grep -q 'versionName = "4.1.00"' app/build.gradle.kts
+          grep -q 'extends MainActivityV699' app/src/main/java/com/parion/aidat/MainActivityV700.java
+          grep -q 'FastHomeRoot700' app/src/main/java/com/parion/aidat/MainActivityV700.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_0_99_Profile_Improvements.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_00_Home_Performance.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.0.99-Profile-Improvements
-          path: Parion_V4_0_99_Profile_Improvements.apk
+          name: Parion-v4.1.00-Home-Performance
+          path: Parion_V4_1_00_Home_Performance.apk
           if-no-files-found: error
