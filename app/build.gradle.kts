@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 211
-        versionName = "4.1.09"
-        // Safe restore: exact v4.1.07 behavior with a higher installable version.
+        versionCode = 212
+        versionName = "4.1.10"
+        // HOME builds FastHomeRoot directly to avoid duplicate setContentView/reparenting.
         // Recovery baseline: v4.0.99
     }
 
