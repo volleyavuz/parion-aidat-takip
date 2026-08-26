@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 199
-        versionName = "4.0.97"
-        // Functional code baseline: v4.0.94-R2 + compact absentee/tshirt dashboard fixes
+        versionCode = 200
+        versionName = "4.0.98"
+        // Functional code baseline: v4.0.94-R2 + corrected attendance/tshirt dashboard sources
         // Recovery baseline: v4.0.70
     }
 
