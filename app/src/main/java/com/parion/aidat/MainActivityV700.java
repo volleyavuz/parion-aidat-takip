@@ -1,13 +1,14 @@
 package com.parion.aidat;
 
 import android.content.Context;
-import android.graphics.drawable.Drawable;
+import android.graphics.Color;
 import android.os.SystemClock;
 import android.util.Log;
-import android.view.View;
+import android.view.Gravity;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
-/** v4.1.07 HOME callback aggregate diagnostic layer. */
+/** v4.1.10 HOME callback aggregate layer + single setContentView HOME root. */
 public class MainActivityV700 extends MainActivityV699 {
     static volatile long maxCallbackCost700=0L;
     static volatile long maxCallbackRequested700=0L;
@@ -37,16 +38,32 @@ public class MainActivityV700 extends MainActivityV699 {
     }
 
     @Override void base(String title, boolean back) {
-        super.base(title, back);
-        if (root == null || page == null || !"HOME".equalsIgnoreCase(page) || root instanceof FastHomeRoot700) return;
-        LinearLayout old = root;
+        if (page == null || !"HOME".equalsIgnoreCase(page)) {
+            super.base(title, back);
+            return;
+        }
+
+        // HOME used to call super.base(), attach a temporary LinearLayout with
+        // setContentView(), move all of its children into FastHomeRoot700 and then
+        // call setContentView() a second time. Build the final root directly instead.
         FastHomeRoot700 fast = new FastHomeRoot700(this);
-        fast.setOrientation(old.getOrientation()); fast.setGravity(old.getGravity());
-        fast.setPadding(old.getPaddingLeft(), old.getPaddingTop(), old.getPaddingRight(), old.getPaddingBottom());
-        fast.setFitsSystemWindows(old.getFitsSystemWindows()); fast.setTag(old.getTag()); fast.setId(old.getId());
-        Drawable bg = old.getBackground(); if (bg != null) fast.setBackground(bg);
-        while (old.getChildCount() > 0) { View child=old.getChildAt(0); old.removeViewAt(0); fast.addView(child); }
-        root=fast; setContentView(fast);
+        fast.setOrientation(LinearLayout.VERTICAL);
+        fast.setBackgroundColor(BG);
+        root = fast;
+        setContentView(root);
+
+        LinearLayout bar = new LinearLayout(this);
+        bar.setGravity(Gravity.CENTER_VERTICAL);
+        bar.setPadding(dp(10),dp(8),dp(10),dp(8));
+        bar.setBackgroundColor(BLACK);
+        if(back){
+            TextView b=tv("‹",36,Color.WHITE,true);
+            b.setOnClickListener(v->goBack());
+            bar.addView(b,new LinearLayout.LayoutParams(dp(52),dp(52)));
+        }
+        TextView t=tv(title,19,GOLD,true);
+        bar.addView(t,new LinearLayout.LayoutParams(0,dp(56),1));
+        root.addView(bar);
     }
 
     static final class FastHomeRoot700 extends LinearLayout {
