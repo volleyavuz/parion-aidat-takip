@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 206
-        versionName = "4.1.04"
-        // Diagnostic baseline: exact v4.1.03 behaviour + non-invasive HOME timing profiler
+        versionCode = 207
+        versionName = "4.1.05"
+        // Performance cleanup: v4.1.04 baseline, obsolete HOME delayed callbacks removed
         // Recovery baseline: v4.0.99
     }
 
@@ -36,6 +36,4 @@ android {
     }
 }
 
-dependencies {
-    implementation("androidx.work:work-runtime:2.10.1")
-}
+dependencies { implementation("androidx.work:work-runtime:2.10.1") }
