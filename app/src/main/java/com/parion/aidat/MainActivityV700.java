@@ -8,7 +8,7 @@ import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/** v4.1.10 HOME callback aggregate layer + single setContentView HOME root. */
+/** v4.1.14 HOME callback batch + single setContentView HOME root. */
 public class MainActivityV700 extends MainActivityV699 {
     static volatile long maxCallbackCost700=0L;
     static volatile long maxCallbackRequested700=0L;
@@ -65,7 +65,6 @@ public class MainActivityV700 extends MainActivityV699 {
 
     static final class FastHomeRoot700 extends LinearLayout {
         private static final String TAG="ParionHomeCallback";
-        private long slot700=0L;
         private int seq700=0;
         FastHomeRoot700(Context c){super(c);}
 
@@ -77,9 +76,11 @@ public class MainActivityV700 extends MainActivityV699 {
                 return true;
             }
             final long requested=delayMillis;
-            final long actual;
-            if(delayMillis<=120L) actual=delayMillis;
-            else { actual=72L+Math.min(220L,slot700*8L); slot700++; }
+            // Keep genuinely immediate UI posts unchanged. All inherited delayed HOME
+            // cleanup callbacks are intentionally released in one queue window. Their
+            // insertion order is preserved, but Android can traverse/layout once after
+            // the batch instead of being forced across many 8 ms-spaced frames.
+            final long actual = delayMillis<=120L ? delayMillis : 72L;
             final long scheduled=SystemClock.elapsedRealtime();
             Runnable measured=()->{
                 long started=SystemClock.elapsedRealtime();
