@@ -9,7 +9,7 @@ import android.util.Printer;
 import android.view.Choreographer;
 import android.widget.Toast;
 
-/** v4.1.12 HOME timing + callback + frame + main-looper profiler. No data mutation. */
+/** v4.1.15 HOME timing + callback + frame + looper + traversal profiler. No data mutation. */
 public class MainActivityV702 extends MainActivityV701 {
     private static final String TAG702 = "ParionHomePerf";
     private final Handler perfHandler702 = new Handler(Looper.getMainLooper());
@@ -18,12 +18,7 @@ public class MainActivityV702 extends MainActivityV701 {
     private int looperGeneration702 = 0;
 
     private static final class LoopStats702 {
-        long started=0L;
-        String label="";
-        long maxMs=0L;
-        String maxLabel="";
-        int over16=0;
-        int dispatchCount=0;
+        long started=0L; String label=""; long maxMs=0L; String maxLabel=""; int over16=0; int dispatchCount=0;
     }
 
     @Override public void onCreate(Bundle b) {
@@ -38,13 +33,9 @@ public class MainActivityV702 extends MainActivityV701 {
         Printer p=x->{
             if(generation!=looperGeneration702 || x==null)return;
             long now=SystemClock.elapsedRealtime();
-            if(x.startsWith(">>>>> Dispatching")){
-                s.started=now;s.label=x;s.dispatchCount++;
-            }else if(x.startsWith("<<<<< Finished") && s.started>0L){
-                long ms=now-s.started;
-                if(ms>16L)s.over16++;
-                if(ms>s.maxMs){s.maxMs=ms;s.maxLabel=s.label;}
-                s.started=0L;
+            if(x.startsWith(">>>>> Dispatching")){s.started=now;s.label=x;s.dispatchCount++;}
+            else if(x.startsWith("<<<<< Finished") && s.started>0L){
+                long ms=now-s.started;if(ms>16L)s.over16++;if(ms>s.maxMs){s.maxMs=ms;s.maxLabel=s.label;}s.started=0L;
             }
         };
         Looper.getMainLooper().setMessageLogging(p);
@@ -52,10 +43,7 @@ public class MainActivityV702 extends MainActivityV701 {
             if(generation!=looperGeneration702)return;
             Looper.getMainLooper().setMessageLogging(null);
             String kind=s.maxLabel;
-            if(kind.contains("Choreographer"))kind="Choreographer";
-            else if(kind.contains("ViewRoot"))kind="ViewRoot";
-            else if(kind.contains("Handler"))kind="Handler";
-            else if(kind.length()>38)kind=kind.substring(0,38);
+            if(kind.contains("Choreographer"))kind="Choreographer"; else if(kind.contains("ViewRoot"))kind="ViewRoot"; else if(kind.contains("Handler"))kind="Handler"; else if(kind.length()>38)kind=kind.substring(0,38);
             String lm="LOOPER max "+s.maxMs+" ms • >16ms "+s.over16+" • "+kind;
             Log.i(TAG702,"call="+call+" "+lm+" dispatch="+s.dispatchCount+" raw="+s.maxLabel);
             Toast.makeText(this,lm,Toast.LENGTH_LONG).show();
@@ -71,7 +59,6 @@ public class MainActivityV702 extends MainActivityV701 {
         if (syncMs < 80L) return;
 
         startLooperProbe702(call);
-
         final long queuedAt = SystemClock.elapsedRealtime();
         perfHandler702.post(() -> {
             long uiLagMs = SystemClock.elapsedRealtime() - queuedAt;
@@ -93,11 +80,15 @@ public class MainActivityV702 extends MainActivityV701 {
         });
 
         perfHandler702.postDelayed(() -> {
-            int count=callbackRunCount700;
-            long total=totalCallbackCost700;
-            long max=maxCallbackCost700;
-            long req=maxCallbackRequested700;
-            int seq=maxCallbackSeq700;
+            if(root instanceof FastHomeRoot700){
+                String tr=((FastHomeRoot700)root).traversalStats700();
+                Log.i(TAG702,"call="+call+" ROOT "+tr);
+                Toast.makeText(this,"ROOT "+tr,Toast.LENGTH_LONG).show();
+            }
+        },1900L);
+
+        perfHandler702.postDelayed(() -> {
+            int count=callbackRunCount700; long total=totalCallbackCost700; long max=maxCallbackCost700; long req=maxCallbackRequested700; int seq=maxCallbackSeq700;
             String cb = "CB " + count + " adet • toplam " + total + " ms • max " + max + " ms";
             Log.i(TAG702, cb + " • maxReq=" + req + "ms • #" + seq + " • queueToplam=" + totalCallbackQueue700 + "ms");
             Toast.makeText(this, cb, Toast.LENGTH_LONG).show();
