@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1008
-        versionName = "4.1.23"
-        // v4.1.21 stable startup/dashboard retained; registration-form upload fix + manifest registration.
+        versionCode = 1009
+        versionName = "4.1.24"
+        // v4.1.21 stable startup/dashboard retained; registration-form upload + EXIF orientation repair.
     }
 
     signingConfigs {
@@ -35,4 +35,7 @@ android {
     }
 }
 
-dependencies { implementation("androidx.work:work-runtime:2.10.1") }
+dependencies {
+    implementation("androidx.work:work-runtime:2.10.1")
+    implementation("androidx.exifinterface:exifinterface:1.3.7")
+}
