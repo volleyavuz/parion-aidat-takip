@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1007
-        versionName = "4.1.22"
-        // v4.1.21 stable startup/dashboard retained; registration-form upload repaired in V703.
+        versionCode = 1008
+        versionName = "4.1.23"
+        // v4.1.21 stable startup/dashboard retained; registration-form upload fix + manifest registration.
     }
 
     signingConfigs {
