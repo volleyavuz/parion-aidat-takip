@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-1-12-looper-profiler ]
+    branches: [ parion-v4-1-15-viewroot-profiler ]
   workflow_dispatch:
 jobs:
   build:
@@ -38,8 +38,8 @@ jobs:
       - name: Verify package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'versionCode = 215' app/build.gradle.kts
-          grep -q 'versionName = "4.1.13"' app/build.gradle.kts
-      - run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_13_Remove_Dashboard_Cover.apk
+          grep -q 'versionCode = 217' app/build.gradle.kts
+          grep -q 'versionName = "4.1.15"' app/build.gradle.kts
+      - run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_15_ViewRoot_Profiler.apk
       - uses: actions/upload-artifact@v4
-        with: { name: Parion-v4.1.13-Remove-Dashboard-Cover, path: Parion_V4_1_13_Remove_Dashboard_Cover.apk, if-no-files-found: error }
+        with: { name: Parion-v4.1.15-ViewRoot-Profiler, path: Parion_V4_1_15_ViewRoot_Profiler.apk, if-no-files-found: error }
