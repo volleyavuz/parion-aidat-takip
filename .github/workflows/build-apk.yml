@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-1-25-registration-form-force-portrait ]
+    branches: [ parion-v4-1-26-recent-payments ]
   workflow_dispatch:
 jobs:
   build:
@@ -46,19 +46,19 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.1.25 package and signature
+      - name: Verify v4.1.26 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'android:name=".MainActivityV703"' app/src/main/AndroidManifest.xml
-          grep -q 'versionCode = 1010' app/build.gradle.kts
-          grep -q 'versionName = "4.1.25"' app/build.gradle.kts
-          grep -q 'forcePortrait703' app/src/main/java/com/parion/aidat/MainActivityV703.java
-          grep -q 'showPortraitForm703' app/src/main/java/com/parion/aidat/MainActivityV703.java
+          grep -q 'android:name=".MainActivityV704"' app/src/main/AndroidManifest.xml
+          grep -q 'versionCode = 1011' app/build.gradle.kts
+          grep -q 'versionName = "4.1.26"' app/build.gradle.kts
+          grep -q 'SON ÖDEMELER' app/src/main/java/com/parion/aidat/MainActivityV704.java
+          grep -q 'payment_recent' app/src/main/java/com/parion/aidat/DbHelper.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_25_Registration_Form_Force_Portrait.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_26_Recent_Payments.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.1.25-Registration-Form-Force-Portrait
-          path: Parion_V4_1_25_Registration_Form_Force_Portrait.apk
+          name: Parion-v4.1.26-Recent-Payments
+          path: Parion_V4_1_26_Recent_Payments.apk
           if-no-files-found: error
