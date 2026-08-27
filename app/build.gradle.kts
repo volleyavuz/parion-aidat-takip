@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1026
-        versionName = "4.1.41"
-        // v4.1.40 base + dedicated Finance page from single dashboard card.
+        versionCode = 1027
+        versionName = "4.1.42"
+        // v4.1.41 base + definitive seven-card Finance page and dashboard early-payment cleanup.
     }
 
     signingConfigs {
