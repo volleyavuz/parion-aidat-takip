@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-1-37-source-fixes ]
+    branches: [ parion-v4-1-38-finance-accounting ]
   workflow_dispatch:
 jobs:
   build:
@@ -46,22 +46,22 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.1.37 package and signature
+      - name: Verify v4.1.38 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'android:name=".MainActivityV714"' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV714.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1022' app/build.gradle.kts
-          grep -q 'versionName = "4.1.37"' app/build.gradle.kts
-          grep -q 'ImageButton home=imageIcon709(R.drawable.ic_nav_home' app/src/main/java/com/parion/aidat/MainActivityV709.java
-          ! grep -q 'Tişört sayısı 0",9.5f' app/src/main/java/com/parion/aidat/MainActivityV621.java
-          grep -q 'ViewGroup.LayoutParams.WRAP_CONTENT' app/src/main/java/com/parion/aidat/MainActivityV713.java
-          grep -q 'dp(28)' app/src/main/java/com/parion/aidat/MainActivityV713.java
+          grep -q 'android:name=".MainActivityV715"' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV715.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1023' app/build.gradle.kts
+          grep -q 'versionName = "4.1.38"' app/build.gradle.kts
+          grep -q 'v715-finance-container' app/src/main/java/com/parion/aidat/MainActivityV715.java
+          grep -q 'TİŞÖRT ALMAYAN AKTİF SPORCULAR' app/src/main/java/com/parion/aidat/MainActivityV715.java
+          grep -q '2026 AİDAT HESAP EKSTRESİ' app/src/main/java/com/parion/aidat/MainActivityV715.java
+          grep -q 'Toplam Tahsilat' app/src/main/java/com/parion/aidat/MainActivityV715.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_37_Source_Fixes.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_38_Finance_Accounting.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.1.37-Source-Fixes
-          path: Parion_V4_1_37_Source_Fixes.apk
+          name: Parion-v4.1.38-Finance-Accounting
+          path: Parion_V4_1_38_Finance_Accounting.apk
           if-no-files-found: error
