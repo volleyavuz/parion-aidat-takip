@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1025
-        versionName = "4.1.40"
-        // v4.1.39 base + report period picker and definitive finance container.
+        versionCode = 1026
+        versionName = "4.1.41"
+        // v4.1.40 base + dedicated Finance page from single dashboard card.
     }
 
     signingConfigs {
