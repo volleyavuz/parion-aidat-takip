@@ -2,7 +2,6 @@ package com.parion.aidat;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
-import android.view.Choreographer;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,10 +11,12 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 /**
- * v4.1.17 - first-frame HOME reveal.
- * Keep the proven v4.0.60 visual shield only until the next render frame instead of
- * holding it for a fixed 1500 ms. This prevents stale/old HOME content from flashing
- * while removing the artificial startup delay. No DB, sync, navigation or card logic.
+ * v4.1.21 - stable HOME cover restored after deep legacy-dashboard analysis.
+ *
+ * MainActivityV36 still builds the legacy yellow dashboard synchronously and later
+ * layers replace/hide it. Keep the proven PARION visual cover for a fixed 1500 ms so
+ * those legacy/intermediate HOME states never become visible, including HOME returns.
+ * No database, sync, navigation or card calculations are changed here.
  */
 public class MainActivityV660 extends MainActivityV659 {
     private View dashboardCover660;
@@ -65,12 +66,13 @@ public class MainActivityV660 extends MainActivityV659 {
         decor.addView(cover,new ViewGroup.LayoutParams(-1,-1));
         dashboardCover660=cover;
 
-        // Remove at the next frame boundary: no fixed delay and no fade tail.
-        Choreographer.getInstance().postFrameCallback(frameTimeNanos -> {
+        cover.postDelayed(()->{
             if(dashboardCover660!=cover)return;
-            try{decor.removeView(cover);}catch(Exception ignored){}
-            if(dashboardCover660==cover)dashboardCover660=null;
-        });
+            cover.animate().alpha(0f).setDuration(140).withEndAction(()->{
+                try{decor.removeView(cover);}catch(Exception ignored){}
+                if(dashboardCover660==cover)dashboardCover660=null;
+            }).start();
+        },1500L);
     }
 
     @Override protected void onDestroy(){
