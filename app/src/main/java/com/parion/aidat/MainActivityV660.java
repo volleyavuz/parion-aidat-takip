@@ -2,6 +2,7 @@ package com.parion.aidat;
 
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.view.Choreographer;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,7 +11,12 @@ import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-/** v4.0.60 - ANR-safe visual cover: does not touch DB, page state or dashboard calculations. */
+/**
+ * v4.1.17 - first-frame HOME reveal.
+ * Keep the proven v4.0.60 visual shield only until the next render frame instead of
+ * holding it for a fixed 1500 ms. This prevents stale/old HOME content from flashing
+ * while removing the artificial startup delay. No DB, sync, navigation or card logic.
+ */
 public class MainActivityV660 extends MainActivityV659 {
     private View dashboardCover660;
 
@@ -59,14 +65,12 @@ public class MainActivityV660 extends MainActivityV659 {
         decor.addView(cover,new ViewGroup.LayoutParams(-1,-1));
         dashboardCover660=cover;
 
-        // Purely visual gate. No database work and no page-state changes.
-        cover.postDelayed(()->{
+        // Remove at the next frame boundary: no fixed delay and no fade tail.
+        Choreographer.getInstance().postFrameCallback(frameTimeNanos -> {
             if(dashboardCover660!=cover)return;
-            cover.animate().alpha(0f).setDuration(140).withEndAction(()->{
-                try{decor.removeView(cover);}catch(Exception ignored){}
-                if(dashboardCover660==cover)dashboardCover660=null;
-            }).start();
-        },1500);
+            try{decor.removeView(cover);}catch(Exception ignored){}
+            if(dashboardCover660==cover)dashboardCover660=null;
+        });
     }
 
     @Override protected void onDestroy(){
