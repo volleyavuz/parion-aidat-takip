@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1022
-        versionName = "4.1.37"
-        // v4.1.36 base + source-level dashboard visual fixes.
+        versionCode = 1023
+        versionName = "4.1.38"
+        // v4.1.37 base + nested finance dashboard, accounting statement and tshirt cleanup.
     }
 
     signingConfigs {
