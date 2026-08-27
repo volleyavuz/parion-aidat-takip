@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1009
-        versionName = "4.1.24"
-        // v4.1.21 stable startup/dashboard retained; registration-form upload + EXIF orientation repair.
+        versionCode = 1010
+        versionName = "4.1.25"
+        // v4.1.21 stable startup/dashboard retained; registration forms forced to portrait on upload and display.
     }
 
     signingConfigs {
