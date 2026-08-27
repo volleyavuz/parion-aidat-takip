@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1017
-        versionName = "4.1.32"
-        // v4.1.31 base + unified home icon + restored full settings menu.
+        versionCode = 1018
+        versionName = "4.1.33"
+        // v4.1.32 base + early payment card, profile payment cleanup, attendance colors, nav tint fix.
     }
 
     signingConfigs {
