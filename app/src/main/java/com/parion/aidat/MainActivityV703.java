@@ -4,8 +4,13 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.Matrix;
 import android.net.Uri;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
 import androidx.exifinterface.media.ExifInterface;
 import java.io.*;
 import java.lang.reflect.Field;
@@ -13,12 +18,11 @@ import java.lang.reflect.Method;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import org.json.JSONObject;
 
-/** v4.1.24 - registration-form upload + EXIF orientation repair only. Keeps v4.1.21 startup/dashboard untouched. */
+/** v4.1.25 - registration forms are normalized to portrait both on upload and display. */
 public class MainActivityV703 extends MainActivityV702 {
     private static final int REQ_CLOUD_FORM_703=4051;
     private final ExecutorService formExec703=Executors.newSingleThreadExecutor();
@@ -31,6 +35,24 @@ public class MainActivityV703 extends MainActivityV702 {
             toast("Kayıt formu yükleniyor...");
             formExec703.execute(()->uploadRegistrationForm703(id,uri));
         }else finishMediaReturn703(id);
+    }
+
+    @Override void showProfile(long id){
+        super.showProfile(id);
+        patchPortraitFormViewer703(root,id);
+    }
+
+    private void patchPortraitFormViewer703(View v,long id){
+        if(!(v instanceof ViewGroup))return;
+        ViewGroup g=(ViewGroup)v;
+        for(int i=0;i<g.getChildCount();i++){
+            View c=g.getChildAt(i);
+            if(c instanceof Button){
+                String s=String.valueOf(((Button)c).getText());
+                if(s.contains("KAYIT FORMUNU GÖRÜNTÜLE"))c.setOnClickListener(x->showPortraitForm703(id));
+            }
+            patchPortraitFormViewer703(c,id);
+        }
     }
 
     private void uploadRegistrationForm703(long id,Uri uri){
@@ -88,7 +110,9 @@ public class MainActivityV703 extends MainActivityV702 {
 
         Bitmap corrected=applyExifOrientation703(bm,orientation);
         if(corrected!=bm)bm.recycle();
-        ByteArrayOutputStream out=new ByteArrayOutputStream();corrected.compress(Bitmap.CompressFormat.JPEG,quality,out);corrected.recycle();return out.toByteArray();
+        Bitmap portrait=forcePortrait703(corrected);
+        if(portrait!=corrected)corrected.recycle();
+        ByteArrayOutputStream out=new ByteArrayOutputStream();portrait.compress(Bitmap.CompressFormat.JPEG,quality,out);portrait.recycle();return out.toByteArray();
     }
 
     private Bitmap applyExifOrientation703(Bitmap src,int orientation){
@@ -105,6 +129,50 @@ public class MainActivityV703 extends MainActivityV702 {
         }
         try{return Bitmap.createBitmap(src,0,0,src.getWidth(),src.getHeight(),m,true);}catch(Exception e){return src;}
     }
+
+    private Bitmap forcePortrait703(Bitmap src){
+        if(src==null||src.getHeight()>=src.getWidth())return src;
+        Matrix m=new Matrix();m.setRotate(90f);
+        try{return Bitmap.createBitmap(src,0,0,src.getWidth(),src.getHeight(),m,true);}catch(Exception e){return src;}
+    }
+
+    private void showPortraitForm703(long id){
+        String path=formMap413().get(id);
+        if(path==null||path.trim().isEmpty()){toast("Kayıt formu bulunamadı.");return;}
+        formExec703.execute(()->{
+            Bitmap decoded=null;
+            try{
+                String token=cloudPrefs==null?"":cloudPrefs.getString("access_token","");
+                if(token.isEmpty())throw new IOException("Oturum anahtarı bulunamadı.");
+                byte[] data=downloadForm703(path,token);
+                BitmapFactory.Options o=new BitmapFactory.Options();o.inPreferredConfig=Bitmap.Config.RGB_565;
+                decoded=BitmapFactory.decodeByteArray(data,0,data.length,o);
+                if(decoded==null)throw new IOException("Form görseli okunamadı.");
+                Bitmap shown=forcePortrait703(decoded);
+                if(shown!=decoded)decoded.recycle();
+                final Bitmap result=shown;
+                runOnUiThread(()->{
+                    ZoomImage403 iv=new ZoomImage403(this);iv.setImageBitmap(result);
+                    FrameLayout f=new FrameLayout(this);f.setBackgroundColor(Color.BLACK);f.addView(iv,new FrameLayout.LayoutParams(-1,dp(650)));
+                    AlertDialog d=new AlertDialog.Builder(this).setTitle("KAYIT FORMU").setView(f).setPositiveButton("KAPAT",null).create();
+                    d.setOnDismissListener(x->result.recycle());d.show();
+                });
+            }catch(Exception e){
+                if(decoded!=null&&!decoded.isRecycled())decoded.recycle();
+                runOnUiThread(()->toast("Kayıt formu açılamadı. İnternet bağlantısını kontrol edin."));
+            }
+        });
+    }
+
+    private byte[] downloadForm703(String path,String token)throws Exception{
+        URL u=new URL(SUPABASE_URL+"/storage/v1/object/registration-forms/"+encode703(path));
+        HttpURLConnection h=(HttpURLConnection)u.openConnection();h.setConnectTimeout(15000);h.setReadTimeout(30000);
+        h.setRequestProperty("apikey",SUPABASE_KEY);h.setRequestProperty("Authorization","Bearer "+token);
+        int code=h.getResponseCode();if(code<200||code>=300){String err=read703(h.getErrorStream());h.disconnect();throw new IOException("HTTP "+code+" "+err);}
+        byte[] data=readBytes703(h.getInputStream());h.disconnect();return data;
+    }
+
+    private byte[] readBytes703(InputStream in)throws Exception{ByteArrayOutputStream out=new ByteArrayOutputStream();try(InputStream x=in){byte[] b=new byte[16384];int n;while((n=x.read(b))>0)out.write(b,0,n);}return out.toByteArray();}
 
     private void showFormError703(String detail,long id){
         String msg="Kayıt formu yüklenemedi.\n\n"+clean703(detail)+"\n\nBu pencere siz kapatana kadar ekranda kalır.";
