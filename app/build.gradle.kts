@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1020
-        versionName = "4.1.35"
-        // v4.1.34 base + home nav tint, tshirt subtitle cleanup, modern absentee engine.
+        versionCode = 1021
+        versionName = "4.1.36"
+        // v4.1.35 base + dashboard visual-only polish.
     }
 
     signingConfigs {
