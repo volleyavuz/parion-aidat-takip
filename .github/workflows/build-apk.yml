@@ -51,14 +51,14 @@ jobs:
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
           grep -q 'MainActivityV702' app/src/main/AndroidManifest.xml
-          grep -q 'versionCode = 218' app/build.gradle.kts
+          grep -q 'versionCode = 1000' app/build.gradle.kts
           grep -q 'versionName = "4.1.16"' app/build.gradle.kts
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_16_From_V13_Official.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_16_From_V13_HighCode.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.1.16-From-v13-Official
-          path: Parion_V4_1_16_From_V13_Official.apk
+          name: Parion-v4.1.16-From-v13-HighCode
+          path: Parion_V4_1_16_From_V13_HighCode.apk
           if-no-files-found: error
-# trigger: 4.1.16 from 4.1.13 stable source
+# trigger: 4.1.16 high-code install compatibility test
