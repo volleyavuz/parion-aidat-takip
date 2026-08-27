@@ -25,22 +25,24 @@ public class MainActivityV713 extends MainActivityV712 {
     private void fixHomeIcon713(View v){
         if(v==null)return;CharSequence cd=v.getContentDescription();
         if(cd!=null&&"Anasayfa".equalsIgnoreCase(cd.toString())&&v instanceof ImageButton){
-            ImageButton b=(ImageButton)v;b.clearColorFilter();b.setImageResource(R.drawable.ic_nav_home);b.setColorFilter(NAV_713);b.setImageTintList(android.content.res.ColorStateList.valueOf(NAV_713));b.setScaleType(ImageView.ScaleType.CENTER_INSIDE);b.setPadding(dp(12),dp(12),dp(12),dp(12));
+            ImageButton b=(ImageButton)v;b.clearColorFilter();b.setImageResource(R.drawable.ic_nav_home);b.setColorFilter(NAV_713);b.setImageTintList(android.content.res.ColorStateList.valueOf(NAV_713));b.setImageAlpha(148);b.setScaleType(ImageView.ScaleType.CENTER_INSIDE);b.setPadding(dp(12),dp(12),dp(12),dp(12));
         }
         if(v instanceof ViewGroup){ViewGroup g=(ViewGroup)v;for(int i=0;i<g.getChildCount();i++)fixHomeIcon713(g.getChildAt(i));}
     }
 
     private void removeTshirtSubtitle713(View v){
-        View card=findTag713(v,"v621-tshirt-card");if(!(card instanceof ViewGroup))return;ViewGroup g=(ViewGroup)card;
-        for(int i=g.getChildCount()-1;i>=0;i--){View c=g.getChildAt(i);if(c instanceof TextView){String n=norm713(String.valueOf(((TextView)c).getText()));if(n.contains("TİŞÖRT ADEDİ")||n.contains("TİŞÖRT SAYISI")||n.contains("AKTİF • TİŞÖRT")){g.removeViewAt(i);}}}
+        View card=findTag713(v,"v621-tshirt-card");if(!(card instanceof ViewGroup))return;removeTshirtText713((ViewGroup)card);
+    }
+    private void removeTshirtText713(ViewGroup g){
+        for(int i=g.getChildCount()-1;i>=0;i--){View c=g.getChildAt(i);if(c instanceof TextView){String n=norm713(String.valueOf(((TextView)c).getText()));if(n.contains("VERİLEN TİŞÖRT ADEDİ")||n.contains("TİŞÖRT ADEDİ")||n.contains("TİŞÖRT SAYISI")||n.contains("AKTİF • TİŞÖRT")){g.removeViewAt(i);continue;}}if(c instanceof ViewGroup)removeTshirtText713((ViewGroup)c);}
     }
 
     private void replaceAbsentees713(){
         if(root==null||!"HOME".equals(page))return;LinearLayout box=homeBox713();if(box==null)return;
         for(int i=box.getChildCount()-1;i>=0;i--){View v=box.getChildAt(i);if(contains713(v,"DEVAMSIZLAR"))box.removeViewAt(i);}
         ArrayList<Ab713> list=absentees713();
-        LinearLayout card=new LinearLayout(this);card.setTag("v713-absentees");card.setOrientation(LinearLayout.VERTICAL);card.setGravity(Gravity.CENTER);card.setPadding(dp(12),dp(12),dp(12),dp(12));GradientDrawable bg=new GradientDrawable();bg.setColor(Color.WHITE);bg.setCornerRadius(dp(16));bg.setStroke(dp(1),RED_713);card.setBackground(bg);card.setElevation(dp(2));
-        TextView n=tv(String.valueOf(list.size()),28,RED_713,true);n.setGravity(Gravity.CENTER);card.addView(n);TextView t=tv("DEVAMSIZLAR",11,Color.rgb(45,45,45),true);t.setGravity(Gravity.CENTER);card.addView(t);TextView s=tv("Son 4 gerçek antrenmanın tamamına gelmeyenler",9,Color.rgb(105,105,105),false);s.setGravity(Gravity.CENTER);card.addView(s);card.setOnClickListener(v->showAbsentees713());card.setClickable(true);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(116));lp.setMargins(dp(4),dp(10),dp(4),dp(8));box.addView(card,lp);
+        LinearLayout card=new LinearLayout(this);card.setTag("v713-absentees");card.setOrientation(LinearLayout.VERTICAL);card.setGravity(Gravity.CENTER);card.setPadding(dp(12),dp(16),dp(12),dp(20));card.setMinimumHeight(dp(138));GradientDrawable bg=new GradientDrawable();bg.setColor(Color.WHITE);bg.setCornerRadius(dp(16));bg.setStroke(dp(1),RED_713);card.setBackground(bg);card.setElevation(dp(2));
+        TextView n=tv(String.valueOf(list.size()),28,RED_713,true);n.setGravity(Gravity.CENTER);card.addView(n);TextView t=tv("DEVAMSIZLAR",11,Color.rgb(45,45,45),true);t.setGravity(Gravity.CENTER);card.addView(t);TextView s=tv("Son 4 gerçek antrenmanın tamamına gelmeyenler",9,Color.rgb(105,105,105),false);s.setGravity(Gravity.CENTER);card.addView(s);card.setOnClickListener(v->showAbsentees713());card.setClickable(true);LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,ViewGroup.LayoutParams.WRAP_CONTENT);lp.setMargins(dp(4),dp(10),dp(4),dp(28));box.addView(card,lp);
     }
 
     private ArrayList<Ab713> absentees713(){
