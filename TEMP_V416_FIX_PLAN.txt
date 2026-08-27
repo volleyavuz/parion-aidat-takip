@@ -1,0 +1,1 @@
+v4.1.39: source-level tshirt cleanup, robust finance container, complete accounting statement metadata/material/guardian notice.
