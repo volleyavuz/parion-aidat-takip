@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1016
-        versionName = "4.1.31"
-        // v4.1.30 base + persistent dashboard bottom nav + normalized icon sizing/colors.
+        versionCode = 1017
+        versionName = "4.1.32"
+        // v4.1.31 base + unified home icon + restored full settings menu.
     }
 
     signingConfigs {
