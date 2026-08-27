@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1012
-        versionName = "4.1.27"
-        // v4.1.26 stable base + collection card/filter + recent-payments navigation fix.
+        versionCode = 1013
+        versionName = "4.1.28"
+        // v4.1.27 stable base + payment DatePicker + 4-session absentee dashboard logic.
     }
 
     signingConfigs {
