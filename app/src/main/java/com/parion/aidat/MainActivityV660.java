@@ -12,21 +12,22 @@ import android.widget.ProgressBar;
 import android.widget.TextView;
 
 /**
- * v4.1.17 - first-frame HOME reveal.
- * Keep the proven v4.0.60 visual shield only until the next render frame instead of
- * holding it for a fixed 1500 ms. This prevents stale/old HOME content from flashing
- * while removing the artificial startup delay. No DB, sync, navigation or card logic.
+ * v4.1.19 - pre-HOME visual shield.
+ * Show the white PARION cover before the legacy HOME chain starts rendering, then
+ * remove it at the next frame after the current HOME build finishes. This prevents
+ * the obsolete yellow V36 dashboard from ever becoming visible during startup or
+ * navigation back to HOME. No DB, sync, navigation or dashboard-card logic changes.
  */
 public class MainActivityV660 extends MainActivityV659 {
     private View dashboardCover660;
 
     @Override void showHome(){
+        final View cover=showDashboardCover660();
         super.showHome();
-        showDashboardCover660();
+        removeDashboardCoverOnNextFrame660(cover);
     }
 
-    private void showDashboardCover660(){
-        if(root==null)return;
+    private View showDashboardCover660(){
         ViewGroup decor=(ViewGroup)getWindow().getDecorView();
         if(dashboardCover660!=null){
             try{decor.removeView(dashboardCover660);}catch(Exception ignored){}
@@ -64,8 +65,12 @@ public class MainActivityV660 extends MainActivityV659 {
         cover.addView(center,cp);
         decor.addView(cover,new ViewGroup.LayoutParams(-1,-1));
         dashboardCover660=cover;
+        return cover;
+    }
 
-        // Remove at the next frame boundary: no fixed delay and no fade tail.
+    private void removeDashboardCoverOnNextFrame660(View cover){
+        if(cover==null)return;
+        ViewGroup decor=(ViewGroup)getWindow().getDecorView();
         Choreographer.getInstance().postFrameCallback(frameTimeNanos -> {
             if(dashboardCover660!=cover)return;
             try{decor.removeView(cover);}catch(Exception ignored){}
