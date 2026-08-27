@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-1-43-finance-polish ]
+    branches: [ parion-v4-1-44-due-accrual ]
   workflow_dispatch:
 jobs:
   build:
@@ -39,21 +39,20 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.1.43 package and signature
+      - name: Verify v4.1.44 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV720' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV720.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1028' app/build.gradle.kts
-          grep -q 'versionName = "4.1.43"' app/build.gradle.kts
-          grep -q 'FIN_TARGET_720' app/src/main/java/com/parion/aidat/MainActivityV720.java
-          grep -q 'FIN_OVERDUE_720' app/src/main/java/com/parion/aidat/MainActivityV720.java
-          grep -q 'FIN_MATERIAL_720' app/src/main/java/com/parion/aidat/MainActivityV720.java
-          grep -q 'EKSİK ÖDEME GİR' app/src/main/java/com/parion/aidat/MainActivityV720.java
+          grep -q 'MainActivityV721' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV721.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1029' app/build.gradle.kts
+          grep -q 'versionName = "4.1.44"' app/build.gradle.kts
+          grep -q 'due.after(now)' app/src/main/java/com/parion/aidat/MainActivityV721.java
+          grep -q 'EKSİK ÖDEME GİR' app/src/main/java/com/parion/aidat/MainActivityV721.java
+          grep -q 'ic_menu_view' app/src/main/java/com/parion/aidat/MainActivityV721.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_43_Finance_Polish.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_44_Due_Accrual.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.1.43-Finance-Polish
-          path: Parion_V4_1_43_Finance_Polish.apk
+          name: Parion-v4.1.44-Due-Accrual
+          path: Parion_V4_1_44_Due_Accrual.apk
           if-no-files-found: error
