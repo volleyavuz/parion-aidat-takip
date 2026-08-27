@@ -3,36 +3,17 @@ plugins { id("com.android.application") }
 android {
     namespace = "com.parion.aidat"
     compileSdk = 36
-
     defaultConfig {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1027
-        versionName = "4.1.42"
-        // v4.1.41 base + definitive seven-card Finance page and dashboard early-payment cleanup.
+        versionCode = 1028
+        versionName = "4.1.43"
+        // Finance page visual polish, direct core actions and finance-aware back navigation.
     }
-
-    signingConfigs {
-        create("release") {
-            storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks")
-            storePassword = System.getenv("PARION_STORE_PASSWORD")
-            keyAlias = System.getenv("PARION_KEY_ALIAS")
-            keyPassword = System.getenv("PARION_KEY_PASSWORD")
-        }
-    }
-
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("release")
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
+    signingConfigs { create("release") { storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks"); storePassword = System.getenv("PARION_STORE_PASSWORD"); keyAlias = System.getenv("PARION_KEY_ALIAS"); keyPassword = System.getenv("PARION_KEY_PASSWORD") } }
+    buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
+    compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
 }
 
 dependencies {
