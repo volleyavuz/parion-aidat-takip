@@ -16,6 +16,7 @@
 <activity android:name=".MainActivityV709" android:screenOrientation="portrait" android:exported="false" />
 <activity android:name=".MainActivityV710" android:screenOrientation="portrait" android:exported="false" />
 <activity android:name=".MainActivityV711" android:screenOrientation="portrait" android:exported="false" />
+<activity android:name=".MainActivityV712" android:screenOrientation="portrait" android:exported="false" />
 <activity android:name=".SplashActivity" android:screenOrientation="portrait" android:exported="true">
 <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
 </activity>
