@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-1-18-remove-profiler ]
+    branches: [ parion-v4-1-20-overlay-shield ]
   workflow_dispatch:
 jobs:
   build:
@@ -46,19 +46,19 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.1.18 package and signature
+      - name: Verify v4.1.20 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
           grep -q 'MainActivityV702' app/src/main/AndroidManifest.xml
-          grep -q 'versionCode = 1003' app/build.gradle.kts
-          grep -q 'versionName = "4.1.18"' app/build.gradle.kts
-          grep -q 'postFrameCallback' app/src/main/java/com/parion/aidat/MainActivityV660.java
+          grep -q 'versionCode = 1005' app/build.gradle.kts
+          grep -q 'versionName = "4.1.20"' app/build.gradle.kts
+          grep -q 'ViewGroupOverlay' app/src/main/java/com/parion/aidat/MainActivityV660.java
           ! grep -q 'Toast.makeText' app/src/main/java/com/parion/aidat/MainActivityV702.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_18_Remove_Profiler.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_20_Overlay_Shield.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.1.18-Remove-Profiler
-          path: Parion_V4_1_18_Remove_Profiler.apk
+          name: Parion-v4.1.20-Overlay-Shield
+          path: Parion_V4_1_20_Overlay_Shield.apk
           if-no-files-found: error
