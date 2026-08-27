@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1010
-        versionName = "4.1.25"
-        // v4.1.21 stable startup/dashboard retained; registration forms forced to portrait on upload and display.
+        versionCode = 1011
+        versionName = "4.1.26"
+        // v4.1.25 stable base + recent payments dashboard card ordered by real save time.
     }
 
     signingConfigs {
