@@ -10,7 +10,7 @@ import android.view.*;
 import android.widget.*;
 import java.util.*;
 
-/** v4.1.33 - early-payment card, pre-2026 payment cleanup, attendance group colors, nav tint fix. */
+/** v4.1.33 - pre-2026 payment cleanup, attendance group colors, nav tint fix. Dashboard early-payment card disabled at source in v4.1.46. */
 public class MainActivityV711 extends MainActivityV710 {
     private static final int NAV_711=Color.rgb(78,78,78);
     private static final int EARLY_711=Color.rgb(72,103,132);
@@ -26,7 +26,9 @@ public class MainActivityV711 extends MainActivityV710 {
 
     @Override void showHome(){
         super.showHome();
-        if(root!=null)root.post(()->{fixNavTint711(root);installEarlyPaymentCard711();root.post(()->{fixNavTint711(root);installEarlyPaymentCard711();});});
+        // v4.1.46: DO NOT create the standalone dashboard Early Payment card.
+        // Early payment remains available only from the dedicated Finance page.
+        if(root!=null)root.post(()->fixNavTint711(root));
     }
 
     @Override void showProfile(long id){
@@ -54,19 +56,8 @@ public class MainActivityV711 extends MainActivityV710 {
     private boolean eq711(CharSequence a,String b){return a!=null&&b.equalsIgnoreCase(a.toString());}
 
     private void installEarlyPaymentCard711(){
-        if(root==null||!"HOME".equals(page))return;
-        LinearLayout fresh=findFresh711(root);if(fresh==null)return;
-        for(int i=fresh.getChildCount()-1;i>=0;i--)if("v711-early-payment".equals(fresh.getChildAt(i).getTag()))fresh.removeViewAt(i);
-        View anchor=findTop711(fresh,"BU AYKİ TAHSİLAT");
-        if(anchor==null)anchor=findTop711(fresh,"AYLIK HEDEF");
-        int at=anchor==null?Math.min(2,fresh.getChildCount()):fresh.indexOfChild(anchor)+1;
-        LinearLayout card=new LinearLayout(this);card.setTag("v711-early-payment");card.setOrientation(LinearLayout.VERTICAL);card.setGravity(Gravity.CENTER);card.setPadding(dp(10),dp(10),dp(10),dp(10));
-        GradientDrawable bg=new GradientDrawable();bg.setColor(Color.WHITE);bg.setCornerRadius(dp(16));card.setBackground(bg);card.setElevation(dp(2));
-        ImageView icon=new ImageView(this);icon.setImageResource(android.R.drawable.ic_input_add);icon.setColorFilter(EARLY_711);icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);card.addView(icon,new LinearLayout.LayoutParams(dp(24),dp(24)));
-        TextView t=new TextView(this);t.setText("ERKEN ÖDEME GİR");t.setTextSize(11.2f);t.setTextColor(Color.rgb(45,45,45));t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);t.setGravity(Gravity.CENTER);card.addView(t);
-        TextView s=new TextView(this);s.setText("Vadesi gelmemiş aylar için aidat kaydı");s.setTextSize(9.5f);s.setTextColor(Color.rgb(105,105,105));s.setGravity(Gravity.CENTER);card.addView(s);
-        card.setClickable(true);card.setOnClickListener(v->showEarlyPayments711());
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(112));lp.setMargins(dp(4),0,dp(4),dp(9));fresh.addView(card,Math.min(at,fresh.getChildCount()),lp);
+        // Disabled permanently for HOME in v4.1.46. Kept only as dead legacy code so older
+        // source layers remain binary-compatible; showHome() no longer calls this method.
     }
 
     private void showEarlyPayments711(){
@@ -119,8 +110,6 @@ public class MainActivityV711 extends MainActivityV710 {
     }
     private int darken711(int c){return Color.rgb(Math.max(0,Color.red(c)-32),Math.max(0,Color.green(c)-32),Math.max(0,Color.blue(c)-32));}
 
-    private LinearLayout findFresh711(View v){if(v instanceof LinearLayout&&"v657-fresh".equals(v.getTag()))return(LinearLayout)v;if(v instanceof ViewGroup){ViewGroup g=(ViewGroup)v;for(int i=0;i<g.getChildCount();i++){LinearLayout r=findFresh711(g.getChildAt(i));if(r!=null)return r;}}return null;}
-    private View findTop711(LinearLayout box,String needle){for(int i=0;i<box.getChildCount();i++)if(text711(box.getChildAt(i)).toUpperCase(new Locale("tr","TR")).contains(needle))return box.getChildAt(i);return null;}
     private LinearLayout findScrollBox711(View v){if(v instanceof ScrollView){ScrollView s=(ScrollView)v;if(s.getChildCount()>0&&s.getChildAt(0) instanceof LinearLayout)return(LinearLayout)s.getChildAt(0);}if(v instanceof ViewGroup){ViewGroup g=(ViewGroup)v;for(int i=0;i<g.getChildCount();i++){LinearLayout r=findScrollBox711(g.getChildAt(i));if(r!=null)return r;}}return null;}
     private String text711(View v){StringBuilder s=new StringBuilder();collectText711(v,s);return s.toString();}
     private void collectText711(View v,StringBuilder s){if(v instanceof TextView)s.append(' ').append(((TextView)v).getText());if(v instanceof ViewGroup){ViewGroup g=(ViewGroup)v;for(int i=0;i<g.getChildCount();i++)collectText711(g.getChildAt(i),s);}}
