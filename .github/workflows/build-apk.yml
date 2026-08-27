@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-1-33-early-payment-profile-attendance ]
+    branches: [ parion-v4-1-34-attendance-modern-restore ]
   workflow_dispatch:
 jobs:
   build:
@@ -46,22 +46,23 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.1.33 package and signature
+      - name: Verify v4.1.34 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'android:name=".MainActivityV711"' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV711.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1018' app/build.gradle.kts
-          grep -q 'versionName = "4.1.33"' app/build.gradle.kts
-          grep -q 'ERKEN ÖDEME GİR' app/src/main/java/com/parion/aidat/MainActivityV711.java
-          grep -q 'hidePre2026PaymentViews711' app/src/main/java/com/parion/aidat/MainActivityV711.java
-          grep -q 'colorAttendanceGroups711' app/src/main/java/com/parion/aidat/MainActivityV711.java
-          grep -q 'setImageTintList' app/src/main/java/com/parion/aidat/MainActivityV711.java
+          grep -q 'android:name=".MainActivityV712"' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV712.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1019' app/build.gradle.kts
+          grep -q 'versionName = "4.1.34"' app/build.gradle.kts
+          grep -q 'showAttendanceGroups631' app/src/main/java/com/parion/aidat/MainActivityV712.java
+          grep -q 'ATTENDANCE_GROUPS_631' app/src/main/java/com/parion/aidat/MainActivityV712.java
+          grep -q 'MİNİ' app/src/main/java/com/parion/aidat/MainActivityV712.java
+          grep -q 'ATTENDANCE_MONTH_635' app/src/main/java/com/parion/aidat/MainActivityV635.java
+          grep -q 'setAthletePhoto' app/src/main/java/com/parion/aidat/MainActivityV637.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_33_Early_Payment_Profile_Attendance.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_34_Attendance_Modern_Restore.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.1.33-Early-Payment-Profile-Attendance
-          path: Parion_V4_1_33_Early_Payment_Profile_Attendance.apk
+          name: Parion-v4.1.34-Attendance-Modern-Restore
+          path: Parion_V4_1_34_Attendance_Modern_Restore.apk
           if-no-files-found: error
