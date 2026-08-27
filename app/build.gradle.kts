@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1015
-        versionName = "4.1.30"
-        // v4.1.29 stable base + restored four-icon bottom navigation and removed left rail.
+        versionCode = 1016
+        versionName = "4.1.31"
+        // v4.1.30 base + persistent dashboard bottom nav + normalized icon sizing/colors.
     }
 
     signingConfigs {
