@@ -1,6 +1,7 @@
 package com.parion.aidat;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.Color;
 import android.os.SystemClock;
 import android.util.Log;
@@ -8,7 +9,7 @@ import android.view.Gravity;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-/** v4.1.10 HOME callback aggregate layer + single setContentView HOME root. */
+/** v4.1.15 HOME callback aggregate + root measure/layout/draw profiler. */
 public class MainActivityV700 extends MainActivityV699 {
     static volatile long maxCallbackCost700=0L;
     static volatile long maxCallbackRequested700=0L;
@@ -67,7 +68,37 @@ public class MainActivityV700 extends MainActivityV699 {
         private static final String TAG="ParionHomeCallback";
         private long slot700=0L;
         private int seq700=0;
+        private long measureTotal700=0L, layoutTotal700=0L, drawTotal700=0L;
+        private long measureMax700=0L, layoutMax700=0L, drawMax700=0L;
+        private int measureCount700=0, layoutCount700=0, drawCount700=0;
         FastHomeRoot700(Context c){super(c);}
+
+        @Override protected void onMeasure(int widthMeasureSpec,int heightMeasureSpec){
+            long t=SystemClock.elapsedRealtime();
+            super.onMeasure(widthMeasureSpec,heightMeasureSpec);
+            long d=SystemClock.elapsedRealtime()-t;
+            measureTotal700+=d;measureCount700++;if(d>measureMax700)measureMax700=d;
+        }
+
+        @Override protected void onLayout(boolean changed,int l,int t,int r,int b){
+            long s=SystemClock.elapsedRealtime();
+            super.onLayout(changed,l,t,r,b);
+            long d=SystemClock.elapsedRealtime()-s;
+            layoutTotal700+=d;layoutCount700++;if(d>layoutMax700)layoutMax700=d;
+        }
+
+        @Override protected void dispatchDraw(Canvas canvas){
+            long s=SystemClock.elapsedRealtime();
+            super.dispatchDraw(canvas);
+            long d=SystemClock.elapsedRealtime()-s;
+            drawTotal700+=d;drawCount700++;if(d>drawMax700)drawMax700=d;
+        }
+
+        String traversalStats700(){
+            return "M "+measureTotal700+"/"+measureMax700+"ms x"+measureCount700+
+                    " • L "+layoutTotal700+"/"+layoutMax700+"ms x"+layoutCount700+
+                    " • D "+drawTotal700+"/"+drawMax700+"ms x"+drawCount700;
+        }
 
         @Override public boolean postDelayed(Runnable action,long delayMillis){
             if(action==null)return false;
