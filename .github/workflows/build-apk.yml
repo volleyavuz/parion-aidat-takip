@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-1-39-report-finance-fix ]
+    branches: [ parion-v4-1-40-filter-finance-card ]
   workflow_dispatch:
 jobs:
   build:
@@ -46,23 +46,21 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.1.39 package and signature
+      - name: Verify v4.1.40 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'android:name=".MainActivityV716"' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV716.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1024' app/build.gradle.kts
-          grep -q 'versionName = "4.1.39"' app/build.gradle.kts
-          grep -q 'v716-finance-container' app/src/main/java/com/parion/aidat/MainActivityV716.java
-          grep -q 'Oluşturma Tarihi' app/src/main/java/com/parion/aidat/MainActivityV716.java
-          grep -q 'TİŞÖRT / MALZEME TAHSİLAT ÖZETİ' app/src/main/java/com/parion/aidat/MainActivityV716.java
-          grep -q 'Sayın Velimiz' app/src/main/java/com/parion/aidat/MainActivityV716.java
-          grep -q 'VERİLEN TİŞÖRT ADEDİ 0' app/src/main/java/com/parion/aidat/MainActivityV716.java
+          grep -q 'android:name=".MainActivityV717"' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV717.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1025' app/build.gradle.kts
+          grep -q 'versionName = "4.1.40"' app/build.gradle.kts
+          grep -q '"3 AY","6 AY","1 YIL"' app/src/main/java/com/parion/aidat/MainActivityV717.java
+          grep -q 'ÖDEME VADESİ GELENLER' app/src/main/java/com/parion/aidat/MainActivityV717.java
+          grep -q 'v717-finance-container' app/src/main/java/com/parion/aidat/MainActivityV717.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_39_Report_Finance_Fix.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_40_Filter_Finance_Card.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.1.39-Report-Finance-Fix
-          path: Parion_V4_1_39_Report_Finance_Fix.apk
+          name: Parion-v4.1.40-Filter-Finance-Card
+          path: Parion_V4_1_40_Filter_Finance_Card.apk
           if-no-files-found: error
