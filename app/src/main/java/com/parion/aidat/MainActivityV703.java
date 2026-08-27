@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.net.Uri;
+import androidx.exifinterface.media.ExifInterface;
 import java.io.*;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -16,7 +18,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import org.json.JSONObject;
 
-/** v4.1.22 - registration-form upload repair only. Keeps v4.1.21 startup/dashboard untouched. */
+/** v4.1.24 - registration-form upload + EXIF orientation repair only. Keeps v4.1.21 startup/dashboard untouched. */
 public class MainActivityV703 extends MainActivityV702 {
     private static final int REQ_CLOUD_FORM_703=4051;
     private final ExecutorService formExec703=Executors.newSingleThreadExecutor();
@@ -69,13 +71,39 @@ public class MainActivityV703 extends MainActivityV702 {
     }
 
     private byte[] optimizedJpeg703(Uri uri,int target,int quality)throws Exception{
+        int orientation=ExifInterface.ORIENTATION_NORMAL;
+        try(InputStream exifIn=getContentResolver().openInputStream(uri)){
+            if(exifIn!=null){
+                ExifInterface exif=new ExifInterface(exifIn);
+                orientation=exif.getAttributeInt(ExifInterface.TAG_ORIENTATION,ExifInterface.ORIENTATION_NORMAL);
+            }
+        }catch(Exception ignored){}
+
         BitmapFactory.Options b=new BitmapFactory.Options();b.inJustDecodeBounds=true;
         try(InputStream in=getContentResolver().openInputStream(uri)){BitmapFactory.decodeStream(in,null,b);}
         int sample=1;while(b.outWidth>0&&b.outHeight>0&&(b.outWidth/sample>target*2||b.outHeight/sample>target*2))sample*=2;
         BitmapFactory.Options o=new BitmapFactory.Options();o.inSampleSize=Math.max(1,sample);
         Bitmap bm;try(InputStream in=getContentResolver().openInputStream(uri)){bm=BitmapFactory.decodeStream(in,null,o);}
         if(bm==null)throw new IOException("Seçilen görsel okunamadı.");
-        ByteArrayOutputStream out=new ByteArrayOutputStream();bm.compress(Bitmap.CompressFormat.JPEG,quality,out);bm.recycle();return out.toByteArray();
+
+        Bitmap corrected=applyExifOrientation703(bm,orientation);
+        if(corrected!=bm)bm.recycle();
+        ByteArrayOutputStream out=new ByteArrayOutputStream();corrected.compress(Bitmap.CompressFormat.JPEG,quality,out);corrected.recycle();return out.toByteArray();
+    }
+
+    private Bitmap applyExifOrientation703(Bitmap src,int orientation){
+        Matrix m=new Matrix();
+        switch(orientation){
+            case ExifInterface.ORIENTATION_FLIP_HORIZONTAL: m.setScale(-1f,1f); break;
+            case ExifInterface.ORIENTATION_ROTATE_180: m.setRotate(180f); break;
+            case ExifInterface.ORIENTATION_FLIP_VERTICAL: m.setScale(1f,-1f); break;
+            case ExifInterface.ORIENTATION_TRANSPOSE: m.setRotate(90f);m.postScale(-1f,1f); break;
+            case ExifInterface.ORIENTATION_ROTATE_90: m.setRotate(90f); break;
+            case ExifInterface.ORIENTATION_TRANSVERSE: m.setRotate(-90f);m.postScale(-1f,1f); break;
+            case ExifInterface.ORIENTATION_ROTATE_270: m.setRotate(270f); break;
+            default: return src;
+        }
+        try{return Bitmap.createBitmap(src,0,0,src.getWidth(),src.getHeight(),m,true);}catch(Exception e){return src;}
     }
 
     private void showFormError703(String detail,long id){
