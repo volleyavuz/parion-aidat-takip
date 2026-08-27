@@ -8,6 +8,7 @@
 <provider android:name=".AttendanceShareProvider" android:authorities="com.parion.aidat.share" android:exported="false" android:grantUriPermissions="true" />
 <activity android:name=".MainActivityV702" android:screenOrientation="portrait" android:exported="false" />
 <activity android:name=".MainActivityV703" android:screenOrientation="portrait" android:exported="false" />
+<activity android:name=".MainActivityV704" android:screenOrientation="portrait" android:exported="false" />
 <activity android:name=".SplashActivity" android:screenOrientation="portrait" android:exported="true">
 <intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter>
 </activity>
