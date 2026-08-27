@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1019
-        versionName = "4.1.34"
-        // v4.1.33 base + restored modern attendance flow and fixed category color mapping.
+        versionCode = 1020
+        versionName = "4.1.35"
+        // v4.1.34 base + home nav tint, tshirt subtitle cleanup, modern absentee engine.
     }
 
     signingConfigs {
