@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1003
-        versionName = "4.1.18"
-        // First-frame HOME reveal retained; diagnostic profiler overhead removed.
+        versionCode = 1004
+        versionName = "4.1.19"
+        // Pre-HOME cover prevents the obsolete yellow dashboard from flashing.
         // Recovery baseline: v4.1.16 / versionCode 1001
     }
 
