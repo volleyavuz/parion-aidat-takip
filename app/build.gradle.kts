@@ -8,10 +8,10 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 215
-        versionName = "4.1.13"
-        // Remove obsolete 1500 ms dashboard visual gate; keep diagnostics for verification.
-        // Recovery baseline: v4.0.99
+        versionCode = 217
+        versionName = "4.1.15"
+        // Single-pass dashboard patch; no data or navigation changes.
+        // Recovery baseline: v4.0.99; performance reference: v4.1.13
     }
 
     signingConfigs {
