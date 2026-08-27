@@ -12,7 +12,6 @@ import java.util.*;
 public class MainActivityV621 extends MainActivityV620 {
     private static final int GOLD621=Color.rgb(205,156,34);
     private static final int TEXT621=Color.rgb(20,20,20);
-    private static final int MUTED621=Color.rgb(75,75,75);
     private static final int BLUE621=Color.rgb(72,103,132);
 
     @Override void showHome(){
@@ -57,10 +56,9 @@ public class MainActivityV621 extends MainActivityV620 {
         ImageView icon=new ImageView(this);icon.setImageResource(android.R.drawable.ic_menu_agenda);icon.setColorFilter(GOLD621);icon.setScaleType(ImageView.ScaleType.CENTER_INSIDE);card.addView(icon,new LinearLayout.LayoutParams(dp(25),dp(25)));
         TextView title=tv621("Tişört Almayan Sporcular",10.5f,TEXT621,true);title.setMaxLines(2);card.addView(title);
         TextView num=tv621(String.valueOf(count),27f,GOLD621,true);card.addView(num);
-        TextView sub=tv621("Tişört sayısı 0",9.5f,MUTED621,false);card.addView(sub);
 
         View anchor=topChild621(box,winter);int idx=anchor==null?box.getChildCount():box.indexOfChild(anchor)+1;
-        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(116));lp.setMargins(dp(3),dp(4),dp(3),dp(8));box.addView(card,Math.max(0,Math.min(idx,box.getChildCount())),lp);
+        LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(104));lp.setMargins(dp(3),dp(4),dp(3),dp(8));box.addView(card,Math.max(0,Math.min(idx,box.getChildCount())),lp);
     }
 
     private int countNoTshirt621(){
@@ -75,11 +73,11 @@ public class MainActivityV621 extends MainActivityV620 {
             final long id=c.getLong(0);String name=c.getString(1);int by=c.getInt(2);String st=c.getString(3)==null?"":c.getString(3);
             LinearLayout row=new LinearLayout(this);row.setOrientation(LinearLayout.VERTICAL);row.setPadding(dp(12),dp(10),dp(12),dp(10));row.setBackground(round621(Color.WHITE,GOLD621,12,1));row.setClickable(true);row.setOnClickListener(v->showProfile(id));
             TextView a=tv621(name,14f,TEXT621,true);a.setGravity(Gravity.START);row.addView(a);
-            TextView d=tv621((by>0?by+" • ":"")+st+" • Tişört: 0",10.5f,MUTED621,false);d.setGravity(Gravity.START);row.addView(d);
+            TextView d=tv621((by>0?by+" • ":"")+st+" • Tişört: 0",10.5f,Color.rgb(75,75,75),false);d.setGravity(Gravity.START);row.addView(d);
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.setMargins(0,0,0,dp(7));b.addView(row,lp);n++;
         }
         c.close();
-        if(n==0)b.addView(tv621("Tişört sayısı 0 olan sporcu bulunmuyor.",13f,MUTED621,true));
+        if(n==0)b.addView(tv621("Tişört sayısı 0 olan sporcu bulunmuyor.",13f,Color.rgb(75,75,75),true));
     }
 
     @Override void goBack(){if("NO_TSHIRT_621".equals(page)){showHome();return;}super.goBack();}
