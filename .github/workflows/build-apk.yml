@@ -46,21 +46,25 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.1.41 package and signature
+      - name: Verify v4.1.42 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'android:name=".MainActivityV718"' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV718.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1026' app/build.gradle.kts
-          grep -q 'versionName = "4.1.41"' app/build.gradle.kts
-          grep -q 'v718-finance-entry' app/src/main/java/com/parion/aidat/MainActivityV718.java
-          grep -q 'FINANCE_718' app/src/main/java/com/parion/aidat/MainActivityV718.java
-          grep -q 'financeCards718' app/src/main/java/com/parion/aidat/MainActivityV718.java
+          grep -q 'android:name=".MainActivityV719"' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV719.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1027' app/build.gradle.kts
+          grep -q 'versionName = "4.1.42"' app/build.gradle.kts
+          grep -q 'AYLIK HEDEF' app/src/main/java/com/parion/aidat/MainActivityV719.java
+          grep -q 'BU AYKİ TAHSİLAT' app/src/main/java/com/parion/aidat/MainActivityV719.java
+          grep -q 'ERKEN ÖDEME GİR' app/src/main/java/com/parion/aidat/MainActivityV719.java
+          grep -q 'ÖDEME VADESİ GELENLER' app/src/main/java/com/parion/aidat/MainActivityV719.java
+          grep -q 'GECİKMİŞ' app/src/main/java/com/parion/aidat/MainActivityV719.java
+          grep -q 'MALZEME BORCU' app/src/main/java/com/parion/aidat/MainActivityV719.java
+          grep -q 'SON ÖDEMELER' app/src/main/java/com/parion/aidat/MainActivityV719.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_41_Finance_Page.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_42_Finance_Page_Complete.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.1.41-Finance-Page
-          path: Parion_V4_1_41_Finance_Page.apk
+          name: Parion-v4.1.42-Finance-Page-Complete
+          path: Parion_V4_1_42_Finance_Page_Complete.apk
           if-no-files-found: error
