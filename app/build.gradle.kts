@@ -8,10 +8,10 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1001
-        versionName = "4.1.16"
-        // Recovery build from v4.1.11 Frame Profiler source; application code unchanged.
-        // Recovery baseline: v4.0.99
+        versionCode = 1002
+        versionName = "4.1.17"
+        // First-frame HOME reveal from the proven v4.1.16 recovery baseline.
+        // Recovery baseline: v4.1.16 / versionCode 1001
     }
 
     signingConfigs {
