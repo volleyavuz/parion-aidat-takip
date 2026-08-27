@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-1-30-bottom-nav-restored ]
+    branches: [ parion-v4-1-31-dashboard-bottom-nav-fix ]
   workflow_dispatch:
 jobs:
   build:
@@ -46,21 +46,21 @@ jobs:
           PARION_KEY_PASSWORD: ${{ secrets.PARION_KEY_PASSWORD }}
           PARION_KEY_ALIAS: ${{ secrets.PARION_KEY_ALIAS }}
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.1.30 package and signature
+      - name: Verify v4.1.31 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'android:name=".MainActivityV708"' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV708.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1015' app/build.gradle.kts
-          grep -q 'versionName = "4.1.30"' app/build.gradle.kts
-          grep -q 'v708-bottom-nav' app/src/main/java/com/parion/aidat/MainActivityV708.java
-          grep -q 'v627-home-shell' app/src/main/java/com/parion/aidat/MainActivityV708.java
-          grep -q 'showAttendanceGroups628' app/src/main/java/com/parion/aidat/MainActivityV708.java
+          grep -q 'android:name=".MainActivityV709"' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV709.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1016' app/build.gradle.kts
+          grep -q 'versionName = "4.1.31"' app/build.gradle.kts
+          grep -q 'v709-bottom-nav' app/src/main/java/com/parion/aidat/MainActivityV709.java
+          grep -q 'installBottomNav709' app/src/main/java/com/parion/aidat/MainActivityV709.java
+          grep -q 'ic_menu_preferences' app/src/main/java/com/parion/aidat/MainActivityV709.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_30_Bottom_Nav_Restored.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_31_Dashboard_Bottom_Nav_Fix.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.1.30-Bottom-Nav-Restored
-          path: Parion_V4_1_30_Bottom_Nav_Restored.apk
+          name: Parion-v4.1.31-Dashboard-Bottom-Nav-Fix
+          path: Parion_V4_1_31_Dashboard_Bottom_Nav_Fix.apk
           if-no-files-found: error
