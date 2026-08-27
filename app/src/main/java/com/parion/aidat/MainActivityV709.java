@@ -1,7 +1,6 @@
 package com.parion.aidat;
 
 import android.graphics.Color;
-import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.view.*;
 import android.widget.*;
@@ -41,10 +40,11 @@ public class MainActivityV709 extends MainActivityV708 {
         bg.setColor(NAV_BG_709);bg.setStroke(dp(1),NAV_DIV_709);
         nav.setBackground(bg);nav.setElevation(dp(6));
 
-        View home=homeIcon709();
+        ImageButton home=imageIcon709(R.drawable.ic_nav_home,"Anasayfa");
         ImageButton attendance=imageIcon709(android.R.drawable.ic_menu_agenda,"Yoklamalar");
         ImageButton athletes=imageIcon709(android.R.drawable.ic_menu_myplaces,"Sporcular");
         ImageButton settings=imageIcon709(android.R.drawable.ic_menu_preferences,"Ayarlar");
+        home.setImageAlpha(148);
 
         home.setOnClickListener(v->showHome());
         attendance.setOnClickListener(v->openAttendance709());
@@ -59,15 +59,6 @@ public class MainActivityV709 extends MainActivityV708 {
 
         root.addView(nav,new LinearLayout.LayoutParams(-1,dp(54)));
         nav.bringToFront();
-    }
-
-    private View homeIcon709(){
-        TextView v=new TextView(this);
-        v.setText("⌂");v.setContentDescription("Anasayfa");
-        v.setTextSize(25f);v.setTextColor(NAV_FG_709);
-        v.setTypeface(Typeface.DEFAULT,Typeface.BOLD);v.setGravity(Gravity.CENTER);
-        v.setBackgroundColor(Color.TRANSPARENT);v.setClickable(true);v.setFocusable(true);
-        return v;
     }
 
     private ImageButton imageIcon709(int res,String desc){
