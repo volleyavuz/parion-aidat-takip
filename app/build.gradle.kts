@@ -8,10 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1006
-        versionName = "4.1.21"
-        // Stable 1500 ms PARION cover restored to mask legacy yellow HOME render.
-        // Recovery baseline: v4.1.18 / versionCode 1003
+        versionCode = 1007
+        versionName = "4.1.22"
+        // v4.1.21 stable startup/dashboard retained; registration-form upload repaired in V703.
     }
 
     signingConfigs {
