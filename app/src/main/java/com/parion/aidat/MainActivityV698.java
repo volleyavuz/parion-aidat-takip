@@ -8,13 +8,16 @@ import android.view.*;
 import android.widget.*;
 import java.util.*;
 
-/** v4.0.98 - dashboard fixes aligned with actual profile/material and attendance UI semantics. */
+/** v4.1.15 - dashboard fixes; apply expensive dashboard patch once per HOME build. */
 public class MainActivityV698 extends MainActivityV694 {
     private static final int TEXT=Color.rgb(28,28,28), MUTED=Color.rgb(92,92,92), RED=Color.rgb(185,55,55), GOLD=Color.rgb(205,156,34);
 
     @Override void showHome(){
         super.showHome();
-        if(root!=null){root.post(this::patch698);root.postDelayed(this::patch698,500);}
+        // v4.0.98 used to run the same full remove/query/recreate patch twice
+        // (immediately and again after 500 ms). The second pass needlessly forces
+        // another ViewRoot traversal on every HOME return. One posted pass is enough.
+        if(root!=null) root.post(this::patch698);
     }
 
     private void patch698(){
@@ -80,7 +83,6 @@ public class MainActivityV698 extends MainActivityV694 {
                 new String[]{String.valueOf(athlete),group,lastPresent});String firstMiss=null;if(m.moveToFirst()&&!m.isNull(0))firstMiss=m.getString(0);m.close();if(firstMiss==null)return 0;return daysSince698(lastPresent);
         }
 
-        // No visible-present session: count only from an explicit confirmed absence, never from a generated session alone.
         Cursor m=db.getReadableDatabase().rawQuery(
             "SELECT MIN(s.sessionDate) FROM attendance_sessions s JOIN attendance_records r ON r.sessionId=s.id AND r.athleteId=? WHERE s.groupName=? COLLATE NOCASE AND s.confirmed=1 AND s.cancelled=0 AND s.sessionDate>=? AND s.sessionDate<=date('now') AND r.present=0",
             new String[]{String.valueOf(athlete),group,spell});String firstMiss=null;if(m.moveToFirst()&&!m.isNull(0))firstMiss=m.getString(0);m.close();return firstMiss==null?0:daysSince698(firstMiss);
