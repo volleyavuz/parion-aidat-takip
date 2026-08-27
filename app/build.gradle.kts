@@ -8,9 +8,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1002
-        versionName = "4.1.17"
-        // First-frame HOME reveal from the proven v4.1.16 recovery baseline.
+        versionCode = 1003
+        versionName = "4.1.18"
+        // First-frame HOME reveal retained; diagnostic profiler overhead removed.
         // Recovery baseline: v4.1.16 / versionCode 1001
     }
 
