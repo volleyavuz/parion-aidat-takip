@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-2-4-updates-navigation ]
+    branches: [ parion-v4-2-5-settings-route-fix ]
   workflow_dispatch:
 jobs:
   build:
@@ -39,21 +39,21 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.2.4 updates navigation package
+      - name: Verify v4.2.5 settings route fix
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
           grep -q 'MainActivityV729' app/src/main/AndroidManifest.xml
           grep -q 'MainActivityV729.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1044' app/build.gradle.kts
-          grep -q 'versionName = "4.2.4"' app/build.gradle.kts
-          grep -q 'GÜNCELLEMELER' app/src/main/java/com/parion/aidat/MainActivityV729.java
-          grep -q 'SENKRONİZASYON' app/src/main/java/com/parion/aidat/MainActivityV729.java
+          grep -q 'versionCode = 1045' app/build.gradle.kts
+          grep -q 'versionName = "4.2.5"' app/build.gradle.kts
+          grep -q 'getClass().getDeclaredMethod("showSettings729"' app/src/main/java/com/parion/aidat/MainActivityV710.java
+          grep -q 'Mevcut sürüm: 4.2.5' app/src/main/java/com/parion/aidat/MainActivityV729.java
           grep -q 'BULUTTAN TEMİZ GERİ YÜKLE' app/src/main/java/com/parion/aidat/MainActivityV728.java
           grep -q 'SAFE_MULTI_DEVICE_SNAPSHOT_BLOCKED' app/src/main/java/com/parion/aidat/MainActivityV727.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_4_Updates_Navigation.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_5_Settings_Route_Fix.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.2.4-Updates-Navigation
-          path: Parion_V4_2_4_Updates_Navigation.apk
+          name: Parion-v4.2.5-Settings-Route-Fix
+          path: Parion_V4_2_5_Settings_Route_Fix.apk
           if-no-files-found: error
