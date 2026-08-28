@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-2-11-lww-photo-fix ]
+    branches: [ parion-v4-2-12-athlete-pull-photo-target-fix ]
   workflow_dispatch:
 jobs:
   build:
@@ -39,23 +39,23 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.2.11 LWW and photo fixes
+      - name: Verify v4.2.12 athlete pull and photo target fix
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV735' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV735.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1051' app/build.gradle.kts
-          grep -q 'versionName = "4.2.11"' app/build.gradle.kts
+          grep -q 'MainActivityV736' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV736.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1052' app/build.gradle.kts
+          grep -q 'versionName = "4.2.12"' app/build.gradle.kts
+          grep -q 'REQ_MISSING_PHOTO_736=7362' app/src/main/java/com/parion/aidat/MainActivityV736.java
+          grep -q 'missingPhotoTarget736=target' app/src/main/java/com/parion/aidat/MainActivityV736.java
+          grep -q 'mobile_athletes?select=\*&order=legacy_id.asc' app/src/main/java/com/parion/aidat/MainActivityV736.java
+          grep -q 'reconcileAthletes736' app/src/main/java/com/parion/aidat/MainActivityV736.java
           grep -q 'parion_sync_one_athlete_lww_v411' app/src/main/java/com/parion/aidat/MainActivityV735.java
-          grep -q 'LAST WRITE WINS' app/src/main/java/com/parion/aidat/MainActivityV735.java
-          grep -q 'repairPhotoRefs735' app/src/main/java/com/parion/aidat/MainActivityV735.java
           grep -q 'ExifInterface.TAG_ORIENTATION' app/src/main/java/com/parion/aidat/MainActivityV735.java
-          grep -q 'normalizedJpeg735' app/src/main/java/com/parion/aidat/MainActivityV735.java
-          grep -q 'replacePaymentsFromCloud734' app/src/main/java/com/parion/aidat/MainActivityV734.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_11_LWW_Photo_Fix.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_12_Athlete_Pull_Photo_Target_Fix.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.2.11-LWW-Photo-Fix
-          path: Parion_V4_2_11_LWW_Photo_Fix.apk
+          name: Parion-v4.2.12-Athlete-Pull-Photo-Target-Fix
+          path: Parion_V4_2_12_Athlete_Pull_Photo_Target_Fix.apk
           if-no-files-found: error
