@@ -7,9 +7,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1041
-        versionName = "4.2.1"
-        // Safe clean-device bootstrap: login first, cloud-to-local restore first, no empty-device cloud writes.
+        versionCode = 1042
+        versionName = "4.2.2"
+        // Safe multi-device sync: conflict preflight, per-athlete delta push, snapshots disabled.
     }
     signingConfigs { create("release") { storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks"); storePassword = System.getenv("PARION_STORE_PASSWORD"); keyAlias = System.getenv("PARION_KEY_ALIAS"); keyPassword = System.getenv("PARION_KEY_PASSWORD") } }
     buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
