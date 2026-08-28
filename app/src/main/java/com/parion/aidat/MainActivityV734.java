@@ -52,7 +52,6 @@ public class MainActivityV734 extends MainActivityV733 {
         }catch(Exception e){toast("BULUTTAN SNAPSHOT BAŞLATILAMADI • "+short734(e));}
     }
 
-    /** Wait until the inherited asynchronous cloud pull actually starts and then finishes. */
     private void waitForRealPull734(long gen,boolean snapshot,boolean announce,int tries,boolean seenBusy){
         if(gen!=pullGeneration734)return;
         boolean busy=false;try{busy=syncing;}catch(Exception ignored){}
@@ -82,7 +81,7 @@ public class MainActivityV734 extends MainActivityV733 {
         JSONArray a=new JSONArray(r.body);SQLiteDatabase d=db.getWritableDatabase();d.beginTransaction();int n=0;
         try{
             d.delete("payments",null,null);
-            d.delete("payment_recent",null,null);
+            // payment_recent is a separate cross-device recent-change mirror from v4.2.13 onward.
             for(int i=0;i<a.length();i++){
                 JSONObject p=a.getJSONObject(i);long id=p.optLong("legacy_id",-1);int y=p.optInt("year",0),m=p.optInt("month",0);if(id<=0||y<=0||m<1||m>12)continue;
                 ContentValues v=new ContentValues();v.put("athleteId",id);v.put("year",y);v.put("month",m);v.put("marker",p.optString("marker",""));v.put("amount",p.optInt("amount",0));
