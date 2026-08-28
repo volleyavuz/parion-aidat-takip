@@ -5,7 +5,7 @@ import android.view.*;
 import android.widget.*;
 import java.lang.reflect.Method;
 
-/** v4.1.32 - unify home icon with nav icons + restore full settings menu. */
+/** v4.1.32 + v4.2.5 route fix: legacy delayed patches must open the current settings menu. */
 public class MainActivityV710 extends MainActivityV709 {
     private static final int NAV_FG_710=Color.rgb(42,42,42);
 
@@ -68,6 +68,12 @@ public class MainActivityV710 extends MainActivityV709 {
     }
 
     private void openFullSettings710(View anchor){
+        // v4.2.5: if the runtime class provides the current settings menu, always use it.
+        // This also fixes inherited delayed patches that used to reopen V661/V639.
+        try{
+            Method current=getClass().getDeclaredMethod("showSettings729",View.class);
+            current.setAccessible(true);current.invoke(this,anchor);return;
+        }catch(Exception ignored){}
         try{
             Method m=MainActivityV661.class.getDeclaredMethod("showSettings661",View.class);
             m.setAccessible(true);m.invoke(this,anchor);
