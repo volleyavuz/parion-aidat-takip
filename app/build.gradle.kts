@@ -7,9 +7,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1052
-        versionName = "4.2.12"
-        // Verified athlete pull + isolated missing-photo target; LWW sync and EXIF photo normalization preserved.
+        versionCode = 1053
+        versionName = "4.2.13"
+        // Delta-only sync menu, missing-photo back fix, durable profile photos, cross-device recent payment history.
     }
     signingConfigs { create("release") { storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks"); storePassword = System.getenv("PARION_STORE_PASSWORD"); keyAlias = System.getenv("PARION_KEY_ALIAS"); keyPassword = System.getenv("PARION_KEY_PASSWORD") } }
     buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
