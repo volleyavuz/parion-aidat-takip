@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-1-46-remove-early-source ]
+    branches: [ parion-v4-1-47-share-whatsapp ]
   workflow_dispatch:
 jobs:
   build:
@@ -39,20 +39,24 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.1.46 package and signature
+      - name: Verify v4.1.47 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV722' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV722.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1031' app/build.gradle.kts
-          grep -q 'versionName = "4.1.46"' app/build.gradle.kts
-          grep -q 'DO NOT create the standalone dashboard Early Payment card' app/src/main/java/com/parion/aidat/MainActivityV711.java
-          ! grep -q 'installEarlyPaymentCard711();' app/src/main/java/com/parion/aidat/MainActivityV711.java
-          grep -q 'showEarlyPayments711' app/src/main/java/com/parion/aidat/MainActivityV711.java
+          grep -q 'MainActivityV723' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV723.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1032' app/build.gradle.kts
+          grep -q 'versionName = "4.1.47"' app/build.gradle.kts
+          grep -q '3 AY' app/src/main/java/com/parion/aidat/MainActivityV723.java
+          grep -q '6 AY' app/src/main/java/com/parion/aidat/MainActivityV723.java
+          grep -q '1 YIL' app/src/main/java/com/parion/aidat/MainActivityV723.java
+          grep -q 'motherPhone' app/src/main/java/com/parion/aidat/MainActivityV723.java
+          grep -q 'fatherPhone' app/src/main/java/com/parion/aidat/MainActivityV723.java
+          grep -q 'ANNEYE WHATSAPP' app/src/main/java/com/parion/aidat/MainActivityV723.java
+          grep -q 'due.after(now)' app/src/main/java/com/parion/aidat/MainActivityV723.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_46_Remove_Early_Source.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_47_Parent_WhatsApp_Share.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.1.46-Remove-Early-Source
-          path: Parion_V4_1_46_Remove_Early_Source.apk
+          name: Parion-v4.1.47-Parent-WhatsApp-Share
+          path: Parion_V4_1_47_Parent_WhatsApp_Share.apk
           if-no-files-found: error
