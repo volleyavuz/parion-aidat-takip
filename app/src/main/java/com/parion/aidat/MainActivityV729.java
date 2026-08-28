@@ -9,7 +9,7 @@ import android.view.*;
 import android.widget.*;
 import java.lang.reflect.Method;
 
-/** v4.2.4 - repair Settings -> Updates navigation while preserving all current settings actions. */
+/** v4.2.5 - permanent Settings -> Updates routing while preserving all current settings actions. */
 public class MainActivityV729 extends MainActivityV728 {
     private static final int GOLD729=Color.rgb(205,156,34);
     private PopupWindow settings729;
@@ -59,11 +59,11 @@ public class MainActivityV729 extends MainActivityV728 {
         GradientDrawable bg=new GradientDrawable();bg.setColor(Color.WHITE);bg.setCornerRadius(dp(16));bg.setStroke(dp(1),Color.rgb(224,202,142));card.setBackground(bg);card.setElevation(dp(2));
         TextView icon=tv("↻",34,GOLD729,true);icon.setGravity(Gravity.CENTER);card.addView(icon,new LinearLayout.LayoutParams(-1,-2));
         TextView title=tv("PARİON SPORCU TAKİP SİSTEMİ",16,Color.rgb(32,32,32),true);title.setGravity(Gravity.CENTER);title.setPadding(0,dp(8),0,dp(4));card.addView(title,new LinearLayout.LayoutParams(-1,-2));
-        TextView ver=tv("Mevcut sürüm: 4.2.4",14,Color.rgb(55,55,55),true);ver.setGravity(Gravity.CENTER);card.addView(ver,new LinearLayout.LayoutParams(-1,-2));
+        TextView ver=tv("Mevcut sürüm: 4.2.5",14,Color.rgb(55,55,55),true);ver.setGravity(Gravity.CENTER);card.addView(ver,new LinearLayout.LayoutParams(-1,-2));
         TextView state=tv("Güncelleme sayfası aktif",12,Color.rgb(95,95,95),false);state.setGravity(Gravity.CENTER);state.setPadding(0,dp(5),0,0);card.addView(state,new LinearLayout.LayoutParams(-1,-2));
         b.addView(card,new LinearLayout.LayoutParams(-1,-2));
         TextView h=tv("BU SÜRÜMDE",13,Color.rgb(55,55,55),true);h.setPadding(dp(2),dp(20),0,dp(8));b.addView(h,new LinearLayout.LayoutParams(-1,-2));
-        b.addView(info729("• Ayarlar → Güncellemeler navigasyonu onarıldı."));
+        b.addView(info729("• Ayarlar → Güncellemeler rotası eski katmanların tekrar ezemeyeceği şekilde düzeltildi."));
         b.addView(info729("• Güvenli Senkronizasyon ve Buluttan Temiz Geri Yükle korunuyor."));
         b.addView(info729("• Eski snapshot tabanlı güncelleme/senkronizasyon dialogu artık kullanılmıyor."));
         b.addView(info729("• Sporcu, ödeme ve bulut verilerine bu düzenlemede müdahale edilmedi."));
