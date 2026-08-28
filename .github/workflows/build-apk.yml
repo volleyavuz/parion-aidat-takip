@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-2-9-safe-athlete-save-delta ]
+    branches: [ parion-v4-2-10-verified-payment-pull ]
   workflow_dispatch:
 jobs:
   build:
@@ -39,21 +39,22 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.2.9 safe athlete save delta
+      - name: Verify v4.2.10 verified payment pull
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV733' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV733.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1049' app/build.gradle.kts
-          grep -q 'versionName = "4.2.9"' app/build.gradle.kts
+          grep -q 'MainActivityV734' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV734.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1050' app/build.gradle.kts
+          grep -q 'versionName = "4.2.10"' app/build.gradle.kts
+          grep -q 'replacePaymentsFromCloud734' app/src/main/java/com/parion/aidat/MainActivityV734.java
+          grep -q 'mobile_payments_legacy' app/src/main/java/com/parion/aidat/MainActivityV734.java
+          grep -q 'BULUT SNAPSHOT.*DOĞRULANDI' app/src/main/java/com/parion/aidat/MainActivityV734.java
           grep -q 'ROUTED_TO_SAFE_DELTA' app/src/main/java/com/parion/aidat/MainActivityV733.java
-          grep -q 'safePush727' app/src/main/java/com/parion/aidat/MainActivityV733.java
           grep -q 'AUTH_REFRESH_LOCK_732' app/src/main/java/com/parion/aidat/MainActivityV732.java
-          grep -q 'SAFE_MULTI_DEVICE_SNAPSHOT_BLOCKED' app/src/main/java/com/parion/aidat/MainActivityV727.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_9_Safe_Athlete_Save_Delta.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_10_Verified_Payment_Pull.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.2.9-Safe-Athlete-Save-Delta
-          path: Parion_V4_2_9_Safe_Athlete_Save_Delta.apk
+          name: Parion-v4.2.10-Verified-Payment-Pull
+          path: Parion_V4_2_10_Verified_Payment_Pull.apk
           if-no-files-found: error
