@@ -15,7 +15,7 @@ import java.util.*;
 
 /** v4.1.48 - restart creates a new dues anchor; second pause closes the restarted spell. */
 public class MainActivityV724 extends MainActivityV723 {
-    private static final int GOLD724=Color.rgb(205,156,34), BLACK724=Color.rgb(25,25,25), GREEN724=Color.rgb(39,134,82), RED724=Color.rgb(196,63,63);
+    private static final int GOLD724=Color.rgb(205,156,34), BLACK724=Color.rgb(25,25,25), GREEN724=Color.rgb(39,134,82), RED724=Color.rgb(196,63,63), ORANGE724=Color.rgb(205,132,44);
     private View financeRoot724;
 
     @Override void base(String title,boolean back){
@@ -83,8 +83,8 @@ public class MainActivityV724 extends MainActivityV723 {
         if("X".equals(r.marker)){status="ARA VERDİ";color=GRAY;detail=period+" • ARA VERDİ";}
         else if(!active){status="AKTİF DEĞİL";color=Color.rgb(225,225,225);detail=period+" • AKTİF DEĞİL";}
         else if(future){status="BEKLİYOR";color=Color.WHITE;detail=period+" • "+(expected>0?money(expected):"—");}
-        else if("!".equals(r.marker)||"!!".equals(r.marker)){status=expected>0?(r.amount<expected?"EKSİK ÖDEME":r.amount>expected?"FAZLA ÖDEME":"ÖDENDİ"):"FARKLI TUTAR";color=status.equals("ÖDENDİ")?Color.rgb(9,242,153):ORANGE;detail=period+" • "+money(r.amount)+" • "+status;}
-        else if(isDate(r.marker)){status=expected>0&&r.amount!=expected?(r.amount<expected?"EKSİK ÖDEME":"FAZLA ÖDEME"):"ÖDENDİ";color=status.equals("ÖDENDİ")?Color.rgb(9,242,153):ORANGE;detail=period+" • "+dateTr(r.marker)+" • "+money(r.amount)+" • "+status;}
+        else if("!".equals(r.marker)||"!!".equals(r.marker)){status=expected>0?(r.amount<expected?"EKSİK ÖDEME":r.amount>expected?"FAZLA ÖDEME":"ÖDENDİ"):"FARKLI TUTAR";color=status.equals("ÖDENDİ")?Color.rgb(9,242,153):ORANGE724;detail=period+" • "+money(r.amount)+" • "+status;}
+        else if(isDate(r.marker)){status=expected>0&&r.amount!=expected?(r.amount<expected?"EKSİK ÖDEME":"FAZLA ÖDEME"):"ÖDENDİ";color=status.equals("ÖDENDİ")?Color.rgb(9,242,153):ORANGE724;detail=period+" • "+dateTr(r.marker)+" • "+money(r.amount)+" • "+status;}
         else if("BURSLU".equalsIgnoreCase(sibling)||expected==0&&yr>=2026&&currentMonthlyFee(id)==0){status="BURSLU";color=Color.rgb(225,225,225);detail=period+" • BURSLU";}
         else if(expected==0&&yr<2026){status="VERİ YOK";color=Color.rgb(225,225,225);detail=period+" • VERİ YOK";}
         else{status="ÖDEME DÖNEMİ";color=YELLOW;detail=period+" • "+money(expected)+" • ÖDEME DÖNEMİ";}
