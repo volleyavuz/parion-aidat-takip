@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-2-8-sync-race-settings-fix ]
+    branches: [ parion-v4-2-9-safe-athlete-save-delta ]
   workflow_dispatch:
 jobs:
   build:
@@ -39,22 +39,21 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.2.8 sync race and settings fixes
+      - name: Verify v4.2.9 safe athlete save delta
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV732' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV732.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1048' app/build.gradle.kts
-          grep -q 'versionName = "4.2.8"' app/build.gradle.kts
+          grep -q 'MainActivityV733' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV733.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1049' app/build.gradle.kts
+          grep -q 'versionName = "4.2.9"' app/build.gradle.kts
+          grep -q 'ROUTED_TO_SAFE_DELTA' app/src/main/java/com/parion/aidat/MainActivityV733.java
+          grep -q 'safePush727' app/src/main/java/com/parion/aidat/MainActivityV733.java
           grep -q 'AUTH_REFRESH_LOCK_732' app/src/main/java/com/parion/aidat/MainActivityV732.java
-          grep -q 'MainActivityV729.class.getDeclaredMethod("showSettings729"' app/src/main/java/com/parion/aidat/MainActivityV710.java
-          grep -q 'parion_sync_attendance_delta_v3' app/src/main/java/com/parion/aidat/MainActivityV731.java
-          grep -q 'BULUTA YÜKLE (SNAPSHOT)' app/src/main/java/com/parion/aidat/MainActivityV731.java
           grep -q 'SAFE_MULTI_DEVICE_SNAPSHOT_BLOCKED' app/src/main/java/com/parion/aidat/MainActivityV727.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_8_Sync_Race_Settings_Fix.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_9_Safe_Athlete_Save_Delta.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.2.8-Sync-Race-Settings-Fix
-          path: Parion_V4_2_8_Sync_Race_Settings_Fix.apk
+          name: Parion-v4.2.9-Safe-Athlete-Save-Delta
+          path: Parion_V4_2_9_Safe_Athlete_Save_Delta.apk
           if-no-files-found: error
