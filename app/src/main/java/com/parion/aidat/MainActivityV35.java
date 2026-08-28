@@ -10,7 +10,7 @@ public class MainActivityV35 extends MainActivityV34 {
     @Override void showProfile(long id){
         page="PROFILE"; currentAthlete=id; Cursor c=db.athlete(id); if(!c.moveToFirst()){c.close();showAthletes();return;}
         String name=s(c,"name"),photo=s(c,"photo"),cat=s(c,"category"),athleteStatus=s(c,"status"),notes=s(c,"notes"); int by=c.getInt(c.getColumnIndexOrThrow("birthYear"));
-        String start=s(c,"startDate"),end=s(c,"endDate"),restart=s(c,"restartDate"),sib=s(c,"sibling");
+        String start=s(c,"startDate"),end=s(c,"endDate"),restart=s(c,"restartDate"),restartEnd=db.restartEndDate(id),sib=s(c,"sibling");
         base("SPORCU PROFİLİ",true); ScrollView sv=scroll(); LinearLayout b=box(sv);
         LinearLayout card=new LinearLayout(this); card.setOrientation(LinearLayout.VERTICAL); card.setGravity(Gravity.CENTER_HORIZONTAL); card.setPadding(dp(12),dp(14),dp(12),dp(14)); card.setBackground(round(Color.WHITE,14));
         ImageView av=new ImageView(this); av.setScaleType(ImageView.ScaleType.CENTER_CROP); setAthletePhoto(av,photo); LinearLayout.LayoutParams ip=new LinearLayout.LayoutParams(dp(150),dp(180)); ip.gravity=Gravity.CENTER_HORIZONTAL; card.addView(av,ip);
@@ -18,8 +18,8 @@ public class MainActivityV35 extends MainActivityV34 {
         TextView cs=tv(cat+" • "+athleteStatus,14,statusColor(athleteStatus),true); cs.setGravity(Gravity.CENTER); card.addView(cs,new LinearLayout.LayoutParams(-1,-2));
         TextView bd=tv("Doğum yılı: "+(by>0?by:"—"),13,Color.DKGRAY,false); bd.setGravity(Gravity.CENTER); card.addView(bd); b.addView(card);
 
-        Calendar now=Calendar.getInstance(); int anchor=anchorDay(start); int currentKey=currentCycleKey(now,anchor); int currentFee=expectedFeeAt(id,currentKey/100,currentKey%100,new PayRec("",0));
-        b.addView(line("Güncel Aidat",money(currentFee))); b.addView(line("Sporcu Tel",s(c,"phone"))); b.addView(line("Anne",join(s(c,"motherName"),s(c,"motherPhone")))); b.addView(line("Baba",join(s(c,"fatherName"),s(c,"fatherPhone")))); b.addView(line("Kardeş",sib)); b.addView(line("İlk Kayıt",dateTr(start))); b.addView(line("Bitiş / Ara Verme",dateTr(end))); b.addView(line("Yeniden Başlama",dateTr(restart))); if(notes!=null&&!notes.isEmpty())b.addView(line("Özel Not",notes)); c.close();
+        Calendar now=Calendar.getInstance(); int anchor=profileAnchor35(now,start,restart); int currentKey=currentCycleKey(now,anchor); int currentFee=expectedFeeAt(id,currentKey/100,currentKey%100,new PayRec("",0));
+        b.addView(line("Güncel Aidat",money(currentFee))); b.addView(line("Sporcu Tel",s(c,"phone"))); b.addView(line("Anne",join(s(c,"motherName"),s(c,"motherPhone")))); b.addView(line("Baba",join(s(c,"fatherName"),s(c,"fatherPhone")))); b.addView(line("Kardeş",sib)); b.addView(line("İlk Kayıt",dateTr(start))); b.addView(line("Bitiş / Ara Verme",dateTr(end))); b.addView(line("Yeniden Başlama",dateTr(restart))); if(restartEnd!=null&&!restartEnd.isEmpty())b.addView(line("Yeniden Bırakma / Ara Verme",dateTr(restartEnd))); if(notes!=null&&!notes.isEmpty())b.addView(line("Özel Not",notes)); c.close();
 
         Button feeBtn=btn("AİDAT ÜCRETİ / GEÇERLİ AY DÜZENLE"); feeBtn.setOnClickListener(v->editFeePeriod(id)); LinearLayout.LayoutParams fp=new LinearLayout.LayoutParams(-1,dp(56)); fp.setMargins(0,dp(10),0,dp(8)); b.addView(feeBtn,fp);
 
@@ -34,6 +34,11 @@ public class MainActivityV35 extends MainActivityV34 {
         int waitingKey=shiftMonth(currentKey,1); addCycleProfileRow(b,id,waitingKey,anchor,start,end,restart,sib,pays,true);
 
         Button report=btn("AİDAT BİLANÇOSU / PAYLAŞ"); report.setOnClickListener(v->shareReport(id)); LinearLayout.LayoutParams rp=new LinearLayout.LayoutParams(-1,dp(58));rp.setMargins(0,dp(16),0,dp(8));b.addView(report,rp);
+    }
+
+    private int profileAnchor35(Calendar now,String start,String restart){
+        try{if(restart!=null&&restart.matches("\\d{4}-\\d{2}-\\d{2}")){Calendar r=Calendar.getInstance();r.clear();r.set(Integer.parseInt(restart.substring(0,4)),Integer.parseInt(restart.substring(5,7))-1,Integer.parseInt(restart.substring(8,10)));if(!now.before(r))return anchorDay(restart);}}catch(Exception ignored){}
+        return anchorDay(start);
     }
 
     void addCycleProfileRow(LinearLayout b,long id,int key,int anchor,String start,String end,String restart,String sibling,HashMap<Integer,PayRec> pays,boolean future){
