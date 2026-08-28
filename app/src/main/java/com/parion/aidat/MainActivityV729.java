@@ -78,7 +78,7 @@ public class MainActivityV729 extends MainActivityV728 {
 
     private void addItem729(LinearLayout p,String text,Runnable action){TextView t=new TextView(this);t.setText(text);t.setTextSize(13);t.setTextColor(Color.rgb(28,28,28));t.setTypeface(Typeface.DEFAULT,Typeface.BOLD);t.setGravity(Gravity.CENTER_VERTICAL);t.setPadding(dp(14),0,dp(14),0);t.setClickable(true);t.setOnClickListener(v->{dismissSettings729();action.run();});p.addView(t,new LinearLayout.LayoutParams(dp(242),dp(48)));}
     private void addDivider729(LinearLayout p){View d=new View(this);d.setBackgroundColor(Color.rgb(232,228,216));LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,dp(1));lp.setMargins(dp(8),dp(3),dp(8),dp(3));p.addView(d,lp);}
-    private TextView info729(String s){TextView t=tv(s,12.5f,Color.rgb(55,55,55),false);t.setPadding(dp(4),dp(7),dp(4),dp(7));return t;}
+    private TextView info729(String s){TextView t=tv(s,12,Color.rgb(55,55,55),false);t.setPadding(dp(4),dp(7),dp(4),dp(7));return t;}
     private void invokeNoArg729(Class<?> cls,String name){try{Method m=cls.getDeclaredMethod(name);m.setAccessible(true);m.invoke(this);}catch(Exception e){toast("İşlem açılamadı.");}}
 
     @Override void goBack(){
