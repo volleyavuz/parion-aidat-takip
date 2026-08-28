@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-2-7-sync-controls-attendance ]
+    branches: [ parion-v4-2-8-sync-race-settings-fix ]
   workflow_dispatch:
 jobs:
   build:
@@ -39,22 +39,22 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.2.7 sync controls package
+      - name: Verify v4.2.8 sync race and settings fixes
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV731' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV731.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1047' app/build.gradle.kts
-          grep -q 'versionName = "4.2.7"' app/build.gradle.kts
-          grep -q 'BULUTA YÜKLE (SNAPSHOT)' app/src/main/java/com/parion/aidat/MainActivityV731.java
-          grep -q 'BULUTTAN ÇEK (SNAPSHOT)' app/src/main/java/com/parion/aidat/MainActivityV731.java
+          grep -q 'MainActivityV732' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV732.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1048' app/build.gradle.kts
+          grep -q 'versionName = "4.2.8"' app/build.gradle.kts
+          grep -q 'AUTH_REFRESH_LOCK_732' app/src/main/java/com/parion/aidat/MainActivityV732.java
+          grep -q 'MainActivityV729.class.getDeclaredMethod("showSettings729"' app/src/main/java/com/parion/aidat/MainActivityV710.java
           grep -q 'parion_sync_attendance_delta_v3' app/src/main/java/com/parion/aidat/MainActivityV731.java
-          grep -q 'DEĞİŞİKLİKLER BULUTA KAYDEDİLSİN Mİ' app/src/main/java/com/parion/aidat/MainActivityV731.java
+          grep -q 'BULUTA YÜKLE (SNAPSHOT)' app/src/main/java/com/parion/aidat/MainActivityV731.java
           grep -q 'SAFE_MULTI_DEVICE_SNAPSHOT_BLOCKED' app/src/main/java/com/parion/aidat/MainActivityV727.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_7_Sync_Controls_Attendance.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_8_Sync_Race_Settings_Fix.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.2.7-Sync-Controls-Attendance
-          path: Parion_V4_2_7_Sync_Controls_Attendance.apk
+          name: Parion-v4.2.8-Sync-Race-Settings-Fix
+          path: Parion_V4_2_8_Sync_Race_Settings_Fix.apk
           if-no-files-found: error
