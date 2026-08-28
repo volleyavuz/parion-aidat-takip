@@ -7,9 +7,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1034
-        versionName = "4.1.49"
-        // Membership spells keep separate personal dues anchors; stop dates do not create a new period.
+        versionCode = 1040
+        versionName = "4.2.0"
+        // Final test candidate based exactly on v4.1.49 application logic; supports clean install and same-package upgrade.
     }
     signingConfigs { create("release") { storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks"); storePassword = System.getenv("PARION_STORE_PASSWORD"); keyAlias = System.getenv("PARION_KEY_ALIAS"); keyPassword = System.getenv("PARION_KEY_PASSWORD") } }
     buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
