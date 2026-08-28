@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-2-6-cloud-restore-completion ]
+    branches: [ parion-v4-2-7-sync-controls-attendance ]
   workflow_dispatch:
 jobs:
   build:
@@ -39,21 +39,22 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.2.6 cloud restore completion fix
+      - name: Verify v4.2.7 sync controls package
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV730' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV730.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1046' app/build.gradle.kts
-          grep -q 'versionName = "4.2.6"' app/build.gradle.kts
-          grep -q 'RESTORE_TIMEOUT_730=90000L' app/src/main/java/com/parion/aidat/MainActivityV730.java
-          grep -q 'pollRestore730' app/src/main/java/com/parion/aidat/MainActivityV730.java
+          grep -q 'MainActivityV731' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV731.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1047' app/build.gradle.kts
+          grep -q 'versionName = "4.2.7"' app/build.gradle.kts
+          grep -q 'BULUTA YÜKLE (SNAPSHOT)' app/src/main/java/com/parion/aidat/MainActivityV731.java
+          grep -q 'BULUTTAN ÇEK (SNAPSHOT)' app/src/main/java/com/parion/aidat/MainActivityV731.java
+          grep -q 'parion_sync_attendance_delta_v3' app/src/main/java/com/parion/aidat/MainActivityV731.java
+          grep -q 'DEĞİŞİKLİKLER BULUTA KAYDEDİLSİN Mİ' app/src/main/java/com/parion/aidat/MainActivityV731.java
           grep -q 'SAFE_MULTI_DEVICE_SNAPSHOT_BLOCKED' app/src/main/java/com/parion/aidat/MainActivityV727.java
-          grep -q 'getClass().getDeclaredMethod("showSettings729"' app/src/main/java/com/parion/aidat/MainActivityV710.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_6_Cloud_Restore_Completion.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_7_Sync_Controls_Attendance.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.2.6-Cloud-Restore-Completion
-          path: Parion_V4_2_6_Cloud_Restore_Completion.apk
+          name: Parion-v4.2.7-Sync-Controls-Attendance
+          path: Parion_V4_2_7_Sync_Controls_Attendance.apk
           if-no-files-found: error
