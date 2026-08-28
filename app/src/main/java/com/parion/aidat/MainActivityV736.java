@@ -59,7 +59,7 @@ public class MainActivityV736 extends MainActivityV735 {
             LinearLayout.LayoutParams lp=new LinearLayout.LayoutParams(-1,-2);lp.setMargins(0,0,0,dp(7));b.addView(r,lp);n++;
         }
         c.close();
-        if(n==0)b.addView(tv("FOTOĞRAFI OLMAYAN AKTİF SPORCU BULUNMUYOR.",14,GREEN,true));
+        if(n==0)b.addView(tv("FOTOĞRAFI OLMAYAN AKTİF SPORCU BULUNMUYOR.",14,android.graphics.Color.rgb(25,135,84),true));
     }
 
     private void pickMissingPhoto736(){
@@ -84,7 +84,6 @@ public class MainActivityV736 extends MainActivityV735 {
         verify736.execute(()->{
             try{
                 Method m=MainActivityV735.class.getDeclaredMethod("uploadNormalizedPhoto735",long.class,Uri.class);m.setAccessible(true);m.invoke(this,id,uri);
-                // V735 returns to profile; restore this dedicated list after upload settles.
                 verify736.schedule(()->runOnUiThread(this::showMissingPhotos736),900,TimeUnit.MILLISECONDS);
             }catch(Exception e){runOnUiThread(()->{toast("FOTOĞRAF YÜKLENEMEDİ.");showMissingPhotos736();});}
         });
@@ -133,7 +132,6 @@ public class MainActivityV736 extends MainActivityV735 {
             }
             d.setTransactionSuccessful();
         }finally{d.endTransaction();}
-        // Baseline after cloud mirror so untouched cloud rows never become dirty on this device.
         for(int i=0;i<a.length();i++){
             long id=a.getJSONObject(i).optLong("legacy_id",-1);if(id<=0)continue;
             String h=hashViaReflection736(id);ContentValues s=new ContentValues();s.put("entity","ATHLETE");s.put("entityKey",String.valueOf(id));s.put("localHash",h);s.put("lastSyncedAt",System.currentTimeMillis());d.insertWithOnConflict("sync_state",null,s,SQLiteDatabase.CONFLICT_REPLACE);
