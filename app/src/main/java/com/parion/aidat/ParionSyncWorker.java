@@ -25,6 +25,9 @@ public class ParionSyncWorker extends Worker {
         SharedPreferences prefs=ctx.getSharedPreferences(PREF,Context.MODE_PRIVATE);
         String token=prefs.getString("access_token","");
         if(token.isEmpty())return Result.success();
+        // v4.2.1 safety: a clean/empty device is never allowed to write a snapshot to cloud.
+        if(localAthleteCount()==0){prefs.edit().putBoolean("bootstrap_required",true).apply();return Result.success();}
+        prefs.edit().putBoolean("bootstrap_required",false).apply();
         try{
             if(!pushCore(token,prefs))return Result.retry();
             if(!pushAttendance(token,prefs))return Result.retry();
@@ -35,6 +38,7 @@ public class ParionSyncWorker extends Worker {
         }catch(Exception e){return Result.retry();}
     }
 
+    private int localAthleteCount(){Cursor c=null;try{c=db.getReadableDatabase().rawQuery("SELECT COUNT(*) FROM athletes",null);return c.moveToFirst()?c.getInt(0):0;}catch(Exception e){return 0;}finally{if(c!=null)c.close();}}
     private void ensureQueue(){db.getWritableDatabase().execSQL("CREATE TABLE IF NOT EXISTS pending_sync(id INTEGER PRIMARY KEY AUTOINCREMENT,kind TEXT NOT NULL,entity_key TEXT NOT NULL DEFAULT '',created_at INTEGER NOT NULL,UNIQUE(kind,entity_key))");}
 
     private boolean pushCore(String token,SharedPreferences prefs)throws Exception{
