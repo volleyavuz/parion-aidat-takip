@@ -94,11 +94,12 @@ public class MainActivityV384 extends MainActivityV383 {
         pendingDeleteButton.setOnClickListener(vv->confirmPhotoDelete());
         pendingPreview.setOnClickListener(vv->showZoomPhoto(pendingPreview.getDrawable()));
 
-        EditText name=f("AD SOYAD",v(c,"name")),bd=f("DOĞUM TARİHİ (gg.aa.yyyy)",birth(c)),cat=f("GRUP / TAKIM",v(c,"category")),fee=f("AYLIK AİDAT ₺",n(c,"monthlyFee")),phone=f("SPORCU TELEFON",v(c,"phone")),mn=f("ANNE ADI",v(c,"motherName")),mp=f("ANNE TELEFON",v(c,"motherPhone")),fn=f("BABA ADI",v(c,"fatherName")),fp=f("BABA TELEFON",v(c,"fatherPhone")),start=f("BAŞLANGIÇ TARİHİ",dt(c,"startDate")),end=f("BİTİŞ / ARA VERME",dt(c,"endDate")),restart=f("YENİDEN BAŞLAMA",dt(c,"restartDate")),notes=f("ÖZEL NOTLAR",v(c,"notes"));
+        String restartEndValue=id>0?db.restartEndDate(id):"";
+        EditText name=f("AD SOYAD",v(c,"name")),bd=f("DOĞUM TARİHİ (gg.aa.yyyy)",birth(c)),cat=f("GRUP / TAKIM",v(c,"category")),fee=f("AYLIK AİDAT ₺",n(c,"monthlyFee")),phone=f("SPORCU TELEFON",v(c,"phone")),mn=f("ANNE ADI",v(c,"motherName")),mp=f("ANNE TELEFON",v(c,"motherPhone")),fn=f("BABA ADI",v(c,"fatherName")),fp=f("BABA TELEFON",v(c,"fatherPhone")),start=f("BAŞLANGIÇ TARİHİ",dt(c,"startDate")),end=f("BİTİŞ / ARA VERME",dt(c,"endDate")),restart=f("YENİDEN BAŞLAMA",dt(c,"restartDate")),restartEnd=f("YENİDEN BIRAKMA / ARA VERME TARİHİ",restartEndValue.isEmpty()?"":dateTr(restartEndValue)),notes=f("ÖZEL NOTLAR",v(c,"notes"));
         fee.setInputType(2); notes.setMinLines(3);
         Spinner status=sp(new String[]{"AKTİF","ARA VERDİ","BIRAKTI","ARANACAK","SAKATLANDI"},v(c,"status"));
         Spinner sibling=sp(new String[]{"TEK","VAR","BURSLU"},v(c,"sibling")); if(c!=null)c.close();
-        View[] vs={name,bd,cat,status,fee,sibling,phone,mn,mp,fn,fp,start,end,restart,notes}; for(View z:vs)b.addView(z);
+        View[] vs={name,bd,cat,status,fee,sibling,phone,mn,mp,fn,fp,start,end,restart,restartEnd,notes}; for(View z:vs)b.addView(z);
         Button save=btn(id<0?"KAYDI OLUŞTUR":"DEĞİŞİKLİKLERİ KAYDET"); b.addView(save,new LinearLayout.LayoutParams(-1,dp(60)));
         save.setOnClickListener(vv->{
             if(name.getText().toString().trim().isEmpty()){Toast.makeText(this,"Ad Soyad zorunludur.",Toast.LENGTH_SHORT).show();return;}
@@ -109,7 +110,7 @@ public class MainActivityV384 extends MainActivityV383 {
             cv.put("startDate",iso(start.getText().toString())); cv.put("endDate",iso(end.getText().toString())); cv.put("restartDate",iso(restart.getText().toString())); cv.put("notes",notes.getText().toString().trim()); cv.put("photo",pendingPhoto==null?"":pendingPhoto);
             SQLiteDatabase d=db.getWritableDatabase(); long saved=id;
             if(id<0){Cursor m=d.rawQuery("SELECT COALESCE(MAX(seq),0)+1 FROM athletes",null);m.moveToFirst();cv.put("seq",m.getInt(0));m.close();saved=d.insert("athletes",null,cv);} else d.update("athletes",cv,"id=?",new String[]{String.valueOf(id)});
-            if(saved>0){deleteOldUserPhotoIfNeeded();Toast.makeText(this,"Kayıt kaydedildi.",Toast.LENGTH_SHORT).show();showProfile(saved);}
+            if(saved>0){db.setRestartEndDate(saved,iso(restartEnd.getText().toString()));deleteOldUserPhotoIfNeeded();Toast.makeText(this,"Kayıt kaydedildi.",Toast.LENGTH_SHORT).show();showProfile(saved);}
         });
     }
 
