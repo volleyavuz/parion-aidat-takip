@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-2-3-cloud-restore ]
+    branches: [ parion-v4-2-4-updates-navigation ]
   workflow_dispatch:
 jobs:
   build:
@@ -39,21 +39,21 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.2.3 cloud restore package
+      - name: Verify v4.2.4 updates navigation package
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV728' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV728.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1043' app/build.gradle.kts
-          grep -q 'versionName = "4.2.3"' app/build.gradle.kts
+          grep -q 'MainActivityV729' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV729.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1044' app/build.gradle.kts
+          grep -q 'versionName = "4.2.4"' app/build.gradle.kts
+          grep -q 'GÜNCELLEMELER' app/src/main/java/com/parion/aidat/MainActivityV729.java
+          grep -q 'SENKRONİZASYON' app/src/main/java/com/parion/aidat/MainActivityV729.java
           grep -q 'BULUTTAN TEMİZ GERİ YÜKLE' app/src/main/java/com/parion/aidat/MainActivityV728.java
-          grep -q 'super.syncFromCloud(true)' app/src/main/java/com/parion/aidat/MainActivityV728.java
           grep -q 'SAFE_MULTI_DEVICE_SNAPSHOT_BLOCKED' app/src/main/java/com/parion/aidat/MainActivityV727.java
-          grep -q 'DELTA_REQUIRES_SAFE_PREFLIGHT' app/src/main/java/com/parion/aidat/MainActivityV727.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_3_Cloud_Clean_Restore.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_4_Updates_Navigation.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.2.3-Cloud-Clean-Restore
-          path: Parion_V4_2_3_Cloud_Clean_Restore.apk
+          name: Parion-v4.2.4-Updates-Navigation
+          path: Parion_V4_2_4_Updates_Navigation.apk
           if-no-files-found: error
