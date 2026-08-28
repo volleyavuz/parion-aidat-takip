@@ -8,7 +8,7 @@ import java.util.*;
 /** v4 local cache. No athlete/payment seed data is bundled in the APK. */
 public class DbHelper extends SQLiteOpenHelper {
     static final String DB="parion_spor_okulu.db";
-    static final int VER=4;
+    static final int VER=5;
     private Context ctx;
 
     public DbHelper(Context c){super(c,DB,null,VER);ctx=c.getApplicationContext();}
@@ -16,16 +16,20 @@ public class DbHelper extends SQLiteOpenHelper {
     @Override public void onCreate(SQLiteDatabase d){
         d.execSQL("CREATE TABLE athletes(id INTEGER PRIMARY KEY,seq INTEGER,birthYear INTEGER,birthDate TEXT,name TEXT,category TEXT,status TEXT,monthlyFee INTEGER,sibling TEXT,tshirtQty INTEGER,tshirtPaid INTEGER,tracksuitQty INTEGER,tracksuitPaid INTEGER,notes TEXT,phone TEXT,motherName TEXT,motherPhone TEXT,fatherName TEXT,fatherPhone TEXT,startDate TEXT,endDate TEXT,restartDate TEXT,photo TEXT,tckn TEXT,summerCall INTEGER NOT NULL DEFAULT 0,winterCall INTEGER NOT NULL DEFAULT 0,deletedAt TEXT,deletedPrevStatus TEXT)");
         d.execSQL("CREATE TABLE payments(id INTEGER PRIMARY KEY AUTOINCREMENT,athleteId INTEGER,year INTEGER,month INTEGER,marker TEXT,amount INTEGER,UNIQUE(athleteId,year,month))");
-        createFeeHistory(d);createMaterialTables(d);createSyncTables(d);createRecentPayments(d);
+        createFeeHistory(d);createMaterialTables(d);createSyncTables(d);createRecentPayments(d);createRestartPeriods(d);
     }
     private void createFeeHistory(SQLiteDatabase d){d.execSQL("CREATE TABLE IF NOT EXISTS fee_history(id INTEGER PRIMARY KEY AUTOINCREMENT,athleteId INTEGER,year INTEGER,effectiveMonth INTEGER,fee INTEGER,UNIQUE(athleteId,year,effectiveMonth))");}
     private void createMaterialTables(SQLiteDatabase d){d.execSQL("CREATE TABLE IF NOT EXISTS material_products(name TEXT PRIMARY KEY,currentPrice INTEGER NOT NULL DEFAULT 0,active INTEGER NOT NULL DEFAULT 1,cloudId TEXT)");d.execSQL("CREATE TABLE IF NOT EXISTS material_transactions(id INTEGER PRIMARY KEY AUTOINCREMENT,cloudId TEXT UNIQUE,athleteId INTEGER NOT NULL,product TEXT NOT NULL,qty INTEGER NOT NULL,unitPrice INTEGER NOT NULL,total INTEGER NOT NULL,paidAmount INTEGER NOT NULL DEFAULT 0,issuedDate TEXT NOT NULL,paymentDate TEXT,note TEXT)");d.execSQL("INSERT OR IGNORE INTO material_products(name,currentPrice,active) VALUES('TİŞÖRT',500,1)");}
     private void createSyncTables(SQLiteDatabase d){d.execSQL("CREATE TABLE IF NOT EXISTS sync_state(entity TEXT NOT NULL,entityKey TEXT NOT NULL,cloudUpdatedAt TEXT,localHash TEXT,lastSyncedAt INTEGER NOT NULL DEFAULT 0,PRIMARY KEY(entity,entityKey))");}
     private void createRecentPayments(SQLiteDatabase d){d.execSQL("CREATE TABLE IF NOT EXISTS payment_recent(athleteId INTEGER NOT NULL,year INTEGER NOT NULL,month INTEGER NOT NULL,amount INTEGER NOT NULL,savedAt INTEGER NOT NULL,PRIMARY KEY(athleteId,year,month))");}
+    private void createRestartPeriods(SQLiteDatabase d){d.execSQL("CREATE TABLE IF NOT EXISTS athlete_restart_periods(athleteId INTEGER PRIMARY KEY,restartEndDate TEXT NOT NULL DEFAULT '')");}
     private boolean hasColumn(SQLiteDatabase d,String table,String col){Cursor c=null;try{c=d.rawQuery("PRAGMA table_info("+table+")",null);while(c.moveToNext())if(col.equalsIgnoreCase(c.getString(c.getColumnIndexOrThrow("name"))))return true;}catch(Exception ignored){}finally{if(c!=null)c.close();}return false;}
     private void addColumn(SQLiteDatabase d,String table,String col,String type){try{if(!hasColumn(d,table,col))d.execSQL("ALTER TABLE "+table+" ADD COLUMN "+col+" "+type);}catch(Exception ignored){}}
 
-    @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){createFeeHistory(d);addColumn(d,"athletes","birthDate","TEXT");addColumn(d,"athletes","tckn","TEXT");addColumn(d,"athletes","summerCall","INTEGER NOT NULL DEFAULT 0");addColumn(d,"athletes","winterCall","INTEGER NOT NULL DEFAULT 0");addColumn(d,"athletes","deletedAt","TEXT");addColumn(d,"athletes","deletedPrevStatus","TEXT");createMaterialTables(d);createSyncTables(d);createRecentPayments(d);}
+    @Override public void onUpgrade(SQLiteDatabase d,int oldVersion,int newVersion){createFeeHistory(d);addColumn(d,"athletes","birthDate","TEXT");addColumn(d,"athletes","tckn","TEXT");addColumn(d,"athletes","summerCall","INTEGER NOT NULL DEFAULT 0");addColumn(d,"athletes","winterCall","INTEGER NOT NULL DEFAULT 0");addColumn(d,"athletes","deletedAt","TEXT");addColumn(d,"athletes","deletedPrevStatus","TEXT");createMaterialTables(d);createSyncTables(d);createRecentPayments(d);createRestartPeriods(d);}
+
+    public String restartEndDate(long athleteId){SQLiteDatabase d=getReadableDatabase();createRestartPeriods(d);Cursor c=d.rawQuery("SELECT restartEndDate FROM athlete_restart_periods WHERE athleteId=?",new String[]{String.valueOf(athleteId)});String s="";if(c.moveToFirst()&&!c.isNull(0))s=c.getString(0);c.close();return s==null?"":s;}
+    public void setRestartEndDate(long athleteId,String date){SQLiteDatabase d=getWritableDatabase();createRestartPeriods(d);String x=date==null?"":date.trim();if(x.isEmpty()){d.delete("athlete_restart_periods","athleteId=?",new String[]{String.valueOf(athleteId)});return;}ContentValues v=new ContentValues();v.put("athleteId",athleteId);v.put("restartEndDate",x);d.insertWithOnConflict("athlete_restart_periods",null,v,SQLiteDatabase.CONFLICT_REPLACE);}
 
     private Context getContext(){return ctx;}
     @Override public SQLiteDatabase getWritableDatabase(){return super.getWritableDatabase();}
