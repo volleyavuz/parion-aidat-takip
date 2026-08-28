@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-1-49-cycle-spells ]
+    branches: [ parion-v4-2-0-final-test ]
   workflow_dispatch:
 jobs:
   build:
@@ -39,21 +39,20 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.1.49 package and signature
+      - name: Verify v4.2.0 package and signature
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
           grep -q 'MainActivityV725' app/src/main/AndroidManifest.xml
           grep -q 'MainActivityV725.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1034' app/build.gradle.kts
-          grep -q 'versionName = "4.1.49"' app/build.gradle.kts
+          grep -q 'versionCode = 1040' app/build.gradle.kts
+          grep -q 'versionName = "4.2.0"' app/build.gradle.kts
+          grep -q 'applicationId = "com.parion.aidat"' app/build.gradle.kts
+          grep -q 'No athlete/payment seed data is bundled in the APK' app/src/main/java/com/parion/aidat/DbHelper.java
           grep -q 'rebuildProfileCycles725' app/src/main/java/com/parion/aidat/MainActivityV725.java
-          grep -q 'currentAnchor605' app/src/main/java/com/parion/aidat/MainActivityV725.java
-          grep -q 'cycleAnchor605' app/src/main/java/com/parion/aidat/MainActivityV725.java
-          grep -q 'YENİDEN BIRAKMA / ARA VERME TARİHİ' app/src/main/java/com/parion/aidat/MainActivityV384.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_1_49_Cycle_Spells.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_0_Final_Test.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.1.49-Cycle-Spells
-          path: Parion_V4_1_49_Cycle_Spells.apk
+          name: Parion-v4.2.0-Final-Test
+          path: Parion_V4_2_0_Final_Test.apk
           if-no-files-found: error
