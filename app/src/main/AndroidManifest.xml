@@ -30,6 +30,7 @@
 <activity android:name=".MainActivityV726" android:screenOrientation="portrait" android:exported="false" />
 <activity android:name=".MainActivityV727" android:screenOrientation="portrait" android:exported="false" />
 <activity android:name=".MainActivityV728" android:screenOrientation="portrait" android:exported="false" />
+<activity android:name=".MainActivityV729" android:screenOrientation="portrait" android:exported="false" />
 <activity android:name=".SplashActivity" android:screenOrientation="portrait" android:exported="true"><intent-filter><action android:name="android.intent.action.MAIN" /><category android:name="android.intent.category.LAUNCHER" /></intent-filter></activity>
 </application>
 </manifest>
