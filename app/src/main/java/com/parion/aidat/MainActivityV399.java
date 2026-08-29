@@ -29,8 +29,6 @@ public class MainActivityV399 extends MainActivityV398 {
 
     @Override void showHome(){
         super.showHome();
-        // showHome can be dynamically dispatched while a parent onCreate is still running.
-        // Ensure the table exists before the first missing-form count is queried.
         ensureRegistrationForms399();
         addMissingFormsCard399();
     }
@@ -77,7 +75,10 @@ public class MainActivityV399 extends MainActivityV398 {
     }
     private boolean hasForm399(long id){
         if(hasLocalForm399(id))return true;
-        ensureBundledIndex399();String[] x=bundledForms399.get(id);return x!=null&&formFileExists399(x[0]);
+        ensureBundledIndex399();
+        // v4.2.27: the bundled index is authoritative enough for the legacy card.
+        // Do not open every bundled file on the UI thread during dashboard startup.
+        return bundledForms399.containsKey(id);
     }
     private boolean formFileExists399(String ref){
         if(ref==null||ref.trim().isEmpty())return false;
