@@ -4,9 +4,10 @@ import android.app.AlertDialog;
 import android.content.ContentValues;
 import android.database.sqlite.SQLiteDatabase;
 import org.json.*;
+import java.lang.reflect.Method;
 import java.util.concurrent.*;
 
-/** v4.2.20 - atomic cloud recovery: validate complete snapshot BEFORE touching local data. */
+/** v4.2.21 - atomic cloud recovery + post-recovery sync-state seeding. */
 public class MainActivityV742 extends MainActivityV741 {
     private final ExecutorService recovery742=Executors.newSingleThreadExecutor();
     private volatile boolean recovering742=false;
@@ -48,6 +49,7 @@ public class MainActivityV742 extends MainActivityV741 {
                     for(int i=0;i<pp.length();i++)insertPayment742(d,pp.getJSONObject(i));
                     for(int i=0;i<ff.length();i++)insertFee742(d,ff.getJSONObject(i));
                     for(int i=0;i<dd.length();i++)markDeleted742(d,dd.getJSONObject(i));
+                    seedSyncState742(d,aa);
                     gv.put("applying_remote",0);d.update("sync_guard",gv,"id=1",null);
                     d.setTransactionSuccessful();
                 }finally{try{ContentValues gv=new ContentValues();gv.put("applying_remote",0);d.update("sync_guard",gv,"id=1",null);}catch(Exception ignored){}d.endTransaction();}
@@ -56,6 +58,16 @@ public class MainActivityV742 extends MainActivityV741 {
             finally{recovering742=false;}
         });
     }
+
+    private void seedSyncState742(SQLiteDatabase d,JSONArray aa){
+        long now=System.currentTimeMillis();
+        for(int i=0;i<aa.length();i++)try{
+            JSONObject o=aa.getJSONObject(i);long id=o.optLong("legacy_id",-1);if(id<=0)continue;
+            ContentValues v=new ContentValues();v.put("entity","ATHLETE");v.put("entityKey",String.valueOf(id));v.put("localHash",hash742(id));v.put("cloudUpdatedAt","");v.put("lastSyncedAt",now);
+            d.insertWithOnConflict("sync_state",null,v,SQLiteDatabase.CONFLICT_REPLACE);
+        }catch(Exception ignored){}
+    }
+    private String hash742(long id){try{Method m=MainActivityV735.class.getDeclaredMethod("hash735",long.class);m.setAccessible(true);return String.valueOf(m.invoke(this,id));}catch(Exception e){return "";}}
 
     private void insertAthlete742(SQLiteDatabase d,JSONObject o){
         long id=o.optLong("legacy_id",-1);if(id<=0)return;ContentValues v=new ContentValues();v.put("id",id);
