@@ -7,9 +7,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1066
-        versionName = "4.2.26"
-        // Remove synchronous all-athlete hash sweep from Activity startup.
+        versionCode = 1067
+        versionName = "4.2.27"
+        // Remove legacy synchronous media asset scans from dashboard first frame.
     }
     signingConfigs { create("release") { storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks"); storePassword = System.getenv("PARION_STORE_PASSWORD"); keyAlias = System.getenv("PARION_KEY_ALIAS"); keyPassword = System.getenv("PARION_KEY_PASSWORD") } }
     buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
