@@ -7,9 +7,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1055
-        versionName = "4.2.15"
-        // Exact 92dp profile portrait targeting; v4.2.12 delta chain and live recent payments preserved.
+        versionCode = 1056
+        versionName = "4.2.16"
+        // Profile uses the same alias/cloud resolver as athlete lists; server-side status normalization prevents LWW HTTP 400.
     }
     signingConfigs { create("release") { storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks"); storePassword = System.getenv("PARION_STORE_PASSWORD"); keyAlias = System.getenv("PARION_KEY_ALIAS"); keyPassword = System.getenv("PARION_KEY_PASSWORD") } }
     buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
