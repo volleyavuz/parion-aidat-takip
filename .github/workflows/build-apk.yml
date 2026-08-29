@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-2-17-realtime-canonical-sync ]
+    branches: [ parion-v4-2-18-realtime-debounce-loop-fix ]
   workflow_dispatch:
 jobs:
   build:
@@ -39,21 +39,21 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.2.17 canonical realtime sync
+      - name: Verify v4.2.18 debounce loop fix
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV740' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV740.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1057' app/build.gradle.kts
-          grep -q 'versionName = "4.2.17"' app/build.gradle.kts
-          grep -q 'parion_sync_one_athlete_lww_v411' app/src/main/java/com/parion/aidat/MainActivityV740.java
-          grep -q 'pending_sync' app/src/main/java/com/parion/aidat/MainActivityV740.java
-          grep -q 'realtime/v1/websocket' app/src/main/java/com/parion/aidat/MainActivityV740.java
-          grep -q 'V4217_USE_CANONICAL_LWW' app/src/main/java/com/parion/aidat/MainActivityV740.java
+          grep -q 'MainActivityV741' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV741.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1058' app/build.gradle.kts
+          grep -q 'versionName = "4.2.18"' app/build.gradle.kts
+          grep -q 'catchupQueued741' app/src/main/java/com/parion/aidat/MainActivityV741.java
+          grep -q '750,TimeUnit.MILLISECONDS' app/src/main/java/com/parion/aidat/MainActivityV741.java
+          grep -q 'syncRunning740' app/src/main/java/com/parion/aidat/MainActivityV741.java
+          grep -q 'destroyed740' app/src/main/java/com/parion/aidat/MainActivityV741.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_17_Realtime_Canonical_Sync.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_18_Realtime_Debounce_Loop_Fix.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.2.17-Realtime-Canonical-Sync
-          path: Parion_V4_2_17_Realtime_Canonical_Sync.apk
+          name: Parion-v4.2.18-Realtime-Debounce-Loop-Fix
+          path: Parion_V4_2_18_Realtime_Debounce_Loop_Fix.apk
           if-no-files-found: error
