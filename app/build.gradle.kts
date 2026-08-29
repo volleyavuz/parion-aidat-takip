@@ -7,9 +7,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1070
-        versionName = "4.2.30"
-        // Disable the legacy V660 full-screen HOME cover; keep the real splash only.
+        versionCode = 1071
+        versionName = "4.2.31"
+        // Keep V657 as the only visible dashboard; legacy V36 finance cards are compatibility no-ops.
     }
     signingConfigs { create("release") { storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks"); storePassword = System.getenv("PARION_STORE_PASSWORD"); keyAlias = System.getenv("PARION_KEY_ALIAS"); keyPassword = System.getenv("PARION_KEY_PASSWORD") } }
     buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
