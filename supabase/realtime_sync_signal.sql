@@ -1,0 +1,3 @@
+-- v4.2.19 backend reference: Realtime publishes only public.parion_sync_signal.
+-- Sensitive domain tables remain behind the existing REST/RPC/RLS model.
+-- Statement-level triggers bump the singleton signal row after meaningful writes.
