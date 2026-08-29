@@ -7,9 +7,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1056
-        versionName = "4.2.16"
-        // Profile uses the same alias/cloud resolver as athlete lists; server-side status normalization prevents LWW HTTP 400.
+        versionCode = 1057
+        versionName = "4.2.17"
+        // Canonical local-first + LWW + Supabase Realtime multi-device synchronization.
     }
     signingConfigs { create("release") { storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks"); storePassword = System.getenv("PARION_STORE_PASSWORD"); keyAlias = System.getenv("PARION_KEY_ALIAS"); keyPassword = System.getenv("PARION_KEY_PASSWORD") } }
     buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
@@ -19,4 +19,5 @@ android {
 dependencies {
     implementation("androidx.work:work-runtime:2.10.1")
     implementation("androidx.exifinterface:exifinterface:1.3.7")
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
 }
