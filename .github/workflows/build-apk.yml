@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-2-22-direct-sync ]
+    branches: [ parion-v4-2-30-single-splash ]
   workflow_dispatch:
 jobs:
   build:
@@ -39,27 +39,27 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.2.29 media rollback
+      - name: Verify v4.2.30 single splash
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'versionCode = 1069' app/build.gradle.kts
-          grep -q 'versionName = "4.2.29"' app/build.gradle.kts
+          grep -q 'versionCode = 1070' app/build.gradle.kts
+          grep -q 'versionName = "4.2.30"' app/build.gradle.kts
           grep -q 'MainActivityV747' app/src/main/AndroidManifest.xml
           grep -q 'MainActivityV747.class' app/src/main/java/com/parion/aidat/SplashActivity.java
           grep -q 'startupReady747=false' app/src/main/java/com/parion/aidat/MainActivityV747.java
           grep -q 'V405 implementation' app/src/main/java/com/parion/aidat/MainActivityV745.java
-          if grep -q 'parion_media_index_v1' app/src/main/java/com/parion/aidat/MainActivityV745.java; then
-            echo 'v4.2.24 duplicate media RPC engine still active' >&2
+          if grep -q 'showDashboardCover660' app/src/main/java/com/parion/aidat/MainActivityV660.java; then
+            echo 'legacy V660 white HOME cover is still active' >&2
             exit 1
           fi
-          if grep -q 'UPDATE athletes SET photo' app/src/main/java/com/parion/aidat/MainActivityV745.java; then
-            echo 'duplicate media engine still mutates athletes table' >&2
+          if grep -q 'SPORCU TAKİP UYGULAMASI' app/src/main/java/com/parion/aidat/MainActivityV660.java; then
+            echo 'legacy second white screen text still present in V660' >&2
             exit 1
           fi
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_29_Media_Index_Rollback.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_30_Single_Splash.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.2.29-Media-Index-Rollback
-          path: Parion_V4_2_29_Media_Index_Rollback.apk
+          name: Parion-v4.2.30-Single-Splash
+          path: Parion_V4_2_30_Single_Splash.apk
           if-no-files-found: error
