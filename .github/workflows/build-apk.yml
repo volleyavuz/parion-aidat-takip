@@ -39,26 +39,26 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.2.32 atomic final dashboard reveal
+      - name: Verify v4.2.33 atomic finance header reveal
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'versionCode = 1072' app/build.gradle.kts
-          grep -q 'versionName = "4.2.32"' app/build.gradle.kts
-          grep -q 'MainActivityV749' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV749.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1073' app/build.gradle.kts
+          grep -q 'versionName = "4.2.33"' app/build.gradle.kts
+          grep -q 'MainActivityV750' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV750.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q '"FİNANS".equalsIgnoreCase' app/src/main/java/com/parion/aidat/MainActivityV750.java
+          grep -q 'builtRoot.setAlpha(0f)' app/src/main/java/com/parion/aidat/MainActivityV750.java
+          grep -q 'builtRoot.setAlpha(1f)' app/src/main/java/com/parion/aidat/MainActivityV750.java
           grep -q 'builtRoot.setAlpha(0f)' app/src/main/java/com/parion/aidat/MainActivityV749.java
-          grep -q 'builtRoot.setAlpha(1f)' app/src/main/java/com/parion/aidat/MainActivityV749.java
           grep -q 'return new DashData();' app/src/main/java/com/parion/aidat/MainActivityV748.java
-          grep -q 'ghost.setVisibility(View.GONE)' app/src/main/java/com/parion/aidat/MainActivityV748.java
-          grep -q 'buildFinalDashboard657' app/src/main/java/com/parion/aidat/MainActivityV657.java
           if grep -q 'showDashboardCover660' app/src/main/java/com/parion/aidat/MainActivityV660.java; then
             echo 'legacy V660 white HOME cover is still active' >&2
             exit 1
           fi
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_32_Atomic_Final_Dashboard.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_33_Atomic_Finance_Header.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.2.32-Atomic-Final-Dashboard
-          path: Parion_V4_2_32_Atomic_Final_Dashboard.apk
+          name: Parion-v4.2.33-Atomic-Finance-Header
+          path: Parion_V4_2_33_Atomic_Finance_Header.apk
           if-no-files-found: error
