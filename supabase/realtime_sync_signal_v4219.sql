@@ -1,0 +1,2 @@
+-- Applied to Supabase production for v4.2.19.
+-- Realtime publication contains only parion_sync_signal.
