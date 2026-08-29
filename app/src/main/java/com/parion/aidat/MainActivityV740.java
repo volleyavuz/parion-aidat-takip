@@ -45,7 +45,9 @@ public class MainActivityV740 extends MainActivityV739 {
         super.onCreate(b);
         ensureQueue740();
         disableLegacySync740();
-        seedDirty740();
+        // Do not run the legacy all-athlete hash sweep on every startup. Safe recovery seeds
+        // sync_state and all subsequent edits are captured by the SQLite triggers below.
+        // The old sweep performed multiple SQLite scans per athlete and delayed first paint.
         scheduleLocalPump740();
     }
 
@@ -114,7 +116,7 @@ public class MainActivityV740 extends MainActivityV739 {
         d.execSQL("CREATE TRIGGER rt740_fee_delete AFTER DELETE ON fee_history"+when+"BEGIN INSERT OR REPLACE INTO pending_sync(kind,entity_key,created_at) VALUES('ATHLETE',OLD.athleteId,"+now+"); END");
     }
 
-    /** One migration-time hash sweep catches edits made before the pending queue existed. */
+    /** Kept only for explicit migration/debug use; no longer invoked during Activity startup. */
     private void seedDirty740(){
         if(db==null)return;
         try{Cursor c=db.getReadableDatabase().rawQuery("SELECT id FROM athletes",null);while(c.moveToNext()){long id=c.getLong(0);String h=hash740(id),s=savedHash740(id);if(!h.equals(s))enqueue740(id);}c.close();}catch(Exception ignored){}
@@ -173,7 +175,6 @@ public class MainActivityV740 extends MainActivityV739 {
         HttpResult r=super.request("POST",SUPABASE_URL+"/rest/v1/rpc/parion_sync_one_athlete_lww_v411",body.toString(),token);
         if(r.code==401&&refreshSession()){token=cloudPrefs.getString("access_token","");r=super.request("POST",SUPABASE_URL+"/rest/v1/rpc/parion_sync_one_athlete_lww_v411",body.toString(),token);}
         if(r.code<200||r.code>=300)throw new IOException("SPORCU "+id+" HTTP "+r.code);
-        // If user edited again while HTTP was in flight, never pull over that newer local edit.
         if(!before.equals(hash740(id))){enqueue740(id);return true;}
         if(!pullOneAthlete740(id,before)){enqueue740(id);return true;}
         dequeue740(id);return true;
@@ -209,7 +210,6 @@ public class MainActivityV740 extends MainActivityV739 {
         return true;
     }
 
-    /** Catch-up is bulk-read + merge, never a whole-database cloud write. */
     private void bulkCatchup740()throws Exception{
         HttpResult ar=getAuthed("/rest/v1/mobile_athletes?select=*&order=legacy_id.asc");
         HttpResult pr=getAuthed("/rest/v1/mobile_payments_legacy?select=*&order=legacy_id.asc,year.asc,month.asc");
@@ -224,7 +224,6 @@ public class MainActivityV740 extends MainActivityV739 {
             guard740(d,true);
             HashSet<Long> cloudIds=new HashSet<>();
             for(int i=0;i<aa.length();i++){JSONObject o=aa.getJSONObject(i);long id=o.optLong("legacy_id",-1);if(id<=0)continue;cloudIds.add(id);mergeAthlete740(d,o,raw.get(id));}
-            // Cloud is canonical only after all local pending writes were flushed.
             d.delete("payments",null,null);for(int i=0;i<pp.length();i++)insertPayment740(d,pp.getJSONObject(i));
             d.delete("fee_history",null,null);for(int i=0;i<ff.length();i++)insertFee740(d,ff.getJSONObject(i));
             for(Map.Entry<Long,JSONObject> e:raw.entrySet()){
