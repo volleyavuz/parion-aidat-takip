@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-2-19-sync-signal ]
+    branches: [ parion-v4-2-20-safe-recovery ]
   workflow_dispatch:
 jobs:
   build:
@@ -39,21 +39,20 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.2.19 sync signal architecture
+      - name: Verify v4.2.20 safe recovery
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV741' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV741.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1059' app/build.gradle.kts
-          grep -q 'versionName = "4.2.19"' app/build.gradle.kts
-          grep -q 'parion_sync_signal' app/src/main/java/com/parion/aidat/MainActivityV741.java
-          ! grep -q 'String\[\] tables=' app/src/main/java/com/parion/aidat/MainActivityV741.java
-          grep -q '650,TimeUnit.MILLISECONDS' app/src/main/java/com/parion/aidat/MainActivityV741.java
-          grep -q 'syncRunning740' app/src/main/java/com/parion/aidat/MainActivityV741.java
+          grep -q 'MainActivityV742' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV742.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1060' app/build.gradle.kts
+          grep -q 'versionName = "4.2.20"' app/build.gradle.kts
+          grep -q 'parion_recovery_snapshot_v1' app/src/main/java/com/parion/aidat/MainActivityV742.java
+          grep -q 'SNAPSHOT EKSİK' app/src/main/java/com/parion/aidat/MainActivityV742.java
+          grep -q 'YEREL VERİYE DOKUNULMADI' app/src/main/java/com/parion/aidat/MainActivityV742.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_19_Sync_Signal.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_20_Safe_Recovery.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.2.19-Sync-Signal
-          path: Parion_V4_2_19_Sync_Signal.apk
+          name: Parion-v4.2.20-Safe-Recovery
+          path: Parion_V4_2_20_Safe_Recovery.apk
           if-no-files-found: error
