@@ -39,13 +39,15 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.2.31 final dashboard only
+      - name: Verify v4.2.32 atomic final dashboard reveal
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'versionCode = 1071' app/build.gradle.kts
-          grep -q 'versionName = "4.2.31"' app/build.gradle.kts
-          grep -q 'MainActivityV748' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV748.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1072' app/build.gradle.kts
+          grep -q 'versionName = "4.2.32"' app/build.gradle.kts
+          grep -q 'MainActivityV749' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV749.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'builtRoot.setAlpha(0f)' app/src/main/java/com/parion/aidat/MainActivityV749.java
+          grep -q 'builtRoot.setAlpha(1f)' app/src/main/java/com/parion/aidat/MainActivityV749.java
           grep -q 'return new DashData();' app/src/main/java/com/parion/aidat/MainActivityV748.java
           grep -q 'ghost.setVisibility(View.GONE)' app/src/main/java/com/parion/aidat/MainActivityV748.java
           grep -q 'buildFinalDashboard657' app/src/main/java/com/parion/aidat/MainActivityV657.java
@@ -54,9 +56,9 @@ jobs:
             exit 1
           fi
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_31_Final_Dashboard_Only.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_32_Atomic_Final_Dashboard.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.2.31-Final-Dashboard-Only
-          path: Parion_V4_2_31_Final_Dashboard_Only.apk
+          name: Parion-v4.2.32-Atomic-Final-Dashboard
+          path: Parion_V4_2_32_Atomic_Final_Dashboard.apk
           if-no-files-found: error
