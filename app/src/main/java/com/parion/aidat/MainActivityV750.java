@@ -11,7 +11,7 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-/** v4.2.36 - full entity delta sync with direct Realtime/pending routing. */
+/** v4.2.37 - full entity delta sync + attendance storm fix. */
 public class MainActivityV750 extends MainActivityV749 {
     private int financeGeneration750=0;
     private final ExecutorService delta750=Executors.newSingleThreadExecutor();
@@ -29,6 +29,7 @@ public class MainActivityV750 extends MainActivityV749 {
         d.execSQL("CREATE TABLE IF NOT EXISTS attendance_schedule(id INTEGER PRIMARY KEY AUTOINCREMENT,groupName TEXT NOT NULL,effectiveFrom TEXT NOT NULL,weekdays TEXT NOT NULL)");
         d.execSQL("CREATE TABLE IF NOT EXISTS attendance_sessions(id INTEGER PRIMARY KEY AUTOINCREMENT,groupName TEXT NOT NULL,sessionDate TEXT NOT NULL,cancelled INTEGER NOT NULL DEFAULT 0,confirmed INTEGER NOT NULL DEFAULT 0,UNIQUE(groupName,sessionDate))");
         d.execSQL("CREATE TABLE IF NOT EXISTS attendance_records(sessionId INTEGER NOT NULL,athleteId INTEGER NOT NULL,present INTEGER NOT NULL DEFAULT 1,PRIMARY KEY(sessionId,athleteId))");
+        try{invoke740("guard740",new Class<?>[]{SQLiteDatabase.class,boolean.class},d,true);d.execSQL("DELETE FROM attendance_schedule WHERE id NOT IN (SELECT MIN(id) FROM attendance_schedule GROUP BY groupName,effectiveFrom)");d.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS ux_attendance_schedule_key ON attendance_schedule(groupName,effectiveFrom)");}catch(Exception ignored){}finally{try{invoke740("guard740",new Class<?>[]{SQLiteDatabase.class,boolean.class},d,false);}catch(Exception ignored){}}
         String w=" WHEN (SELECT applying_remote FROM sync_guard WHERE id=1)=0 ",n="CAST(strftime('%s','now') AS INTEGER)*1000";
         trigger750(d,"x750_as_i","attendance_schedule","INSERT","'ATTENDANCE','ALL'",w,n);trigger750(d,"x750_as_u","attendance_schedule","UPDATE","'ATTENDANCE','ALL'",w,n);trigger750(d,"x750_as_d","attendance_schedule","DELETE","'ATTENDANCE','ALL'",w,n);
         trigger750(d,"x750_ase_i","attendance_sessions","INSERT","'ATTENDANCE','ALL'",w,n);trigger750(d,"x750_ase_u","attendance_sessions","UPDATE","'ATTENDANCE','ALL'",w,n);trigger750(d,"x750_ase_d","attendance_sessions","DELETE","'ATTENDANCE','ALL'",w,n);
@@ -68,7 +69,10 @@ public class MainActivityV750 extends MainActivityV749 {
     }
 
     private void syncAttendance750()throws Exception{
-        SQLiteDatabase d=db.getWritableDatabase();invoke740("guard740",new Class<?>[]{SQLiteDatabase.class,boolean.class},d,true);try{Method m=MainActivityV731.class.getDeclaredMethod("syncAttendanceDelta731",boolean.class);m.setAccessible(true);m.invoke(this,false);}finally{invoke740("guard740",new Class<?>[]{SQLiteDatabase.class,boolean.class},d,false);}Method b=MainActivityV731.class.getDeclaredMethod("buildAttendancePayload731",boolean.class);b.setAccessible(true);JSONObject left=(JSONObject)b.invoke(this,true);int dirty=left.getJSONArray("p_schedule").length()+left.getJSONArray("p_sessions").length()+left.getJSONArray("p_records").length();if(dirty>0)throw new Exception("YOKLAMA DEĞİŞİKLİĞİ/ÇAKIŞMASI BEKLİYOR");d.delete("pending_sync","kind='ATTENDANCE'",null);
+        SQLiteDatabase d=db.getWritableDatabase();invoke740("guard740",new Class<?>[]{SQLiteDatabase.class,boolean.class},d,true);try{Method m=MainActivityV731.class.getDeclaredMethod("syncAttendanceDelta731",boolean.class);m.setAccessible(true);m.invoke(this,false);repairAttendanceSchedule750();}finally{invoke740("guard740",new Class<?>[]{SQLiteDatabase.class,boolean.class},d,false);}Method b=MainActivityV731.class.getDeclaredMethod("buildAttendancePayload731",boolean.class);b.setAccessible(true);JSONObject left=(JSONObject)b.invoke(this,true);int dirty=left.getJSONArray("p_schedule").length()+left.getJSONArray("p_sessions").length()+left.getJSONArray("p_records").length();if(dirty>0)throw new Exception("YOKLAMA DEĞİŞİKLİĞİ/ÇAKIŞMASI BEKLİYOR");d.delete("pending_sync","kind='ATTENDANCE'",null);
+    }
+    private void repairAttendanceSchedule750()throws Exception{
+        HttpResult r=getAuthed750("/rest/v1/mobile_attendance_schedule?select=group_name,effective_from,weekdays,updated_at&order=effective_from.asc");JSONArray a=new JSONArray(r.body);SQLiteDatabase d=db.getWritableDatabase();d.beginTransaction();try{invoke740("guard740",new Class<?>[]{SQLiteDatabase.class,boolean.class},d,true);d.execSQL("DELETE FROM attendance_schedule WHERE id NOT IN (SELECT MIN(id) FROM attendance_schedule GROUP BY groupName,effectiveFrom)");d.execSQL("CREATE UNIQUE INDEX IF NOT EXISTS ux_attendance_schedule_key ON attendance_schedule(groupName,effectiveFrom)");for(int i=0;i<a.length();i++){JSONObject o=a.getJSONObject(i);String g=o.optString("group_name",""),dt=o.optString("effective_from",""),w=o.optString("weekdays","");ContentValues v=new ContentValues();v.put("groupName",g);v.put("effectiveFrom",dt);v.put("weekdays",w);d.insertWithOnConflict("attendance_schedule",null,v,SQLiteDatabase.CONFLICT_IGNORE);d.update("attendance_schedule",v,"groupName=? AND effectiveFrom=?",new String[]{g,dt});}invoke740("guard740",new Class<?>[]{SQLiteDatabase.class,boolean.class},d,false);d.setTransactionSuccessful();}finally{try{invoke740("guard740",new Class<?>[]{SQLiteDatabase.class,boolean.class},d,false);}catch(Exception ignored){}d.endTransaction();}
     }
 
     private void pushMaterial750()throws Exception{
