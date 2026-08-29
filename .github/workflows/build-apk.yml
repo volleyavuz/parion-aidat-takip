@@ -39,19 +39,23 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.2.25 startup hotfix
+      - name: Verify v4.2.26 startup hash sweep fix
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
           grep -q 'MainActivityV746' app/src/main/AndroidManifest.xml
           grep -q 'MainActivityV746.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1065' app/build.gradle.kts
-          grep -q 'versionName = "4.2.25"' app/build.gradle.kts
+          grep -q 'versionCode = 1066' app/build.gradle.kts
+          grep -q 'versionName = "4.2.26"' app/build.gradle.kts
           grep -q 'if(!announce) return' app/src/main/java/com/parion/aidat/MainActivityV746.java
           grep -q 'parion_media_index_v1' app/src/main/java/com/parion/aidat/MainActivityV745.java
+          if sed -n '/@Override public void onCreate(Bundle b)/,/^    }/p' app/src/main/java/com/parion/aidat/MainActivityV740.java | grep -q 'seedDirty740()'; then
+            echo 'seedDirty740 still runs synchronously during startup' >&2
+            exit 1
+          fi
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_25_Startup_Hotfix.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_26_Startup_Hash_Sweep_Fix.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.2.25-Startup-Hotfix
-          path: Parion_V4_2_25_Startup_Hotfix.apk
+          name: Parion-v4.2.26-Startup-Hash-Sweep-Fix
+          path: Parion_V4_2_26_Startup_Hash_Sweep_Fix.apk
           if-no-files-found: error
