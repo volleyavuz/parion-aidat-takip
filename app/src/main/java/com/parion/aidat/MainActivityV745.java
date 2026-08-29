@@ -5,8 +5,8 @@ import android.os.Bundle;
 /**
  * v4.2.29 media rollback.
  *
- * parion_media_index_v1 was introduced in v4.2.24 as a second media-index engine while
- * MainActivityV405 already owned photo/form indexing. The duplicate engine also wrote
+ * The v4.2.24 duplicate cloud media RPC client is disabled here. MainActivityV405 already
+ * owns photo/form indexing and upload/display behavior. The duplicate engine also wrote
  * CLOUD: photo paths into athletes, which interacted with sync triggers and startup.
  *
  * Keep this compatibility class in the inheritance chain, but make it intentionally inert.
