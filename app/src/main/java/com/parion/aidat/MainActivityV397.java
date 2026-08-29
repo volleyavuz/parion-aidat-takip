@@ -40,7 +40,9 @@ public class MainActivityV397 extends MainActivityV396 {
         String p=photo==null?"":photo.trim(),up=p.toUpperCase(new Locale("tr","TR"));
         if(p.isEmpty()||"NONE".equalsIgnoreCase(p)||up.contains("0000 BOS"))return true;
         if(p.startsWith("USER:")){File f=new File(new File(getFilesDir(),"athlete_photos"),p.substring(5));return !f.isFile();}
-        try(InputStream in=getAssets().open("photos/"+p)){Bitmap src=BitmapFactory.decodeStream(in);if(src==null)return true;Bitmap b=Bitmap.createScaledBitmap(src,32,32,true);if(src!=b)src.recycle();int lowSat=0,light=0,dark=0,n=1024;for(int y=0;y<32;y++)for(int x=0;x<32;x++){int c=b.getPixel(x,y),r=Color.red(c),g=Color.green(c),bl=Color.blue(c),mx=Math.max(r,Math.max(g,bl)),mn=Math.min(r,Math.min(g,bl)),lum=(r+g+bl)/3;if(mx-mn<14)lowSat++;if((lum>=188&&lum<=238)||lum>=246)light++;if(lum<175)dark++;}b.recycle();return lowSat>n*.985&&light>n*.94&&dark<n*.015;}catch(Exception e){return true;}
+        // v4.2.27: Do not decode legacy/cloud photos on the UI thread during dashboard startup.
+        // A non-empty reference is enough here; the canonical media index corrects cloud state asynchronously.
+        return false;
     }
     private int countMissing397(){int n=0;Cursor c=db.athletes("","AKTİF");while(c.moveToNext()){A x=a(c);if(missing397(x.photo))n++;}c.close();return n;}
     private void showMissingDirect397(){
