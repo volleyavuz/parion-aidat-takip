@@ -7,9 +7,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1069
-        versionName = "4.2.29"
-        // Roll back duplicate v4.2.24 parion_media_index_v1 client engine; V405 owns media index again.
+        versionCode = 1070
+        versionName = "4.2.30"
+        // Disable the legacy V660 full-screen HOME cover; keep the real splash only.
     }
     signingConfigs { create("release") { storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks"); storePassword = System.getenv("PARION_STORE_PASSWORD"); keyAlias = System.getenv("PARION_KEY_ALIAS"); keyPassword = System.getenv("PARION_KEY_PASSWORD") } }
     buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
