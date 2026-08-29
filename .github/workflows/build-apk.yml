@@ -1,7 +1,7 @@
 name: Build Parion APK
 on:
   push:
-    branches: [ parion-v4-2-15-profile-photo-exact-slot ]
+    branches: [ parion-v4-2-16-photo-alias-status-fix ]
   workflow_dispatch:
 jobs:
   build:
@@ -39,21 +39,21 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.2.15 exact profile photo slot
+      - name: Verify v4.2.16 photo alias and status fix
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
           grep -q 'MainActivityV739' app/src/main/AndroidManifest.xml
           grep -q 'MainActivityV739.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1055' app/build.gradle.kts
-          grep -q 'versionName = "4.2.15"' app/build.gradle.kts
+          grep -q 'versionCode = 1056' app/build.gradle.kts
+          grep -q 'versionName = "4.2.16"' app/build.gradle.kts
+          grep -q 'setAthletePhoto(portrait,ref)' app/src/main/java/com/parion/aidat/MainActivityV739.java
           grep -q 'target=dp(92)' app/src/main/java/com/parion/aidat/MainActivityV739.java
-          grep -q 'findExactPortrait739' app/src/main/java/com/parion/aidat/MainActivityV739.java
           grep -q 'scheduleLive737(4000L)' app/src/main/java/com/parion/aidat/MainActivityV737.java
           grep -q 'parion_sync_one_athlete_lww_v411' app/src/main/java/com/parion/aidat/MainActivityV735.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_15_Profile_Photo_Exact_Slot.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_16_Photo_Alias_Status_Fix.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.2.15-Profile-Photo-Exact-Slot
-          path: Parion_V4_2_15_Profile_Photo_Exact_Slot.apk
+          name: Parion-v4.2.16-Photo-Alias-Status-Fix
+          path: Parion_V4_2_16_Photo_Alias_Status_Fix.apk
           if-no-files-found: error
