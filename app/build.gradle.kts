@@ -7,9 +7,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1067
-        versionName = "4.2.27"
-        // Remove legacy synchronous media asset scans from dashboard first frame.
+        versionCode = 1068
+        versionName = "4.2.28"
+        // Single-owner startup gate; background media refresh no longer blocks or dirties startup.
     }
     signingConfigs { create("release") { storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks"); storePassword = System.getenv("PARION_STORE_PASSWORD"); keyAlias = System.getenv("PARION_KEY_ALIAS"); keyPassword = System.getenv("PARION_KEY_PASSWORD") } }
     buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
