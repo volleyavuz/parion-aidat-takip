@@ -7,9 +7,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1072
-        versionName = "4.2.32"
-        // Atomic final HOME reveal: legacy compatibility patches finish off-screen; only final dashboard is shown.
+        versionCode = 1073
+        versionName = "4.2.33"
+        // Atomic final HOME and FINANCE header reveal; legacy intermediate frames stay hidden.
     }
     signingConfigs { create("release") { storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks"); storePassword = System.getenv("PARION_STORE_PASSWORD"); keyAlias = System.getenv("PARION_KEY_ALIAS"); keyPassword = System.getenv("PARION_KEY_PASSWORD") } }
     buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
