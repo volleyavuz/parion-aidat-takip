@@ -1,33 +1,39 @@
 package com.parion.aidat;
 
+import android.content.ContentValues;
 import android.os.Bundle;
 import org.json.*;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicBoolean;
 
-/** v4.2.24 - robust cloud media index. Never clears known media on failed refresh. */
+/** v4.2.28 startup-safe cloud media index.
+ * - no duplicate 150/300 ms startup refreshes
+ * - remote photo-path application is guarded so it never creates local pending_sync rows
+ * - failed/partial refresh never clears a healthy in-memory index
+ */
 public class MainActivityV745 extends MainActivityV744 {
     private final ScheduledExecutorService media745=Executors.newSingleThreadScheduledExecutor();
+    private final AtomicBoolean queued745=new AtomicBoolean(false);
     private volatile boolean destroyed745=false;
 
     @Override public void onCreate(Bundle b){
         super.onCreate(b);
-        scheduleMedia745(150);
+        scheduleMedia745(1800);
     }
 
     @Override protected void onResume(){
         super.onResume();
-        scheduleMedia745(300);
+        // Startup refresh is owned by onCreate. Avoid a second immediate refresh on first resume.
     }
 
     @Override void syncFromCloud(boolean announce){
         super.syncFromCloud(announce);
-        scheduleMedia745(1200);
-        scheduleMedia745(3500);
+        scheduleMedia745(1800);
     }
 
     private void scheduleMedia745(long delay){
-        if(destroyed745)return;
-        try{media745.schedule(this::refreshMedia745,delay,TimeUnit.MILLISECONDS);}catch(Exception ignored){}
+        if(destroyed745||!queued745.compareAndSet(false,true))return;
+        try{media745.schedule(()->{queued745.set(false);refreshMedia745();},delay,TimeUnit.MILLISECONDS);}catch(Exception ignored){queued745.set(false);}
     }
 
     private void refreshMedia745(){
@@ -42,7 +48,7 @@ public class MainActivityV745 extends MainActivityV744 {
             }
             if(r.code<200||r.code>=300)return;
             JSONArray a=new JSONArray(r.body);
-            if(a.length()<200)return; // never replace a healthy index with an obviously partial response
+            if(a.length()<200)return;
 
             java.util.HashMap<Long,String> photos=new java.util.HashMap<>();
             java.util.HashMap<Long,String> forms=new java.util.HashMap<>();
@@ -53,19 +59,29 @@ public class MainActivityV745 extends MainActivityV744 {
                 if(!pp.isEmpty()&&!"null".equalsIgnoreCase(pp))photos.put(id,pp);
                 if(!fp.isEmpty()&&!"null".equalsIgnoreCase(fp))forms.put(id,fp);
             }
-            // Production currently has far more than a handful of forms. Guard against auth/RLS/partial-response regressions.
             if(forms.size()<150)return;
+
             photoMap413().clear();photoMap413().putAll(photos);
             formMap413().clear();formMap413().putAll(forms);
+
             if(db!=null){
                 android.database.sqlite.SQLiteDatabase d=db.getWritableDatabase();
-                for(java.util.Map.Entry<Long,String> e:photos.entrySet()){
-                    d.execSQL("UPDATE athletes SET photo=? WHERE id=?",new Object[]{"CLOUD:"+e.getValue(),e.getKey()});
+                d.beginTransaction();
+                try{
+                    ContentValues g=new ContentValues();g.put("applying_remote",1);d.update("sync_guard",g,"id=1",null);
+                    for(java.util.Map.Entry<Long,String> e:photos.entrySet()){
+                        d.execSQL("UPDATE athletes SET photo=? WHERE id=? AND COALESCE(photo,'')<>?",new Object[]{"CLOUD:"+e.getValue(),e.getKey(),"CLOUD:"+e.getValue()});
+                    }
+                    g.put("applying_remote",0);d.update("sync_guard",g,"id=1",null);
+                    d.setTransactionSuccessful();
+                }finally{
+                    try{ContentValues g=new ContentValues();g.put("applying_remote",0);d.update("sync_guard",g,"id=1",null);}catch(Exception ignored){}
+                    d.endTransaction();
                 }
             }
-            runOnUiThread(()->{if(!destroyed745)showHome();});
+            runOnUiThread(()->{if(!destroyed745&&"HOME".equals(page))showHome();});
         }catch(Exception ignored){
-            // Deliberately keep the previous in-memory media index on failure.
+            // Keep previous media maps and local rows intact on any failure.
         }
     }
 
