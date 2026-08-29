@@ -39,23 +39,29 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.2.27 fast first frame
+      - name: Verify v4.2.28 startup lifecycle reset
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'versionCode = 1067' app/build.gradle.kts
-          grep -q 'versionName = "4.2.27"' app/build.gradle.kts
-          grep -q 'Do not decode legacy/cloud photos on the UI thread' app/src/main/java/com/parion/aidat/MainActivityV397.java
-          grep -q 'Do not open every bundled file on the UI thread' app/src/main/java/com/parion/aidat/MainActivityV399.java
-          if grep -q 'Bitmap.createScaledBitmap(src,32,32,true)' app/src/main/java/com/parion/aidat/MainActivityV397.java; then
-            echo 'legacy dashboard bitmap pixel scan still present' >&2
+          grep -q 'versionCode = 1068' app/build.gradle.kts
+          grep -q 'versionName = "4.2.28"' app/build.gradle.kts
+          grep -q 'MainActivityV747' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV747.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'startupReady747=false' app/src/main/java/com/parion/aidat/MainActivityV747.java
+          grep -q 'if(!startupReady747)return' app/src/main/java/com/parion/aidat/MainActivityV747.java
+          grep -q 'scheduleMedia745(1800)' app/src/main/java/com/parion/aidat/MainActivityV745.java
+          grep -q 'applying_remote' app/src/main/java/com/parion/aidat/MainActivityV745.java
+          if grep -q 'scheduleMedia745(150)' app/src/main/java/com/parion/aidat/MainActivityV745.java; then
+            echo 'early duplicate media refresh still present' >&2
             exit 1
           fi
-          grep -q 'if(!announce) return' app/src/main/java/com/parion/aidat/MainActivityV746.java
-          grep -q 'parion_media_index_v1' app/src/main/java/com/parion/aidat/MainActivityV745.java
+          if grep -q 'scheduleMedia745(300)' app/src/main/java/com/parion/aidat/MainActivityV745.java; then
+            echo 'resume duplicate media refresh still present' >&2
+            exit 1
+          fi
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_27_Fast_First_Frame.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_28_Single_Owner_Startup.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.2.27-Fast-First-Frame
-          path: Parion_V4_2_27_Fast_First_Frame.apk
+          name: Parion-v4.2.28-Single-Owner-Startup
+          path: Parion_V4_2_28_Single_Owner_Startup.apk
           if-no-files-found: error
