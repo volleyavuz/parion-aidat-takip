@@ -7,9 +7,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1059
-        versionName = "4.2.19"
-        // Realtime subscribes only to non-sensitive parion_sync_signal; domain data stays behind REST/RPC/RLS.
+        versionCode = 1060
+        versionName = "4.2.20"
+        // Atomic cloud recovery validates complete snapshot before replacing local SQLite.
     }
     signingConfigs { create("release") { storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks"); storePassword = System.getenv("PARION_STORE_PASSWORD"); keyAlias = System.getenv("PARION_KEY_ALIAS"); keyPassword = System.getenv("PARION_KEY_PASSWORD") } }
     buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
