@@ -39,20 +39,19 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.2.24 media index fix
+      - name: Verify v4.2.25 startup hotfix
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'MainActivityV745' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV745.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'versionCode = 1064' app/build.gradle.kts
-          grep -q 'versionName = "4.2.24"' app/build.gradle.kts
+          grep -q 'MainActivityV746' app/src/main/AndroidManifest.xml
+          grep -q 'MainActivityV746.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'versionCode = 1065' app/build.gradle.kts
+          grep -q 'versionName = "4.2.25"' app/build.gradle.kts
+          grep -q 'if(!announce) return' app/src/main/java/com/parion/aidat/MainActivityV746.java
           grep -q 'parion_media_index_v1' app/src/main/java/com/parion/aidat/MainActivityV745.java
-          grep -q 'forms.size()<150' app/src/main/java/com/parion/aidat/MainActivityV745.java
-          grep -q "WHERE kind='ATHLETE'" app/src/main/java/com/parion/aidat/MainActivityV744.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_24_Safe_Media_Index.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_2_25_Startup_Hotfix.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.2.24-Safe-Media-Index
-          path: Parion_V4_2_24_Safe_Media_Index.apk
+          name: Parion-v4.2.25-Startup-Hotfix
+          path: Parion_V4_2_25_Startup_Hotfix.apk
           if-no-files-found: error
