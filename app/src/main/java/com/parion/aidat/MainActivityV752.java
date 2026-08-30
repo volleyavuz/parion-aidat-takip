@@ -9,8 +9,8 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * v4.3.1 - Universal Last-Write-Wins router.
- * Fixes precise attendance delivery and prevents background sync from navigating to HOME.
+ * v4.3.2 - single-owner Universal Last-Write-Wins router.
+ * Legacy V741 periodic pump is disabled. Realtime + this single queue owner drive sync.
  */
 public class MainActivityV752 extends MainActivityV751 {
     private final ScheduledExecutorService fast752=Executors.newSingleThreadScheduledExecutor();
@@ -26,14 +26,19 @@ public class MainActivityV752 extends MainActivityV751 {
         fast752.scheduleWithFixedDelay(()->{
             if(!resumed752||db==null||cloudPrefs==null||cloudPrefs.getString("access_token","").isEmpty())return;
             try{
-                if(pendingCount741()>0){
+                if(pendingAny752()>0&&kick752.compareAndSet(false,true)){
                     normalizePendingTimes752();
-                    if(kick752.compareAndSet(false,true)){
-                        try{syncFromCloud(false);}finally{fast752.schedule(()->kick752.set(false),400,TimeUnit.MILLISECONDS);}
-                    }
+                    try{syncFromCloud(false);}finally{fast752.schedule(()->kick752.set(false),250,TimeUnit.MILLISECONDS);}
                 }
             }catch(Exception ignored){}
-        },180,400,TimeUnit.MILLISECONDS);
+        },250,500,TimeUnit.MILLISECONDS);
+    }
+
+    /** V741's inherited 450ms timer checks this method. Return zero so that legacy periodic pump never fires. */
+    @Override protected int pendingCount741(){return 0;}
+
+    private int pendingAny752(){
+        try{Cursor c=db.getReadableDatabase().rawQuery("SELECT COUNT(*) FROM pending_sync",null);int n=0;if(c.moveToFirst())n=c.getInt(0);c.close();return n;}catch(Exception e){return 0;}
     }
 
     @Override protected void onResume(){resumed752=true;super.onResume();}
@@ -50,31 +55,8 @@ public class MainActivityV752 extends MainActivityV751 {
             }catch(Exception e){
                 if(announce){String m=e.getMessage()==null?e.getClass().getSimpleName():e.getMessage();runOnUiThread(()->toast("LWW SENKRONİZASYONU DURDU • "+m));}
             }finally{athletePass752.set(false);}
-            // V751/V750 still performs remote delta pulls for all domains.
             super.syncFromCloud(announce);
         });
-    }
-
-    /**
-     * Background V750 delta completion historically calls showHome().
-     * Keep the user's current page intact; only allow those synthetic HOME calls when HOME is already open.
-     */
-    @Override void showHome(){
-        if(page!=null&&!"HOME".equals(page)&&calledFromSyncHome752())return;
-        super.showHome();
-    }
-
-    private boolean calledFromSyncHome752(){
-        try{
-            for(StackTraceElement e:Thread.currentThread().getStackTrace()){
-                String c=e.getClassName();
-                if(c!=null&&(c.contains("MainActivityV750")||c.contains("MainActivityV751")||c.contains("MainActivityV752"))){
-                    String m=e.getMethodName();
-                    if(m!=null&&(m.contains("lambda$deltaPass750")||m.contains("deltaPass750")||m.contains("pass751")))return true;
-                }
-            }
-        }catch(Exception ignored){}
-        return false;
     }
 
     private String deviceId752(){
@@ -84,7 +66,6 @@ public class MainActivityV752 extends MainActivityV751 {
         return x;
     }
 
-    /** Old SQLite triggers used second precision. Upgrade fresh pending writes to millisecond precision. */
     private void normalizePendingTimes752(){
         long now=System.currentTimeMillis();
         try{db.getWritableDatabase().execSQL("UPDATE pending_sync SET created_at=? WHERE created_at%1000=0 AND created_at>=?",new Object[]{now,now-2500L});}catch(Exception ignored){}
@@ -100,10 +81,6 @@ public class MainActivityV752 extends MainActivityV751 {
         return System.currentTimeMillis();
     }
 
-    /**
-     * V751 previously scheduled this on a second executor. That race could leave attendance pending forever.
-     * Invoke its proven entity flusher synchronously inside the single v4.3 LWW pass.
-     */
     private void flushAttendanceDirect752()throws Exception{
         Cursor c=db.getReadableDatabase().rawQuery("SELECT 1 FROM pending_sync WHERE kind IN ('ATT_SCHEDULE','ATT_SESSION','ATT_RECORD') LIMIT 1",null);
         boolean any=c.moveToFirst();c.close();
@@ -142,7 +119,6 @@ public class MainActivityV752 extends MainActivityV751 {
             .putLong("domain_rev_750_mobile_attendance_schedule",-1)
             .putLong("domain_rev_750_mobile_attendance_sessions",-1)
             .putLong("domain_rev_750_mobile_attendance_records",-1).apply();
-            fast752.schedule(()->syncFromCloud(false),120,TimeUnit.MILLISECONDS);
         }catch(Exception ignored){}
     }
 
