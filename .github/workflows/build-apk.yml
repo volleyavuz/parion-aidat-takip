@@ -39,24 +39,21 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.3.0 universal LWW
+      - name: Verify v4.3.1 attendance and page preservation
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'versionCode = 1080' app/build.gradle.kts
-          grep -q 'versionName = "4.3.0"' app/build.gradle.kts
+          grep -q 'versionCode = 1081' app/build.gradle.kts
+          grep -q 'versionName = "4.3.1"' app/build.gradle.kts
           grep -q 'MainActivityV752' app/src/main/AndroidManifest.xml
-          grep -q 'MainActivityV752.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'parion_sync_one_athlete_lww_v430' app/src/main/java/com/parion/aidat/MainActivityV752.java
+          grep -q 'flushAttendanceDirect752' app/src/main/java/com/parion/aidat/MainActivityV752.java
+          grep -q 'calledFromSyncHome752' app/src/main/java/com/parion/aidat/MainActivityV752.java
           grep -q 'parion_sync_attendance_lww_v2' app/src/main/java/com/parion/aidat/MainActivityV752.java
-          grep -q 'parion_sync_material_lww_v430' app/src/main/java/com/parion/aidat/MainActivityV752.java
-          grep -q 'parion_sync_restart_ends_lww_v430' app/src/main/java/com/parion/aidat/MainActivityV752.java
-          grep -q 'p_version_ms' app/src/main/java/com/parion/aidat/MainActivityV752.java
-          grep -q 'p_device_id' app/src/main/java/com/parion/aidat/MainActivityV752.java
+          grep -q '400,TimeUnit.MILLISECONDS' app/src/main/java/com/parion/aidat/MainActivityV752.java
           if grep -q 'showDashboardCover660' app/src/main/java/com/parion/aidat/MainActivityV660.java; then exit 1; fi
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_3_0_Universal_LWW.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_3_1_LWW_Attendance_PageFix.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.3.0-Universal-LWW
-          path: Parion_V4_3_0_Universal_LWW.apk
+          name: Parion-v4.3.1-LWW-Attendance-PageFix
+          path: Parion_V4_3_1_LWW_Attendance_PageFix.apk
           if-no-files-found: error
