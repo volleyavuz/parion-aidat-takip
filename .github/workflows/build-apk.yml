@@ -39,21 +39,20 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.3.2 single-owner sync
+      - name: Verify v4.3.3 active-page refresh
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'versionCode = 1082' app/build.gradle.kts
-          grep -q 'versionName = "4.3.2"' app/build.gradle.kts
-          grep -q 'Override protected int pendingCount741(){return 0;}' app/src/main/java/com/parion/aidat/MainActivityV752.java || grep -q 'pendingCount741(){return 0;}' app/src/main/java/com/parion/aidat/MainActivityV752.java
-          grep -q 'pendingAny752' app/src/main/java/com/parion/aidat/MainActivityV752.java
-          grep -q '"HOME".equals(page)' app/src/main/java/com/parion/aidat/MainActivityV750.java
-          grep -q 'flushAttendanceDirect752' app/src/main/java/com/parion/aidat/MainActivityV752.java
+          grep -q 'versionCode = 1083' app/build.gradle.kts
+          grep -q 'versionName = "4.3.3"' app/build.gradle.kts
+          grep -q 'onRemoteApplied750' app/src/main/java/com/parion/aidat/MainActivityV750.java
+          grep -q 'ATTENDANCE_SESSION_628' app/src/main/java/com/parion/aidat/MainActivityV752.java
+          grep -q 'showAthletes()' app/src/main/java/com/parion/aidat/MainActivityV752.java
+          grep -q 'pendingCount741(){return 0;}' app/src/main/java/com/parion/aidat/MainActivityV752.java
           grep -q 'parion_sync_attendance_lww_v2' app/src/main/java/com/parion/aidat/MainActivityV752.java
-          if grep -q 'showDashboardCover660' app/src/main/java/com/parion/aidat/MainActivityV660.java; then exit 1; fi
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_3_2_Single_Owner_LWW.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_3_3_Active_Page_Refresh.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.3.2-Single-Owner-LWW
-          path: Parion_V4_3_2_Single_Owner_LWW.apk
+          name: Parion-v4.3.3-Active-Page-Refresh
+          path: Parion_V4_3_3_Active_Page_Refresh.apk
           if-no-files-found: error
