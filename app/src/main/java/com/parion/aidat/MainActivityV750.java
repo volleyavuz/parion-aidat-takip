@@ -105,7 +105,7 @@ public class MainActivityV750 extends MainActivityV749 {
     private JSONArray arr750(JSONObject o,String k){JSONArray a=o.optJSONArray(k);return a==null?new JSONArray():a;}
     private String nz750(String s){return s==null?"":s;}
     private String rootCause750(Throwable t){Throwable x=t;while(x.getCause()!=null)x=x.getCause();String m=x.getMessage();return m==null?x.getClass().getSimpleName():m;}
-    private Object invoke740(String name,Class<?>[] sig,Object... args)throws Exception{Method m=MainActivityV740.class.getDeclaredMethod(name,sig);m.setAccessible(true);return m.invoke(this,args);}
-    private int invokeInt740(String name)throws Exception{Method m=MainActivityV740.class.getDeclaredMethod(name);m.setAccessible(true);Object x=m.invoke(this);return x instanceof Number?((Number)x).intValue():0;}
+    @Override protected Object invoke740(String name,Class<?>[] sig,Object... args)throws Exception{Method m=MainActivityV740.class.getDeclaredMethod(name,sig);m.setAccessible(true);return m.invoke(this,args);}
+    @Override protected int invokeInt740(String name)throws Exception{Method m=MainActivityV740.class.getDeclaredMethod(name);m.setAccessible(true);Object x=m.invoke(this);return x instanceof Number?((Number)x).intValue():0;}
     @Override protected void onDestroy(){delta750.shutdownNow();super.onDestroy();}
 }
