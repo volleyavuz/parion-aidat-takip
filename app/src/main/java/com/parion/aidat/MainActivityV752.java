@@ -9,8 +9,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * v4.3.2 - single-owner Universal Last-Write-Wins router.
- * Legacy V741 periodic pump is disabled. Realtime + this single queue owner drive sync.
+ * v4.3.3 - single-owner LWW router with active-page refresh.
  */
 public class MainActivityV752 extends MainActivityV751 {
     private final ScheduledExecutorService fast752=Executors.newSingleThreadScheduledExecutor();
@@ -34,7 +33,6 @@ public class MainActivityV752 extends MainActivityV751 {
         },250,500,TimeUnit.MILLISECONDS);
     }
 
-    /** V741's inherited 450ms timer checks this method. Return zero so that legacy periodic pump never fires. */
     @Override protected int pendingCount741(){return 0;}
 
     private int pendingAny752(){
@@ -58,6 +56,31 @@ public class MainActivityV752 extends MainActivityV751 {
             super.syncFromCloud(announce);
         });
     }
+
+    @Override protected void onRemoteApplied750(boolean athleteChanged,boolean attendanceChanged,boolean materialChanged,boolean membershipChanged){
+        if(!athleteChanged&&!attendanceChanged&&!materialChanged&&!membershipChanged)return;
+        final String p=page==null?"":page;
+        final long athlete=currentAthlete;
+        runOnUiThread(()->{
+            try{
+                if("HOME".equals(p)){super.onRemoteApplied750(athleteChanged,attendanceChanged,materialChanged,membershipChanged);return;}
+                if(athleteChanged&&"LIST".equals(p)){showAthletes();return;}
+                if(athleteChanged&&"PROFILE".equals(p)){
+                    Cursor c=db.athlete(athlete);boolean ok=c.moveToFirst();String del=ok?c.getString(c.getColumnIndexOrThrow("deletedAt")):"";c.close();
+                    if(!ok||(del!=null&&!del.trim().isEmpty()))showAthletes();else showProfile(athlete);return;
+                }
+                if(attendanceChanged&&p.equals("ATTENDANCE_GROUPS_628")){invoke628752("showAttendanceGroups628",new Class<?>[0]);return;}
+                if(attendanceChanged&&p.startsWith("ATTENDANCE_GROUP_628:")){
+                    String g=p.substring("ATTENDANCE_GROUP_628:".length());invoke628752("openGroupAttendance628",new Class<?>[]{String.class},g);return;
+                }
+                if(attendanceChanged&&p.startsWith("ATTENDANCE_SESSION_628:")){
+                    String rest=p.substring("ATTENDANCE_SESSION_628:".length());int k=rest.lastIndexOf(':');if(k>0){String g=rest.substring(0,k);long sid=Long.parseLong(rest.substring(k+1));Cursor c=db.getReadableDatabase().rawQuery("SELECT sessionDate FROM attendance_sessions WHERE id=? LIMIT 1",new String[]{String.valueOf(sid)});String dt=c.moveToFirst()?c.getString(0):"";c.close();if(!dt.isEmpty())invoke628752("showSession628",new Class<?>[]{String.class,long.class,String.class},g,sid,dt);}return;
+                }
+            }catch(Exception ignored){}
+        });
+    }
+
+    private void invoke628752(String name,Class<?>[] sig,Object... args)throws Exception{Method m=MainActivityV628.class.getDeclaredMethod(name,sig);m.setAccessible(true);m.invoke(this,args);}
 
     private String deviceId752(){
         android.content.SharedPreferences p=getSharedPreferences("parion_lww_device_v430",0);
