@@ -9,12 +9,8 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * v4.3.0 - Universal Last-Write-Wins router.
- *
- * Supabase is the single authority. Every local write carries:
- *   entity kind + entity key + client edit time (ms) + stable device id.
- * The server accepts only the newest version. Older packets may arrive later,
- * but can never overwrite a newer value.
+ * v4.3.1 - Universal Last-Write-Wins router.
+ * Fixes precise attendance delivery and prevents background sync from navigating to HOME.
  */
 public class MainActivityV752 extends MainActivityV751 {
     private final ScheduledExecutorService fast752=Executors.newSingleThreadScheduledExecutor();
@@ -33,11 +29,11 @@ public class MainActivityV752 extends MainActivityV751 {
                 if(pendingCount741()>0){
                     normalizePendingTimes752();
                     if(kick752.compareAndSet(false,true)){
-                        try{syncFromCloud(false);}finally{fast752.schedule(()->kick752.set(false),90,TimeUnit.MILLISECONDS);}
+                        try{syncFromCloud(false);}finally{fast752.schedule(()->kick752.set(false),400,TimeUnit.MILLISECONDS);}
                     }
                 }
             }catch(Exception ignored){}
-        },80,90,TimeUnit.MILLISECONDS);
+        },180,400,TimeUnit.MILLISECONDS);
     }
 
     @Override protected void onResume(){resumed752=true;super.onResume();}
@@ -47,11 +43,38 @@ public class MainActivityV752 extends MainActivityV751 {
         if(db==null||cloudPrefs==null||cloudPrefs.getString("access_token","").isEmpty())return;
         athlete752.execute(()->{
             if(!athletePass752.compareAndSet(false,true))return;
-            try{normalizePendingTimes752();flushAthleteLww752();}
-            catch(Exception e){if(announce){String m=e.getMessage()==null?e.getClass().getSimpleName():e.getMessage();runOnUiThread(()->toast("LWW SENKRONİZASYONU DURDU • "+m));}}
-            finally{athletePass752.set(false);}
+            try{
+                normalizePendingTimes752();
+                flushAttendanceDirect752();
+                flushAthleteLww752();
+            }catch(Exception e){
+                if(announce){String m=e.getMessage()==null?e.getClass().getSimpleName():e.getMessage();runOnUiThread(()->toast("LWW SENKRONİZASYONU DURDU • "+m));}
+            }finally{athletePass752.set(false);}
+            // V751/V750 still performs remote delta pulls for all domains.
             super.syncFromCloud(announce);
         });
+    }
+
+    /**
+     * Background V750 delta completion historically calls showHome().
+     * Keep the user's current page intact; only allow those synthetic HOME calls when HOME is already open.
+     */
+    @Override void showHome(){
+        if(page!=null&&!"HOME".equals(page)&&calledFromSyncHome752())return;
+        super.showHome();
+    }
+
+    private boolean calledFromSyncHome752(){
+        try{
+            for(StackTraceElement e:Thread.currentThread().getStackTrace()){
+                String c=e.getClassName();
+                if(c!=null&&(c.contains("MainActivityV750")||c.contains("MainActivityV751")||c.contains("MainActivityV752"))){
+                    String m=e.getMethodName();
+                    if(m!=null&&(m.contains("lambda$deltaPass750")||m.contains("deltaPass750")||m.contains("pass751")))return true;
+                }
+            }
+        }catch(Exception ignored){}
+        return false;
     }
 
     private String deviceId752(){
@@ -75,6 +98,19 @@ public class MainActivityV752 extends MainActivityV751 {
             if(c.moveToFirst()&&!c.isNull(0)){long v=c.getLong(0);if(v>0)return v;}
         }catch(Exception ignored){}finally{if(c!=null)c.close();}
         return System.currentTimeMillis();
+    }
+
+    /**
+     * V751 previously scheduled this on a second executor. That race could leave attendance pending forever.
+     * Invoke its proven entity flusher synchronously inside the single v4.3 LWW pass.
+     */
+    private void flushAttendanceDirect752()throws Exception{
+        Cursor c=db.getReadableDatabase().rawQuery("SELECT 1 FROM pending_sync WHERE kind IN ('ATT_SCHEDULE','ATT_SESSION','ATT_RECORD') LIMIT 1",null);
+        boolean any=c.moveToFirst();c.close();
+        if(!any)return;
+        Method m=MainActivityV751.class.getDeclaredMethod("flushAttendance751");
+        m.setAccessible(true);
+        m.invoke(this);
     }
 
     private void flushAthleteLww752()throws Exception{
