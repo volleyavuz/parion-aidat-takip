@@ -39,19 +39,21 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.4.0 core cleanup phase 1
+      - name: Verify v4.4.1 financial year cleanup
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'versionCode = 1090' app/build.gradle.kts
-          grep -q 'versionName = "4.4.0"' app/build.gradle.kts
+          grep -q 'versionCode = 1091' app/build.gradle.kts
+          grep -q 'versionName = "4.4.1"' app/build.gradle.kts
+          grep -q 'MainActivityV757.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'MainActivityV757' app/src/main/AndroidManifest.xml
+          grep -q 'MIN_YEAR = 2026' app/src/main/java/com/parion/aidat/FinancialYear.java
+          grep -q 'WHERE athleteId=? AND year=? ORDER BY month' app/src/main/java/com/parion/aidat/DbHelper.java
+          grep -q 'Aktif Aidat Yılı' app/src/main/java/com/parion/aidat/MainActivityV757.java
           grep -q 'FALLBACK_SYNC_PERIOD_MS=30000L' app/src/main/java/com/parion/aidat/MainActivityV752.java
-          ! grep -q '},250,500,TimeUnit.MILLISECONDS' app/src/main/java/com/parion/aidat/MainActivityV752.java
-          grep -q 'MainActivityV756.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'sessionDate<=?' app/src/main/java/com/parion/aidat/MainActivityV753.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_4_0_Core_Cleanup_Phase1.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_4_1_Financial_Year_Cleanup.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.4.0-Core-Cleanup-Phase1
-          path: Parion_V4_4_0_Core_Cleanup_Phase1.apk
+          name: Parion-v4.4.1-Financial-Year-Cleanup
+          path: Parion_V4_4_1_Financial_Year_Cleanup.apk
           if-no-files-found: error
