@@ -13,10 +13,13 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
- * v4.3.4 - single-owner LWW router with active-page refresh,
+ * Single-owner LWW router with active-page refresh,
  * automatic current-month attendance generation and material dirty detection.
+ * Core cleanup: Realtime/user actions are primary; periodic polling is fallback only.
  */
 public class MainActivityV752 extends MainActivityV751 {
+    private static final long FALLBACK_SYNC_INITIAL_MS=5000L;
+    private static final long FALLBACK_SYNC_PERIOD_MS=30000L;
     private final ScheduledExecutorService fast752=Executors.newSingleThreadScheduledExecutor();
     private final ExecutorService athlete752=Executors.newSingleThreadExecutor();
     private final AtomicBoolean kick752=new AtomicBoolean(false);
@@ -37,10 +40,10 @@ public class MainActivityV752 extends MainActivityV751 {
                 detectMaterialDirty752();
                 if(pendingAny752()>0&&kick752.compareAndSet(false,true)){
                     normalizePendingTimes752();
-                    try{syncFromCloud(false);}finally{fast752.schedule(()->kick752.set(false),250,TimeUnit.MILLISECONDS);}
+                    try{syncFromCloud(false);}finally{fast752.schedule(()->kick752.set(false),1000,TimeUnit.MILLISECONDS);}
                 }
             }catch(Exception ignored){}
-        },250,500,TimeUnit.MILLISECONDS);
+        },FALLBACK_SYNC_INITIAL_MS,FALLBACK_SYNC_PERIOD_MS,TimeUnit.MILLISECONDS);
     }
 
     @Override protected int pendingCount741(){return 0;}
