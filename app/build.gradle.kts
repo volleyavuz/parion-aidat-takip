@@ -7,9 +7,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1089
-        versionName = "4.3.9"
-        // Single-owner profile photo renderer: V754/V755 legacy writers disabled; V756 only.
+        versionCode = 1090
+        versionName = "4.4.0"
+        // Core cleanup phase 1: Realtime/user actions primary, 30s fallback polling only.
     }
     signingConfigs { create("release") { storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks"); storePassword = System.getenv("PARION_STORE_PASSWORD"); keyAlias = System.getenv("PARION_KEY_ALIAS"); keyPassword = System.getenv("PARION_KEY_PASSWORD") } }
     buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
