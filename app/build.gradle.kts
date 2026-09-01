@@ -7,9 +7,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1090
-        versionName = "4.4.0"
-        // Core cleanup phase 1: Realtime/user actions primary, 30s fallback polling only.
+        versionCode = 1091
+        versionName = "4.4.1"
+        // Financial year: selectable from 2026 onward; pre-2026 profile month cards hidden by design.
     }
     signingConfigs { create("release") { storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks"); storePassword = System.getenv("PARION_STORE_PASSWORD"); keyAlias = System.getenv("PARION_KEY_ALIAS"); keyPassword = System.getenv("PARION_KEY_PASSWORD") } }
     buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
