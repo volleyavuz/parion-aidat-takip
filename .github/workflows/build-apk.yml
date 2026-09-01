@@ -39,21 +39,21 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.3.6 final profile photo pinning
+      - name: Verify v4.3.7 athlete-id photo watchdog
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'versionCode = 1086' app/build.gradle.kts
-          grep -q 'versionName = "4.3.6"' app/build.gradle.kts
-          grep -q 'MainActivityV754.class' app/src/main/java/com/parion/aidat/SplashActivity.java
-          grep -q 'MainActivityV754' app/src/main/AndroidManifest.xml
-          grep -q 'pinProfilePhoto754' app/src/main/java/com/parion/aidat/MainActivityV754.java
-          grep -q 'CLOUD:' app/src/main/java/com/parion/aidat/MainActivityV754.java
+          grep -q 'versionCode = 1087' app/build.gradle.kts
+          grep -q 'versionName = "4.3.7"' app/build.gradle.kts
+          grep -q 'MainActivityV755.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'MainActivityV755' app/src/main/AndroidManifest.xml
+          grep -q 'photoGuard755' app/src/main/java/com/parion/aidat/MainActivityV755.java
+          grep -q 'photoMap413().get(id)' app/src/main/java/com/parion/aidat/MainActivityV755.java
+          grep -q '350L' app/src/main/java/com/parion/aidat/MainActivityV755.java
           grep -q 'sessionDate<=?' app/src/main/java/com/parion/aidat/MainActivityV753.java
-          grep -q 'parion_sync_material_lww_v430' app/src/main/java/com/parion/aidat/MainActivityV752.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_3_6_Final_Profile_Photo_Pinning.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_3_7_Athlete_Id_Photo_Watchdog.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.3.6-Final-Profile-Photo-Pinning
-          path: Parion_V4_3_6_Final_Profile_Photo_Pinning.apk
+          name: Parion-v4.3.7-Athlete-Id-Photo-Watchdog
+          path: Parion_V4_3_7_Athlete_Id_Photo_Watchdog.apk
           if-no-files-found: error
