@@ -39,21 +39,21 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.3.4 attendance month and material sync
+      - name: Verify v4.3.5 today attendance and profile photo repair
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'versionCode = 1084' app/build.gradle.kts
-          grep -q 'versionName = "4.3.4"' app/build.gradle.kts
-          grep -q 'ensureCurrentAttendanceMonth752' app/src/main/java/com/parion/aidat/MainActivityV752.java
-          grep -q 'detectMaterialDirty752' app/src/main/java/com/parion/aidat/MainActivityV752.java
-          grep -q 'computeMaterialHash752' app/src/main/java/com/parion/aidat/MainActivityV752.java
-          grep -q 'MATERIAL","ALL' app/src/main/java/com/parion/aidat/MainActivityV752.java
-          grep -q 'pendingCount741(){return 0;}' app/src/main/java/com/parion/aidat/MainActivityV752.java
+          grep -q 'versionCode = 1085' app/build.gradle.kts
+          grep -q 'versionName = "4.3.5"' app/build.gradle.kts
+          grep -q 'MainActivityV753.class' app/src/main/java/com/parion/aidat/SplashActivity.java
+          grep -q 'sessionDate<=?' app/src/main/java/com/parion/aidat/MainActivityV753.java
+          grep -q 'sessionDate>?' app/src/main/java/com/parion/aidat/MainActivityV753.java
+          grep -q 'repairAllMappedPhotos753' app/src/main/java/com/parion/aidat/MainActivityV753.java
+          grep -q 'CLOUD:' app/src/main/java/com/parion/aidat/MainActivityV753.java
           grep -q 'parion_sync_material_lww_v430' app/src/main/java/com/parion/aidat/MainActivityV752.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_3_4_Current_Month_Material_Sync.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_3_5_Today_Attendance_Profile_Photo_Fix.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.3.4-Current-Month-Material-Sync
-          path: Parion_V4_3_4_Current_Month_Material_Sync.apk
+          name: Parion-v4.3.5-Today-Attendance-Profile-Photo-Fix
+          path: Parion_V4_3_5_Today_Attendance_Profile_Photo_Fix.apk
           if-no-files-found: error
