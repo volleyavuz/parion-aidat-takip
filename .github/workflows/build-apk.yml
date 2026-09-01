@@ -39,21 +39,21 @@ jobs:
           PARION_KEY_PASSWORD: '${{ secrets.PARION_KEY_PASSWORD }}'
           PARION_KEY_ALIAS: '${{ secrets.PARION_KEY_ALIAS }}'
         run: gradle assembleRelease --stacktrace
-      - name: Verify v4.3.8 direct bitmap profile renderer
+      - name: Verify v4.3.9 single-owner profile photo renderer
         run: |
           "$ANDROID_HOME/build-tools/36.0.0/apksigner" verify --verbose --print-certs app/build/outputs/apk/release/app-release.apk
-          grep -q 'versionCode = 1088' app/build.gradle.kts
-          grep -q 'versionName = "4.3.8"' app/build.gradle.kts
+          grep -q 'versionCode = 1089' app/build.gradle.kts
+          grep -q 'versionName = "4.3.9"' app/build.gradle.kts
           grep -q 'MainActivityV756.class' app/src/main/java/com/parion/aidat/SplashActivity.java
           grep -q 'MainActivityV756' app/src/main/AndroidManifest.xml
-          grep -q 'downloadBitmap405' app/src/main/java/com/parion/aidat/MainActivityV756.java
           grep -q 'setImageBitmap' app/src/main/java/com/parion/aidat/MainActivityV756.java
-          grep -q 'PARION_DIRECT_PHOTO_' app/src/main/java/com/parion/aidat/MainActivityV756.java
+          ! grep -q 'setAthletePhoto' app/src/main/java/com/parion/aidat/MainActivityV754.java
+          ! grep -q 'setAthletePhoto' app/src/main/java/com/parion/aidat/MainActivityV755.java
           grep -q 'sessionDate<=?' app/src/main/java/com/parion/aidat/MainActivityV753.java
       - name: Rename APK
-        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_3_8_Direct_Bitmap_Profile_Photo.apk
+        run: cp app/build/outputs/apk/release/app-release.apk Parion_V4_3_9_Single_Owner_Profile_Photo.apk
       - uses: actions/upload-artifact@v4
         with:
-          name: Parion-v4.3.8-Direct-Bitmap-Profile-Photo
-          path: Parion_V4_3_8_Direct_Bitmap_Profile_Photo.apk
+          name: Parion-v4.3.9-Single-Owner-Profile-Photo
+          path: Parion_V4_3_9_Single_Owner_Profile_Photo.apk
           if-no-files-found: error
