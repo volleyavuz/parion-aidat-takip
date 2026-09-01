@@ -7,9 +7,9 @@ android {
         applicationId = "com.parion.aidat"
         minSdk = 23
         targetSdk = 36
-        versionCode = 1087
-        versionName = "4.3.7"
-        // Athlete-id keyed profile photo watchdog; ignores name/month text collisions.
+        versionCode = 1088
+        versionName = "4.3.8"
+        // Direct athlete-id -> canonical photo_path Bitmap renderer; no alias/placeholder loop.
     }
     signingConfigs { create("release") { storeFile = file(System.getenv("PARION_KEYSTORE_PATH") ?: "parion-release.jks"); storePassword = System.getenv("PARION_STORE_PASSWORD"); keyAlias = System.getenv("PARION_KEY_ALIAS"); keyPassword = System.getenv("PARION_KEY_PASSWORD") } }
     buildTypes { getByName("release") { isMinifyEnabled = false; signingConfig = signingConfigs.getByName("release") } }
